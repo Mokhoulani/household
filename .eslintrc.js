@@ -20,12 +20,17 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
     'react-native/no-unused-styles': 'warn',
     'react-native/split-platform-components': 'warn',
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'warn',
     'react/react-in-jsx-scope': 'off', // If you're using React 17+ or Next.js
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        additionalHooks: '(useMyCustomHook|useMyOtherCustomHook)',
+      },
+    ],
   },
   settings: {
     react: {

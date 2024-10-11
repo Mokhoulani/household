@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "format": "prettier --write .",
     "types": "npx tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@react-navigation/drawer": "^6.7.2",

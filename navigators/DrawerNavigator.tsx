@@ -4,12 +4,13 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
+import SettingsScreen from '../screens/SettingScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 
 export type DrawerParamList = {
-  ProfileTab: NavigatorScreenParams<TabParamsList>;
   HomeTab: NavigatorScreenParams<TabParamsList>;
-  SearchTab: NavigatorScreenParams<TabParamsList>;
+  Profile: undefined;
+  Settings: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -29,30 +30,28 @@ export default function DrawerNavigator() {
         ),
       })}>
       <Drawer.Screen
-        name="ProfileTab"
+        name="Profile"
         component={TopTabsNavigator}
-        options={({ navigation }) => ({
+        options={() => ({
           title: '',
           drawerLabel: () => (
             <MaterialIcons
               style={{ marginRight: 16 }}
               name="person"
               size={24}
-              onPress={() => navigation.navigate('Profile')}
             />
           ),
         })}
       />
       <Drawer.Screen
         name="HomeTab"
-        component={TopTabsNavigator}
-        options={({ navigation }) => ({
+        component={SettingsScreen}
+        options={() => ({
           drawerLabel: () => (
             <MaterialIcons
               style={{ marginRight: 16 }}
               name="settings"
               size={24}
-              onPress={() => navigation.navigate('Settings')}
             />
           ),
         })}

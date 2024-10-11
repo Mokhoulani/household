@@ -3,8 +3,6 @@ import HomeScreen from '../screens/HomeScreen';
 
 export type TabParamsList = {
   Home: undefined;
-  Settings: undefined;
-  Profile: undefined;
 };
 
 const Tab = createMaterialTopTabNavigator();

@@ -1,23 +1,40 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import RootNavigator from '../navigators/RootStackNavigator';
 import { useAppSelector } from '../store/hook';
-import { selectAppTheme } from '../store/theme/selectors';
-import { useStatusBarStyle } from '../store/theme/useStatusBarStyle';
+import { selectColorMode } from '../store/theme/selectors';
+import { combinedDarkTheme, combinedLightTheme } from '../themes/theme';
 
 export default function MainApp() {
-  const appTheme = useAppSelector(selectAppTheme); // Get the theme from Redux
-  const statusBarStyle = useStatusBarStyle(); // Get the status bar style from the custom hook
+  const colorMode = useAppSelector(selectColorMode); // Get the theme from Redux
+  console.log(colorMode); // Log the theme to the console
+  const colorScheme = useColorScheme();
+  console.log(colorScheme); // Log the color scheme to the console
+
+  const theme =
+    colorMode === 'dark' || (colorMode === 'auto' && colorScheme === 'dark')
+      ? combinedDarkTheme
+      : combinedLightTheme;
 
   return (
     <>
       {/* Correct usage of StatusBar with the barStyle prop */}
-      <StatusBar barStyle={statusBarStyle} />
+      <StatusBar
+        style={
+          colorMode === 'light'
+            ? 'light'
+            : colorMode === 'dark'
+              ? 'light'
+              : 'auto'
+        }
+      />
 
       {/* Use PaperProvider and NavigationContainer with the theme from Redux */}
-      <PaperProvider theme={appTheme}>
-        <NavigationContainer theme={appTheme}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer theme={theme}>
           <RootNavigator />
         </NavigationContainer>
       </PaperProvider>

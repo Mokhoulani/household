@@ -1,10 +1,11 @@
-import RootStackNavigator from './navigators/RootStackNavigator';
-import ThemeProvider from './providers/ThemeProvider';
+import { Provider } from 'react-redux';
+import MainApp from './main/MainApp';
+import { store } from './store/store'; // Redux store
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <RootStackNavigator />
-    </ThemeProvider>
+    <Provider store={store}>
+      <MainApp />
+    </Provider>
   );
 }

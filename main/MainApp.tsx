@@ -10,9 +10,7 @@ import { combinedDarkTheme, combinedLightTheme } from '../themes/theme';
 
 export default function MainApp() {
   const colorMode = useAppSelector(selectColorMode); // Get the theme from Redux
-  console.log(colorMode); // Log the theme to the console
   const colorScheme = useColorScheme();
-  console.log(colorScheme); // Log the color scheme to the console
 
   const theme =
     colorMode === 'dark' || (colorMode === 'auto' && colorScheme === 'dark')
@@ -21,7 +19,6 @@ export default function MainApp() {
 
   return (
     <>
-      {/* Correct usage of StatusBar with the barStyle prop */}
       <StatusBar
         style={
           colorMode === 'light'
@@ -31,8 +28,6 @@ export default function MainApp() {
               : 'auto'
         }
       />
-
-      {/* Use PaperProvider and NavigationContainer with the theme from Redux */}
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
           <RootNavigator />

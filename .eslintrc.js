@@ -18,7 +18,17 @@ module.exports = {
     'jest/globals': true, // This should now be recognized
   },
   rules: {
-    'prettier/prettier': 'error',
+    'prettier/prettier': [
+      'error',
+      {
+        semi: true,
+        singleQuote: true,
+        jsxBracketSameLine: true,
+        trailingComma: 'all',
+        printWidth: 80,
+        tabWidth: 2,
+      },
+    ],
     'react-hooks/rules-of-hooks': 'error',
     'react-native/no-unused-styles': 'warn',
     'react-native/split-platform-components': 'warn',

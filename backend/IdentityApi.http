@@ -1,0 +1,41 @@
+@IdentityApi_HostAddress = http://localhost:5147
+
+GET {{IdentityApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST http://192.168.8.165:5147/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "NewUserPassword123!"
+}
+
+###
+
+POST http://192.168.8.165:5147/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "NewUserPassword123!",
+  "fullName": "New User1"
+}
+
+
+###
+
+POST http://192.168.8.165:5147/api/auth/refresh-token
+Content-Type: application/json
+
+{
+    "userId": "7fcf8402-c3a8-45e6-b8d4-dd30024b02ad",
+    "refreshToken": "KmbzWn6s41C/LJSoJevsBSnTNnksDTipgneRYhVTZg8="
+}
+
+###
+GET http://192.168.8.165:5147/api/Households
+
+###
+GET http://192.168.8.165:5147/api/Profiles

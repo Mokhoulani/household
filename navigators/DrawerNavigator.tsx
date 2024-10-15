@@ -25,7 +25,7 @@ export default function DrawerNavigator() {
             name="login"
             size={24}
             color={props.tintColor}
-            onPress={() => navigation.navigate('Singin')}
+            onPress={() => navigation.navigate('signIn')}
           />
         ),
       })}>

@@ -8,7 +8,7 @@ import SettingsScreen from '../screens/SettingScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 
 export type DrawerParamList = {
-  HomeTab: NavigatorScreenParams<TabParamsList>;
+  Hoursehold: NavigatorScreenParams<TabParamsList>;
   Profile: undefined;
   Settings: undefined;
 };
@@ -30,7 +30,7 @@ export default function DrawerNavigator() {
         ),
       })}>
       <Drawer.Screen
-        name="Profile"
+        name="Hoursehold"
         component={TopTabsNavigator}
         options={() => ({
           title: '',
@@ -44,7 +44,7 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
-        name="HomeTab"
+        name="Settings"
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => (

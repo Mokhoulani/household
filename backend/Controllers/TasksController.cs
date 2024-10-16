@@ -1,27 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 [Route("api/[controller]")]
 [ApiController]
 public class TasksController : ControllerBase
 {
-    private readonly IEfRepository<Tasks> _tasksRepository;
+    private readonly IEfRepository<HouseholdTask> _tasksRepository;
 
-    public TasksController(IEfRepository<Tasks> tasksRepository)
+    public TasksController(IEfRepository<HouseholdTask> tasksRepository)
     {
         _tasksRepository = tasksRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Tasks>>> GetTasks()
+    public async Task<ActionResult<IEnumerable<HouseholdTask>>> GetTasks()
     {
         var tasks = await _tasksRepository.GetAllAsync();
         return Ok(tasks);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Tasks>> GetTask(int id)
+    public async Task<ActionResult<HouseholdTask>> GetTask(int id)
     {
         var task = await _tasksRepository.GetByIdAsync(id);
         if (task == null)
@@ -32,7 +32,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateTask([FromBody] Tasks task)
+    public async Task<ActionResult> CreateTask([FromBody] HouseholdTask task)
     {
         await _tasksRepository.AddAsync(task);
         await _tasksRepository.SaveChangesAsync();
@@ -40,7 +40,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateTask(int id, [FromBody] Tasks task)
+    public async Task<ActionResult> UpdateTask(int id, [FromBody] HouseholdTask task)
     {
         if (id != task.Id)
         {

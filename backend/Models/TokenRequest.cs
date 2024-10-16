@@ -1,5 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 public class TokenRequest
 {
-    public string UserId { get; set; } // Pass the UserId along with the refresh token
+    [Required] // Requires that the user ID is provided
+    public string UserId { get; set; }
+
+    [Required] // Requires that the refresh token is provided
     public string RefreshToken { get; set; }
 }

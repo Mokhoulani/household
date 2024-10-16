@@ -1,15 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 public class Profile
 {
-    public int Id { get; set; } // Primary key
+    public int Id { get; set; }
+
+    [Required]
+    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
     public string Name { get; set; }
+
     public bool IsOwner { get; set; }
     public bool IsRequest { get; set; }
-    public int HouseholdID { get; set; } // Foreign key for Household
 
-    // Foreign key for Account
-    public string AccountId { get; set; } // This should match the foreign key type from `Account`
+    public int HouseholdId { get; set; }
 
-    // Navigation properties
-    public virtual Household Household { get; set; }
-    public virtual Account Account { get; set; }
+    [Required]
+    [ForeignKey("Account")]
+    public string AccountId { get; set; }
+
+    [ForeignKey("HouseholdId")]
+    public Household Household { get; set; }
+
+    public Account Account { get; set; }
 }

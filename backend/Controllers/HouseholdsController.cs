@@ -16,7 +16,7 @@ public class HouseholdsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Household>>> GetHouseholds()
     {
-        var households = await _householdRepository.GetAllAsync();
+        var households = await _householdRepository.GetAllAsync(/* where household.userId === jwt.userid */);
         return Ok(households);
     }
 

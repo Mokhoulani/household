@@ -18,7 +18,7 @@ POST http://192.168.8.165:5147/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "newuser@example.com",
+  "email": "newuseer2@example.com",
   "password": "NewUserPassword123!",
   "fullName": "New User1"
 }
@@ -30,8 +30,8 @@ POST http://192.168.8.165:5147/api/auth/refresh-token
 Content-Type: application/json
 
 {
-    "userId": "7fcf8402-c3a8-45e6-b8d4-dd30024b02ad",
-    "refreshToken": "KmbzWn6s41C/LJSoJevsBSnTNnksDTipgneRYhVTZg8="
+    "userId": "99370672-20f0-4f39-9c3b-83c47166d989",
+    "refreshToken": "GQYFl4SM+KwghtURdTQABhxupDH+qdb+bl0e8i8UgWA="
 }
 
 ###
@@ -39,3 +39,29 @@ GET http://10.25.13.193:5147/api/Households
 
 ###
 GET http://192.168.8.165:5147/api/Profiles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJqdGkiOiIwZTMwMGQwMC1jYzZhLTQ5NTctOWZhMS01ZjliOWEyZTY2YzUiLCJ1c2VySWQiOiJkOWYyYzU3OS1mNWQyLTQ3NmEtYWFmNi1kNTM4ODdhYTUyOWYiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkwODExMzYsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.TgN_nYNRjkYYGgxzjGMEZzaE2GEu4El_CUmXXOMvG8A
+
+
+
+### 
+POST http://192.168.8.165:5147/api/Profiles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJqdGkiOiIzOWJhODUxZi1jMGJkLTQ1ZDctYTA0Yy00YzJjNjUyMjUyZDciLCJ1c2VySWQiOiI3MTBjODgxZi1iMTk1LTQ0NjItOGMyOC04MzUwZTgzNTZhYWQiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkwODI0MzksImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.8otowyexQrXibyJlmF77C7ihCKUOB-Si1P8wzzoeYo4
+Content-Type: application/json
+
+{
+    "Name": "John",
+    "IsOwner": true,
+    "IsRequest": true,
+    "HouseholdId": 1
+}
+
+
+
+###
+POST http://192.168.8.165:5147/api/Households
+Content-Type: application/json
+
+{
+  "Name": "Smith Family",
+  "Code": "SFM001"
+}

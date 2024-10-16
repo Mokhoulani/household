@@ -8,6 +8,7 @@ public class ApplicationDbContext : IdentityDbContext<Account>
     }
     public DbSet<Household> Households { get; set; }
     public DbSet<Profile> Profiles { get; set; }
-    public DbSet<Tasks> Tasks { get; set; }
+    public DbSet<HouseholdTask> Tasks { get; set; }
     public DbSet<CompleteTask> CompleteTasks { get; set; }
+
 }

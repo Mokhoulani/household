@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241015070304_InitialCreate")]
+    [Migration("20241016121009_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -96,17 +96,17 @@ namespace IdentityApi.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProfileID")
+                    b.Property<int?>("HouseholdTaskId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("TasksId")
+                    b.Property<int>("ProfileID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfileID");
+                    b.HasIndex("HouseholdTaskId");
 
-                    b.HasIndex("TasksId");
+                    b.HasIndex("ProfileID");
 
                     b.ToTable("CompleteTasks");
                 });
@@ -128,6 +128,41 @@ namespace IdentityApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Households");
+                });
+
+            modelBuilder.Entity("HouseholdTask", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HouseholdId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HouseholdId");
+
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -268,7 +303,7 @@ namespace IdentityApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("HouseholdID")
+                    b.Property<int?>("HouseholdId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsOwner")
@@ -279,63 +314,42 @@ namespace IdentityApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("HouseholdID");
+                    b.HasIndex("HouseholdId");
 
                     b.ToTable("Profiles");
                 });
 
-            modelBuilder.Entity("Tasks", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Difficulty")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("HouseholdID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Interval")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HouseholdID");
-
-                    b.ToTable("Tasks");
-                });
-
             modelBuilder.Entity("CompleteTask", b =>
                 {
+                    b.HasOne("HouseholdTask", null)
+                        .WithMany("CompletedTasks")
+                        .HasForeignKey("HouseholdTaskId");
+
                     b.HasOne("Profile", "Profile")
                         .WithMany()
                         .HasForeignKey("ProfileID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tasks", null)
-                        .WithMany("CompletedTasks")
-                        .HasForeignKey("TasksId");
-
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("HouseholdTask", b =>
+                {
+                    b.HasOne("Household", "Household")
+                        .WithMany("Tasks")
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Household");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -391,32 +405,15 @@ namespace IdentityApi.Migrations
 
             modelBuilder.Entity("Profile", b =>
                 {
-                    b.HasOne("Account", "Account")
+                    b.HasOne("Account", null)
                         .WithMany("Profiles")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Household", "Household")
+                    b.HasOne("Household", null)
                         .WithMany("Profiles")
-                        .HasForeignKey("HouseholdID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Household");
-                });
-
-            modelBuilder.Entity("Tasks", b =>
-                {
-                    b.HasOne("Household", "Household")
-                        .WithMany("Tasks")
-                        .HasForeignKey("HouseholdID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Household");
+                        .HasForeignKey("HouseholdId");
                 });
 
             modelBuilder.Entity("Account", b =>
@@ -431,7 +428,7 @@ namespace IdentityApi.Migrations
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("Tasks", b =>
+            modelBuilder.Entity("HouseholdTask", b =>
                 {
                     b.Navigation("CompletedTasks");
                 });

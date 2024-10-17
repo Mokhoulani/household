@@ -26,21 +26,22 @@ Content-Type: application/json
 
 ###
 
-POST http://192.168.8.165:5147/api/auth/refresh-token
+POST http://10.25.13.193:5147/api/auth/refresh-token
 Content-Type: application/json
 
 {
     "userId": "ff90b9b4-8a1d-4db3-9e2b-6b7281fafd78",
-    "refreshToken": "UrIEF+vpW8cg9Otg3HogEHOhsjrsPhBAZHAu6YBFHHs="
+    "refreshToken": "0n5Yq+YZJyaBfOxDeUauYztwfXpRCRuJHBJ53PFRtBY="
 }
 
 ###
 GET http://10.25.13.193:5147/api/Households
 
 ###
-GET http://192.168.8.165:5147/api/Profiles
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk
+GET http://10.25.13.193:5147/api/Profiles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlYzYyNDA4OC1jNGVjLTRhMzktYjQ2Yy01OTc2OThhNDNjMzYiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNzE3NjcsImlzcyI6Imh0dHA6Ly8xMC4yNS4xMy4xOTM6NTE0NyIsImF1ZCI6Imh0dHA6Ly8xMC4yNS4xMy4xOTM6NTE0NyJ9.3bZCTdQsxOYUtH-BV064Lra6yFZQ3-AHWfowmYng8xs
 
+###
 
 ### 
 POST http://192.168.8.165:5147/api/Profiles

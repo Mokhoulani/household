@@ -68,6 +68,7 @@ public class AuthController : ControllerBase
         // Here, it's returned in the response body for demonstration
         return Ok(new
         {
+            AccessToken = token,
             RefreshToken = refreshToken, // Return refresh token (if required)
             Account = new
             {
@@ -176,7 +177,7 @@ public class AuthController : ControllerBase
         {
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken,
-            AccountId = user.Id // Changed from "AcountId" to "AccountId" for consistency
+            AccountId = user // Changed from "AcountId" to "AccountId" for consistency
         });
     }
     private string GenerateJwtToken(Account user)

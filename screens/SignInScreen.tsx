@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import { signupUser } from '../store/auth/action';
+import { signinUser } from '../store/auth/action';
 import { useAppDispatch } from '../store/hook';
 
-export default function SignupScreen() {
+export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const dispatch = useAppDispatch();
 
   const handleSignup = async () => {
-    dispatch(signupUser({ email, password, fullName }));
+    dispatch(signinUser({ email, password }));
   };
 
   return (
@@ -29,13 +28,6 @@ export default function SignupScreen() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Enter full name"
-        value={fullName}
-        onChangeText={setFullName}
-        clearTextOnFocus
         style={styles.input}
       />
       <Button

@@ -2,15 +2,17 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import HomeScreen from '../screens/HomeScreen';
 
 export type TabParamsList = {
-  Home: undefined;
+  Today: undefined;
+  Statistics: { period: string };
 };
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<TabParamsList>();
 
 export default function TopTabsNavigator() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Today" component={HomeScreen} />
+      <Tab.Screen name="Statistics" component={HomeScreen} />
     </Tab.Navigator>
   );
 }

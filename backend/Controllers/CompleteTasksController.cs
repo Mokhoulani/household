@@ -1,68 +1,174 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CompleteTasksController : ControllerBase
 {
     private readonly IEfRepository<CompleteTask> _completeTaskRepository;
+    private readonly IEfRepository<HouseholdTask> _householdTaskRepository;
+    private readonly ILogger<CompleteTasksController> _logger;
 
-    public CompleteTasksController(IEfRepository<CompleteTask> completeTaskRepository)
+    public CompleteTasksController(
+        IEfRepository<CompleteTask> completeTaskRepository,
+        IEfRepository<HouseholdTask> householdTaskRepository,
+        ILogger<CompleteTasksController> logger)
     {
         _completeTaskRepository = completeTaskRepository;
+        _householdTaskRepository = householdTaskRepository;
+        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CompleteTask>>> GetCompleteTasks()
+    public async Task<IActionResult> GetCompletedTasks()
     {
-        var completeTasks = await _completeTaskRepository.GetAllAsync();
-        return Ok(completeTasks);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<CompleteTask>> GetCompleteTask(int id)
-    {
-        var completeTask = await _completeTaskRepository.GetByIdAsync(id);
-        if (completeTask == null)
+        try
         {
-            return NotFound();
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<IEnumerable<CompleteTask>> { Message = "User is not authenticated." });
+            }
+
+            var completedTasks = await _completeTaskRepository.FindAsync(t => t.Profile.AccountId == userId);
+
+            if (!completedTasks.Any())
+            {
+                return NotFound(new ApiResponse<IEnumerable<CompleteTask>> { Message = "No completed tasks found for the current user." });
+            }
+
+            return Ok(new ApiResponse<IEnumerable<CompleteTask>> { Data = completedTasks, Message = "Completed tasks retrieved successfully." });
         }
-        return Ok(completeTask);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieving completed tasks");
+            return StatusCode(500, new ApiResponse<IEnumerable<CompleteTask>> { Message = "An error occurred while processing your request." });
+        }
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateCompleteTask([FromBody] CompleteTask completeTask)
+    public async Task<IActionResult> CreateCompletedTask([FromBody] CompleteTask completedTask)
     {
-        await _completeTaskRepository.AddAsync(completeTask);
-        await _completeTaskRepository.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetCompleteTask), new { id = completeTask.Id }, completeTask);
+        try
+        {
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<CompleteTask> { Message = "User is not authenticated." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse<CompleteTask>
+                {
+                    Message = "Invalid completed task data",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                });
+            }
+
+            var houseTask = await _householdTaskRepository.GetByIdAsync(completedTask.HouseholdTaskId);
+            if (houseTask == null)
+            {
+                return NotFound(new ApiResponse<CompleteTask> { Message = "House task not found." });
+            }
+
+            // Ensure the task belongs to the same household
+            if (houseTask.HouseholdId != completedTask.Profile.HouseholdId)
+            {
+                return BadRequest(new ApiResponse<CompleteTask> { Message = "House task and household do not match." });
+            }
+
+            completedTask.CompletedAt = DateTime.UtcNow;
+
+            await _completeTaskRepository.AddAsync(completedTask);
+            await _completeTaskRepository.SaveChangesAsync();
+
+            _logger.LogInformation($"Completed task created for user {userId}");
+
+            return CreatedAtAction(nameof(GetCompletedTasks), new { id = completedTask.Id }, new ApiResponse<CompleteTask> { Data = completedTask, Message = "Completed task created successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while creating completed task");
+            return StatusCode(500, new ApiResponse<CompleteTask> { Message = "An error occurred while processing your request." });
+        }
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateCompleteTask(int id, [FromBody] CompleteTask completeTask)
+    public async Task<IActionResult> UpdateCompletedTask(int id, [FromBody] CompleteTask completedTask)
     {
-        if (id != completeTask.Id)
+        try
         {
-            return BadRequest();
-        }
+            if (id != completedTask.Id)
+            {
+                return BadRequest(new ApiResponse<CompleteTask> { Message = "Completed Task ID mismatch." });
+            }
 
-        await _completeTaskRepository.UpdateAsync(completeTask);
-        await _completeTaskRepository.SaveChangesAsync();
-        return NoContent();
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId) || completedTask.Profile.AccountId != userId)
+            {
+                return Unauthorized(new ApiResponse<CompleteTask> { Message = "You are not authorized to update this completed task." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse<CompleteTask>
+                {
+                    Message = "Invalid completed task data",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                });
+            }
+
+            await _completeTaskRepository.UpdateAsync(completedTask);
+            await _completeTaskRepository.SaveChangesAsync();
+
+            _logger.LogInformation($"Completed task updated for user {userId}");
+
+            return Ok(new ApiResponse<CompleteTask> { Data = completedTask, Message = "Completed task updated successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while updating completed task");
+            return StatusCode(500, new ApiResponse<CompleteTask> { Message = "An error occurred while processing your request." });
+        }
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteCompleteTask(int id)
+    public async Task<IActionResult> DeleteCompletedTask(int id)
     {
-        var completeTask = await _completeTaskRepository.GetByIdAsync(id);
-        if (completeTask == null)
+        try
         {
-            return NotFound();
-        }
+            var completedTask = await _completeTaskRepository.GetByIdAsync(id);
+            if (completedTask == null)
+            {
+                return NotFound(new ApiResponse<object> { Message = "Completed task not found." });
+            }
 
-        await _completeTaskRepository.DeleteAsync(completeTask);
-        await _completeTaskRepository.SaveChangesAsync();
-        return NoContent();
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId) || completedTask.Profile.AccountId != userId)
+            {
+                return Unauthorized(new ApiResponse<object> { Message = "You are not authorized to delete this completed task." });
+            }
+
+            await _completeTaskRepository.DeleteAsync(completedTask);
+            await _completeTaskRepository.SaveChangesAsync();
+
+            _logger.LogInformation($"Completed task deleted for user {userId}");
+
+            return Ok(new ApiResponse<object> { Message = "Completed task deleted successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while deleting completed task");
+            return StatusCode(500, new ApiResponse<object> { Message = "An error occurred while processing your request." });
+        }
+    }
+
+    private string GetUserIdFromClaims()
+    {
+        return User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
     }
 }
+
+

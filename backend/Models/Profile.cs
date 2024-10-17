@@ -12,14 +12,13 @@ public class Profile
     public bool IsOwner { get; set; }
     public bool IsRequest { get; set; }
 
-    public int HouseholdId { get; set; }
+    public int HouseholdId { get; set; } // Foreign key to Household
+    public string? AccountId { get; set; } // Foreign key to Account
 
-    [Required]
-    [ForeignKey("Account")]
-    public string AccountId { get; set; }
-
+    // Navigation properties
     [ForeignKey("HouseholdId")]
-    public Household Household { get; set; }
+    public Household? Household { get; set; } // Navigation to Household
 
-    public Account Account { get; set; }
+    [ForeignKey("AccountId")]
+    public Account? Account { get; set; } // Navigation to Account
 }

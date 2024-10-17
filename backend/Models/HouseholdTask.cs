@@ -8,22 +8,22 @@ public class HouseholdTask
     [ForeignKey("Household")]
     public int HouseholdId { get; set; }
 
-    public Household Household { get; set; }
+    public Household? Household { get; set; }
 
     [Required]
-    public int Interval { get; set; }
+    public int? Interval { get; set; }
 
-    public bool IsArchived { get; set; }
+    public bool? IsArchived { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [Range(1, 5, ErrorMessage = "Difficulty must be between 1 and 5.")]
-    public int Difficulty { get; set; }
+    public int? Difficulty { get; set; }
 
     public ICollection<CompleteTask> CompletedTasks { get; set; } = new List<CompleteTask>();
 }

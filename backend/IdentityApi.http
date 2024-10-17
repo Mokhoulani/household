@@ -14,11 +14,11 @@ Content-Type: application/json
 
 ###
 
-POST http://192.168.8.165:5147/api/auth/register
+POST http://localhost:5147/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "newuseer2@example.com",
+  "email": "newuseer3@example.com",
   "password": "NewUserPassword123!",
   "fullName": "New User1"
 }
@@ -30,8 +30,8 @@ POST http://192.168.8.165:5147/api/auth/refresh-token
 Content-Type: application/json
 
 {
-    "userId": "99370672-20f0-4f39-9c3b-83c47166d989",
-    "refreshToken": "GQYFl4SM+KwghtURdTQABhxupDH+qdb+bl0e8i8UgWA="
+    "userId": "ff90b9b4-8a1d-4db3-9e2b-6b7281fafd78",
+    "refreshToken": "UrIEF+vpW8cg9Otg3HogEHOhsjrsPhBAZHAu6YBFHHs="
 }
 
 ###
@@ -39,20 +39,19 @@ GET http://10.25.13.193:5147/api/Households
 
 ###
 GET http://192.168.8.165:5147/api/Profiles
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJqdGkiOiIwZTMwMGQwMC1jYzZhLTQ5NTctOWZhMS01ZjliOWEyZTY2YzUiLCJ1c2VySWQiOiJkOWYyYzU3OS1mNWQyLTQ3NmEtYWFmNi1kNTM4ODdhYTUyOWYiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkwODExMzYsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.TgN_nYNRjkYYGgxzjGMEZzaE2GEu4El_CUmXXOMvG8A
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk
 
 
 ### 
 POST http://192.168.8.165:5147/api/Profiles
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJqdGkiOiIzOWJhODUxZi1jMGJkLTQ1ZDctYTA0Yy00YzJjNjUyMjUyZDciLCJ1c2VySWQiOiI3MTBjODgxZi1iMTk1LTQ0NjItOGMyOC04MzUwZTgzNTZhYWQiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkwODI0MzksImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.8otowyexQrXibyJlmF77C7ihCKUOB-Si1P8wzzoeYo4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk
 Content-Type: application/json
 
 {
     "Name": "John",
     "IsOwner": true,
     "IsRequest": true,
-    "HouseholdId": 1
+    "HouseholdID":1
 }
 
 
@@ -65,3 +64,7 @@ Content-Type: application/json
   "Name": "Smith Family",
   "Code": "SFM001"
 }
+
+###
+GET  http://192.168.8.165:5147/api/HouseholdTasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk

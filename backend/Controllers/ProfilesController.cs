@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -46,18 +47,19 @@ public class ProfilesController : ControllerBase
             return StatusCode(500, new ApiResponse<IEnumerable<Profile>> { Message = "An error occurred while processing your request." });
         }
     }
-
     [HttpPost]
-    public async Task<IActionResult> CreateProfiles([FromBody] Profile profile)
+    public async Task<IActionResult> CreateProfile([FromBody] Profile profile)
     {
         try
         {
+            // Extract user ID from the token claims
             var userId = GetUserIdFromClaims();
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized(new ApiResponse<Profile> { Message = "User is not authenticated." });
             }
 
+            // Check if the incoming model is valid based on data annotations in Profile class
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ApiResponse<Profile>
@@ -67,14 +69,26 @@ public class ProfilesController : ControllerBase
                 });
             }
 
+            // Set the AccountId to the current authenticated user
             profile.AccountId = userId;
-
+            // Add the profile to the repository and save changes
             await _profileRepository.AddAsync(profile);
             await _profileRepository.SaveChangesAsync();
 
+            // Log profile creation
             _logger.LogInformation($"Profile created for user {userId}");
 
-            return CreatedAtAction(nameof(GetProfiles), new { id = profile.Id }, new ApiResponse<Profile> { Data = profile, Message = "Profile created successfully" });
+            // Return a 201 Created response with the newly created profile
+            return CreatedAtAction(nameof(GetProfiles), new { id = profile.Id }, new ApiResponse<Profile>
+            {
+                Data = profile,
+                Message = "Profile created successfully"
+            });
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError(dbEx, "Database error while creating profile");
+            return StatusCode(500, new ApiResponse<Profile> { Message = "Database error occurred while processing your request." });
         }
         catch (Exception ex)
         {
@@ -159,9 +173,3 @@ public class ProfilesController : ControllerBase
     }
 }
 
-public class ApiResponse<T>
-{
-    public T Data { get; set; }
-    public string Message { get; set; }
-    public List<string> Errors { get; set; }
-}

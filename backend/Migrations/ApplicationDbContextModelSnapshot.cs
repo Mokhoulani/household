@@ -90,20 +90,25 @@ namespace IdentityApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("HouseholdTaskId")
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("HouseholdTaskId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ProfileID")
+                    b.Property<int>("ProfileId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HouseholdTaskId");
 
-                    b.HasIndex("ProfileID");
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("CompleteTasks");
                 });
@@ -300,7 +305,7 @@ namespace IdentityApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("HouseholdId")
+                    b.Property<int>("HouseholdId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsOwner")
@@ -325,15 +330,19 @@ namespace IdentityApi.Migrations
 
             modelBuilder.Entity("CompleteTask", b =>
                 {
-                    b.HasOne("HouseholdTask", null)
+                    b.HasOne("HouseholdTask", "HouseholdTask")
                         .WithMany("CompletedTasks")
-                        .HasForeignKey("HouseholdTaskId");
+                        .HasForeignKey("HouseholdTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Profile", "Profile")
                         .WithMany()
-                        .HasForeignKey("ProfileID")
+                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("HouseholdTask");
 
                     b.Navigation("Profile");
                 });
@@ -402,15 +411,21 @@ namespace IdentityApi.Migrations
 
             modelBuilder.Entity("Profile", b =>
                 {
-                    b.HasOne("Account", null)
+                    b.HasOne("Account", "Account")
                         .WithMany("Profiles")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Household", null)
+                    b.HasOne("Household", "Household")
                         .WithMany("Profiles")
-                        .HasForeignKey("HouseholdId");
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Household");
                 });
 
             modelBuilder.Entity("Account", b =>

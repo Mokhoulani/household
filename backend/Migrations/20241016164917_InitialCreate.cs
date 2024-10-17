@@ -180,7 +180,7 @@ namespace IdentityApi.Migrations
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     IsOwner = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsRequest = table.Column<bool>(type: "INTEGER", nullable: false),
-                    HouseholdId = table.Column<int>(type: "INTEGER", nullable: true),
+                    HouseholdId = table.Column<int>(type: "INTEGER", nullable: false),
                     AccountId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -196,7 +196,8 @@ namespace IdentityApi.Migrations
                         name: "FK_Profiles_Households_HouseholdId",
                         column: x => x.HouseholdId,
                         principalTable: "Households",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,16 +230,17 @@ namespace IdentityApi.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ProfileID = table.Column<int>(type: "INTEGER", nullable: false),
-                    HouseholdTaskId = table.Column<int>(type: "INTEGER", nullable: true)
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ProfileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HouseholdTaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Comment = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CompleteTasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CompleteTasks_Profiles_ProfileID",
-                        column: x => x.ProfileID,
+                        name: "FK_CompleteTasks_Profiles_ProfileId",
+                        column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -246,7 +248,8 @@ namespace IdentityApi.Migrations
                         name: "FK_CompleteTasks_Tasks_HouseholdTaskId",
                         column: x => x.HouseholdTaskId,
                         principalTable: "Tasks",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -292,9 +295,9 @@ namespace IdentityApi.Migrations
                 column: "HouseholdTaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompleteTasks_ProfileID",
+                name: "IX_CompleteTasks_ProfileId",
                 table: "CompleteTasks",
-                column: "ProfileID");
+                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Profiles_AccountId",

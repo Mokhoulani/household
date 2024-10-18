@@ -60,7 +60,7 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
-        name="HomeTab"
+        name="Settings"
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => (

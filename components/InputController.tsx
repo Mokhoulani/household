@@ -7,7 +7,7 @@ import {
   Path,
 } from 'react-hook-form';
 import { TextInput, TextInputProps } from 'react-native-paper';
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 
 interface Props<T extends FieldValues> {
   control: Control<T>;
@@ -48,10 +48,14 @@ export default function InputController<T extends FieldValues>({
         name={fieldKey}
       />
       {errors && errors[fieldKey] && (
-        <Text style={{ color: 'red' }}>
-          {String(errors[fieldKey]?.message)}
-        </Text>
+        <Text style={styles.warning}>{String(errors[fieldKey]?.message)}</Text>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  warning: {
+    color: '#FF0000',
+  },
+});

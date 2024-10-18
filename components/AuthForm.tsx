@@ -60,7 +60,7 @@ export default function AuthForm<T extends FieldValues>({
       </View>
 
       <Button
-        labelStyle={{ color: 'black', fontWeight: 'bold' }}
+        labelStyle={styles.label}
         mode="elevated"
         onPress={handleSubmit(onSubmit)}>
         <Text>{buttonText}</Text>
@@ -83,5 +83,9 @@ const styles = StyleSheet.create({
 
     padding: 10,
     borderRadius: 10,
+  },
+  label: {
+    color: '#000000',
+    fontWeight: 'bold',
   },
 });

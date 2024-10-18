@@ -20,6 +20,8 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^2.2.8",
     "expo": "~51.0.28",
+    "expo-secure-store": "~13.0.2",
+    "expo-splash-screen": "~0.27.6",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-hook-form": "^7.53.0",
@@ -46,6 +48,7 @@
     "eslint-plugin-react": "^7.37.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-native": "^4.1.0",
+    "expo-module-scripts": "^3.5.2",
     "prettier": "^3.3.3",
     "typescript": "^5.4.2"
   },

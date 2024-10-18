@@ -1,11 +1,21 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AuthForm from '../components/AuthForm';
 import { signUpSchema, TsignUpSchema } from '../constants/schemas/SignUpSchema';
 import { Field } from '../constants/types';
-import AuthForm from '../components/AuthForm';
+import { signupUser } from '../store/auth/action';
+import { useAppDispatch } from '../store/hook';
 
 export default function SignUpScreen() {
+  const dispatch = useAppDispatch();
+  async function handleSubmit(data: TsignUpSchema) {
+    const email = data.email;
+    const password = data.password;
+    const fullName = data.name;
+    dispatch(signupUser({ email, password, fullName }));
+  }
+
   const fields: Field<TsignUpSchema>[] = [
     { fieldKey: 'name', placeholder: 'Enter your name', secureText: false },
     {
@@ -27,11 +37,6 @@ export default function SignUpScreen() {
       icon: 'lock-outline',
     },
   ];
-
-  function handleSubmit(data: TsignUpSchema) {
-    console.log(data);
-    //hantera registrering
-  }
 
   return (
     <SafeAreaView style={styles.page}>

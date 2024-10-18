@@ -1,0 +1,71 @@
+@IdentityApi_HostAddress = http://localhost:5147
+
+GET {{IdentityApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST http://192.168.8.165:5147/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mok@gmail.com",
+  "password": "Aa12345@"
+}
+
+###
+
+POST http://localhost:5147/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "newuseer3@example.com",
+  "password": "NewUserPassword123!",
+  "fullName": "New User1"
+}
+
+
+###
+
+POST http://192.168.8.165:5147/api/auth/refresh-token
+Content-Type: application/json
+
+{
+    "userId": "d2a05ebb-0e70-44e2-b55c-2cb5aaa6ae0d",
+    "refreshToken": "v/ck1TPFY/x1V/WsTh+hMCVMNjvnjhSDjLXS21NCDXc="
+}
+
+###
+GET http://10.25.13.193:5147/api/Households
+
+###
+GET http://10.25.13.193:5147/api/Profiles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlYzYyNDA4OC1jNGVjLTRhMzktYjQ2Yy01OTc2OThhNDNjMzYiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNzE3NjcsImlzcyI6Imh0dHA6Ly8xMC4yNS4xMy4xOTM6NTE0NyIsImF1ZCI6Imh0dHA6Ly8xMC4yNS4xMy4xOTM6NTE0NyJ9.3bZCTdQsxOYUtH-BV064Lra6yFZQ3-AHWfowmYng8xs
+
+###
+
+### 
+POST http://192.168.8.165:5147/api/Profiles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk
+Content-Type: application/json
+
+{
+    "Name": "John",
+    "IsOwner": true,
+    "IsRequest": true,
+    "HouseholdID":1
+}
+
+
+
+###
+POST http://192.168.8.165:5147/api/Households
+Content-Type: application/json
+
+{
+  "Name": "Smith Family",
+  "Code": "SFM001"
+}
+
+###
+GET  http://192.168.8.165:5147/api/HouseholdTasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk

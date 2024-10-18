@@ -6,8 +6,8 @@ import {
   FieldValues,
   Path,
 } from 'react-hook-form';
+import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, TextInputProps } from 'react-native-paper';
-import { Text, View, StyleSheet } from 'react-native';
 
 interface Props<T extends FieldValues> {
   control: Control<T>;
@@ -19,6 +19,9 @@ interface Props<T extends FieldValues> {
   props?: TextInputProps;
 }
 
+const colors = {
+  warning: '#FF0000',
+};
 export default function InputController<T extends FieldValues>({
   control,
   errors,
@@ -56,6 +59,6 @@ export default function InputController<T extends FieldValues>({
 
 const styles = StyleSheet.create({
   warning: {
-    color: '#FF0000',
+    color: colors.warning,
   },
 });

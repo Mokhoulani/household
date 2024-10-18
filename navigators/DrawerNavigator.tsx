@@ -9,7 +9,7 @@ import SignUpScreen from '../screens/SignUpScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 
 export type DrawerParamList = {
-  HomeTab: NavigatorScreenParams<TabParamsList>;
+  Hoursehold: NavigatorScreenParams<TabParamsList>;
   Profile: undefined;
   Settings: undefined;
   SignUp: undefined;
@@ -27,12 +27,12 @@ export default function DrawerNavigator() {
             name="login"
             size={24}
             color={props.tintColor}
-            onPress={() => navigation.navigate('Singin')}
+            onPress={() => navigation.navigate('signIn')}
           />
         ),
       })}>
       <Drawer.Screen
-        name="Profile"
+        name="Hoursehold"
         component={TopTabsNavigator}
         options={() => ({
           title: '',
@@ -60,7 +60,7 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
-        name="HomeTab"
+        name="Settings"
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => (

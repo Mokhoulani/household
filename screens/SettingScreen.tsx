@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet } from 'react-native';
 import { SegmentedButtons } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { setColorMode } from '../store/theme/reducer';
 import { selectColorMode } from '../store/theme/selectors'; // Removed selectCurrentTheme
@@ -15,17 +16,19 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <SegmentedButtons
-        value={colorMode}
-        onValueChange={handleValueChange as any} // TypeScript will infer the type correctly
-        buttons={[
-          { value: 'light', label: 'Light' },
-          { value: 'dark', label: 'Dark' },
-          { value: 'auto', label: 'Auto' },
-        ]}
-      />
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.container}>
+        <SegmentedButtons
+          value={colorMode}
+          onValueChange={handleValueChange as any} // TypeScript will infer the type correctly
+          buttons={[
+            { value: 'light', label: 'Light' },
+            { value: 'dark', label: 'Dark' },
+            { value: 'auto', label: 'Auto' },
+          ]}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

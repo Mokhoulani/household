@@ -1,14 +1,12 @@
-import { StyleSheet, Text } from 'react-native';
+import React from 'react';
+import { ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const colors = {
-  background: '#fff',
-};
-
-export default function HomeSceen() {
+export default function SplashScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Home screen</Text>
+      <ActivityIndicator size="large" color="#0000ff" />
+      <Text>Loading...</Text>
     </SafeAreaView>
   );
 }
@@ -16,7 +14,6 @@ export default function HomeSceen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },

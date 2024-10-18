@@ -1,16 +1,16 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import {
-  FieldValues,
-  useForm,
-  SubmitHandler,
   DefaultValues,
+  FieldValues,
+  SubmitHandler,
+  useForm,
 } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { Text, Surface, Button } from 'react-native-paper';
-import InputController from './InputController';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Surface, Text } from 'react-native-paper';
 import { ZodSchema } from 'zod';
 import { Field } from '../constants/types';
+import InputController from './InputController';
 
 interface Props<T extends FieldValues> {
   fields: Field<T>[];
@@ -19,6 +19,10 @@ interface Props<T extends FieldValues> {
   formTitle: string;
   onSubmit: SubmitHandler<T>;
 }
+
+const colors = {
+  background: '#000000',
+};
 
 export default function AuthForm<T extends FieldValues>({
   fields,
@@ -85,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   label: {
-    color: '#000000',
+    color: colors.background,
     fontWeight: 'bold',
   },
 });

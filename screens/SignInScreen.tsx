@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { signinUser } from '../store/auth/action';
 import { useAppDispatch } from '../store/hook';
 
@@ -13,7 +14,7 @@ export default function SignInScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text>SignupScreen</Text>
       <TextInput
         placeholder="Enter email"
@@ -34,7 +35,7 @@ export default function SignInScreen() {
         title="Signup"
         onPress={handleSignup} // Incorrectly invoking the function
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

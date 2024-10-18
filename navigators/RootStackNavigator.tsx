@@ -1,9 +1,10 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
-import { initializeAuth } from '../store/auth/action';
+import { StyleSheet, View } from 'react-native';
+import { useSplashScreen } from '../hooks/useSplashScreen'; // Import your custom hook
+import SplashScreen from '../screens/SplashScreen'; // Import your splash screen
 import { selectIsAuthenticated } from '../store/auth/selectors';
-import { useAppDispatch, useAppSelector } from '../store/hook';
+import { useAppSelector } from '../store/hook';
 import DrawerNavigator, { DrawerParamList } from './DrawerNavigator';
 import TopTabsNavigatorAuth, {
   TabAuthParamsList,
@@ -12,30 +13,32 @@ import TopTabsNavigatorAuth, {
 export type RootStackParamList = {
   MainNavigator: NavigatorScreenParams<DrawerParamList>;
   AuthNavigator: NavigatorScreenParams<TabAuthParamsList>;
-  SplashScreen: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  // const isLoaded = useAppSelector((state) => state.auth.isLoading); // Get the theme from Redux
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    // check if user is still logged in
-    dispatch(initializeAuth());
-  }, [dispatch]);
+  const { isLoading, onLayoutRootView } = useSplashScreen(); // Use the custom hook
+
+  if (isLoading) {
+    return <SplashScreen />; // Show splash screen while loading
+  }
 
   return (
-    <RootStack.Navigator>
-      {isAuthenticated ? (
-        <RootStack.Screen name="MainNavigator" component={DrawerNavigator} />
-      ) : (
-        <RootStack.Screen
-          name="AuthNavigator"
-          component={TopTabsNavigatorAuth}
-        />
-      )}
-    </RootStack.Navigator>
+    <View style={styles.flex} onLayout={onLayoutRootView}>
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <RootStack.Screen name="MainNavigator" component={DrawerNavigator} />
+        ) : (
+          <RootStack.Screen
+            name="AuthNavigator"
+            component={TopTabsNavigatorAuth}
+          />
+        )}
+      </RootStack.Navigator>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({ flex: { flex: 1 } });

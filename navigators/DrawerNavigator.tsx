@@ -5,12 +5,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
 import SettingsScreen from '../screens/SettingScreen';
+import SignUpScreen from '../screens/SignUpScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 
 export type DrawerParamList = {
   Hoursehold: NavigatorScreenParams<TabParamsList>;
   Profile: undefined;
   Settings: undefined;
+  SignUp: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -44,7 +46,21 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
-        name="Settings"
+        name="SignUp"
+        component={SignUpScreen}
+        options={() => ({
+          title: '',
+          drawerLabel: () => (
+            <MaterialIcons
+              style={{ marginRight: 16 }}
+              name="person"
+              size={24}
+            />
+          ),
+        })}
+      />
+      <Drawer.Screen
+        name="HomeTab"
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => (

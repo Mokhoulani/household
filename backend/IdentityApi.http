@@ -8,8 +8,8 @@ POST http://192.168.8.165:5147/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "newuser@example.com",
-  "password": "NewUserPassword123!"
+  "email": "mok@gmail.com",
+  "password": "Aa12345@"
 }
 
 ###
@@ -26,12 +26,12 @@ Content-Type: application/json
 
 ###
 
-POST http://10.25.13.193:5147/api/auth/refresh-token
+POST http://192.168.8.165:5147/api/auth/refresh-token
 Content-Type: application/json
 
 {
-    "userId": "ff90b9b4-8a1d-4db3-9e2b-6b7281fafd78",
-    "refreshToken": "0n5Yq+YZJyaBfOxDeUauYztwfXpRCRuJHBJ53PFRtBY="
+    "userId": "d2a05ebb-0e70-44e2-b55c-2cb5aaa6ae0d",
+    "refreshToken": "v/ck1TPFY/x1V/WsTh+hMCVMNjvnjhSDjLXS21NCDXc="
 }
 
 ###

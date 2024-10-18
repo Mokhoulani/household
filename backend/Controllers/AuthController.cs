@@ -64,7 +64,9 @@ public class AuthController : ControllerBase
             Expires = DateTimeOffset.UtcNow.AddHours(1) // Set the cookie expiration
         });
 
-        // Optionally, you can save the refresh token in a database or return it
+        // Store the new refresh token securely
+        await _userManager.SetAuthenticationTokenAsync(user, "Default", "refresh_token", refreshToken);
+
         // Here, it's returned in the response body for demonstration
         return Ok(new
         {
@@ -116,6 +118,15 @@ public class AuthController : ControllerBase
         var token = GenerateJwtToken(user);
         var refreshToken = GenerateRefreshToken();
 
+        // Set the JWT as a secure cookie
+        Response.Cookies.Append("access_token", token, new CookieOptions
+        {
+            HttpOnly = true, // Prevents JavaScript access
+            Secure = true, // Only send cookie over HTTPS
+            SameSite = SameSiteMode.Strict, // Adjust based on your app requirements
+            Expires = DateTimeOffset.UtcNow.AddHours(1) // Set the cookie expiration
+        });
+
         // Optionally store the refresh token in a secure manner, e.g., database or secure cookie
         await _userManager.SetAuthenticationTokenAsync(user, "Default", "refresh_token", refreshToken);
 
@@ -166,6 +177,15 @@ public class AuthController : ControllerBase
         // Generate new access and refresh tokens
         var newAccessToken = GenerateJwtToken(user);
         var newRefreshToken = GenerateRefreshToken();
+
+        // Set the JWT as a secure cookie
+        Response.Cookies.Append("access_token", newAccessToken, new CookieOptions
+        {
+            HttpOnly = true, // Prevents JavaScript access
+            Secure = true, // Only send cookie over HTTPS
+            SameSite = SameSiteMode.Strict, // Adjust based on your app requirements
+            Expires = DateTimeOffset.UtcNow.AddHours(1) // Set the cookie expiration
+        });
 
         // Store the new refresh token securely
         await _userManager.SetAuthenticationTokenAsync(user, "Default", "refresh_token", newRefreshToken);

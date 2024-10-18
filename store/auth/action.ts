@@ -1,10 +1,8 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
 import { createAppAsyncThunk } from '../hook';
-import { AuthState } from './state';
 
 // Move API_URL to an environment variable or configuration file
-const API_URL = 'http://10.25.13.193:5147/api/auth';
+const API_URL = 'http://192.168.8.165:5147/api/auth';
 
 // Standardize response types with camelCase
 type Account = {
@@ -17,6 +15,13 @@ type AuthenticationResponse = {
   accessToken: string;
   refreshToken: string;
   account: Account;
+};
+
+type SavingData = {
+  accessToken: string;
+  refreshToken: string;
+  account: Account;
+  expiresAt: number;
 };
 
 type SignInPayload = {
@@ -49,7 +54,7 @@ const apiService = {
   },
 };
 
-export const signinUser = createAsyncThunk<
+export const signinUser = createAppAsyncThunk<
   AuthenticationResponse,
   SignInPayload
 >('auth/signinUser', async ({ email, password }, thunkAPI) => {
@@ -58,7 +63,7 @@ export const signinUser = createAsyncThunk<
       email,
       password,
     });
-
+    console.log(data);
     await saveAccountData(data);
 
     return data;
@@ -77,7 +82,7 @@ type SignupPayload = {
 export const signupUser = createAppAsyncThunk<
   AuthenticationResponse,
   SignupPayload
->('user/register', async ({ email, password, fullName }, thunkAPI) => {
+>('auth/signupUser', async ({ email, password, fullName }, thunkAPI) => {
   try {
     const data = await apiService.post<AuthenticationResponse>('/register', {
       email,
@@ -95,7 +100,7 @@ export const signupUser = createAppAsyncThunk<
 });
 
 export async function saveAccountData(data: AuthenticationResponse) {
-  const accountData = {
+  const accountData: SavingData = {
     accessToken: data.accessToken,
     refreshToken: data.refreshToken,
     account: data.account,
@@ -105,19 +110,17 @@ export async function saveAccountData(data: AuthenticationResponse) {
   await SecureStore.setItemAsync('accountData', JSON.stringify(accountData));
 }
 
-async function getAccountData() {
+async function getAccountData(): Promise<SavingData | null> {
   const accountDataString = await SecureStore.getItemAsync('accountData');
   return accountDataString ? JSON.parse(accountDataString) : null;
 }
 
-export const initializeAuth = createAsyncThunk<AuthState | void, void>(
+export const initializeAuth = createAppAsyncThunk<SavingData | void, void>(
   'auth/initializeAuth',
   async (_, thunkAPI) => {
     try {
       const accountData = await getAccountData();
-      if (!accountData) {
-        return undefined; // No stored data, return initial state (logged out)
-      }
+      if (!accountData) return; // No stored data, return initial state (logged out)
 
       // Check if the token has expired
       if (Date.now() > accountData.expiresAt) {
@@ -148,15 +151,18 @@ export const initializeAuth = createAsyncThunk<AuthState | void, void>(
   },
 );
 
-export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
-  try {
-    await SecureStore.deleteItemAsync('accountData');
-    return; // Successful logout
-  } catch (error) {
-    console.error(error);
-    return thunkAPI.rejectWithValue('Logout failed');
-  }
-});
+export const logout = createAppAsyncThunk(
+  'auth/logout',
+  async (_, thunkAPI) => {
+    try {
+      await SecureStore.deleteItemAsync('accountData');
+      return; // Successful logout
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue('Logout failed');
+    }
+  },
+);
 
 export const refreshTokens = createAppAsyncThunk<AuthenticationResponse, void>(
   'auth/refreshTokens',
@@ -164,14 +170,12 @@ export const refreshTokens = createAppAsyncThunk<AuthenticationResponse, void>(
     try {
       const accountData = await getAccountData();
       if (!accountData) throw new Error('No account data found');
-
-      const { accountId, refreshToken } = accountData;
-
+      console.log('refreshTokens', accountData.refreshToken);
       const data = await apiService.post<AuthenticationResponse>(
         '/refresh-token',
         {
-          userId: accountId,
-          refreshToken,
+          userId: accountData.account?.id,
+          refreshToken: accountData.refreshToken,
         },
       );
 
@@ -185,24 +189,24 @@ export const refreshTokens = createAppAsyncThunk<AuthenticationResponse, void>(
   },
 );
 
-export async function ensureValidToken(dispatch: any) {
-  const accountData = await getAccountData();
-  if (!accountData) return false;
+// export async function ensureValidToken(dispatch: any) {
+//   const accountData = await getAccountData();
+//   if (!accountData) return false;
 
-  if (Date.now() > accountData.expiresAt) {
-    await dispatch(refreshTokens());
-    return true;
-  }
+//   if (Date.now() > accountData.expiresAt) {
+//     await dispatch(refreshTokens());
+//     return true;
+//   }
 
-  return true; // Token is still valid
-}
+//   return true; // Token is still valid
+// }
 
-export async function isTokenExpired(): Promise<boolean> {
-  const accountData = await getAccountData();
-  if (!accountData) return true; // No token saved, treat as expired
+// export async function isTokenExpired(): Promise<boolean> {
+//   const accountData = await getAccountData();
+//   if (!accountData) return true; // No token saved, treat as expired
 
-  return Date.now() > accountData.expiresAt;
-}
+//   return Date.now() > accountData.expiresAt;
+// }
 
 // interface Profile {
 //   id: number;

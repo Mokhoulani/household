@@ -8,23 +8,30 @@ SplashScreen.preventAutoHideAsync();
 
 export function useSplashScreen() {
   const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState(true);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      await dispatch(initializeAuth());
-      setIsLoading(false); // Set loading to false once auth is checked
-    };
+    async function prepare() {
+      try {
+        // Initialize authentication
+        await dispatch(initializeAuth());
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
+      }
+    }
 
-    checkAuth();
+    prepare();
   }, [dispatch]);
 
   const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
-      // Hide the splash screen after loading is complete
+    if (appIsReady) {
+      // This tells the splash screen to hide immediately
       await SplashScreen.hideAsync();
     }
-  }, [isLoading]);
+  }, [appIsReady]);
 
-  return { isLoading, onLayoutRootView };
+  return { appIsReady, onLayoutRootView };
 }

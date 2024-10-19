@@ -3,9 +3,9 @@ import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Alert, Button, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DrawerParamList } from '../navigators/DrawerNavigator';
+import { DrawerAuthParamList } from '../navigators/DrawerNavigatorAuth';
 import { RootStackParamList } from '../navigators/RootStackNavigator';
 import { TabAuthParamsList } from '../navigators/TopTabsNavigatorAuth';
 import { logout } from '../store/auth/action';
@@ -14,7 +14,7 @@ import { useAppDispatch } from '../store/hook';
 type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList, 'logout'>,
   CompositeScreenProps<
-    DrawerScreenProps<DrawerParamList>,
+    DrawerScreenProps<DrawerAuthParamList>,
     MaterialTopTabScreenProps<TabAuthParamsList>
   >
 >;
@@ -31,24 +31,22 @@ export default function LogoutScreen({
   const handleLogout = async () => {
     try {
       await dispatch(logout());
-      // Optionally, navigate to login screen or show a success message
+
+      // Reset navigation stack to the AuthNavigator after logout
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AuthNavigator' }], // Ensure 'AuthNavigator' is correct
+      });
     } catch (error) {
       console.error('Logout failed:', error);
-      // Optionally, show an error message to the user
+      Alert.alert('Logout Error', 'There was a problem logging you out.');
     }
-  };
-
-  const navigateToAuth = () => {
-    navigation.navigate('AuthNavigator', {
-      screen: 'signUp', // Assuming 'Login' is a screen in your AuthNavigator
-    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Button title="Logout" onPress={handleLogout} />
       <View style={styles.spacer} />
-      <Button title="Go to Login" onPress={navigateToAuth} />
     </SafeAreaView>
   );
 }
@@ -61,6 +59,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spacer: {
-    height: 20,
+    marginVertical: 10,
   },
 });

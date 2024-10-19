@@ -1,20 +1,16 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useSplashScreen } from '../hooks/useSplashScreen';
 
 export default function SplashScreen() {
+  const { onLayoutRootView } = useSplashScreen();
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <ActivityIndicator size="large" color="#0000ff" />
-      <Text>Loading...</Text>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  container: { flex: 1 },
 });

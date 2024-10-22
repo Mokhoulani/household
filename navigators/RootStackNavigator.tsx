@@ -1,17 +1,18 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LogoutScreen from '../screens/logoutSceern';
 import { selectIsAuthenticated } from '../store/auth/selectors';
 import { useAppSelector } from '../store/hook';
 import DrawerNavigator, { DrawerParamList } from './DrawerNavigator';
 import DrawerAuthNavigator, {
   DrawerAuthParamList,
 } from './DrawerNavigatorAuth';
+import SettingsScreen from '../screens/SettingScreen';
 
 export type RootStackParamList = {
   MainNavigator: NavigatorScreenParams<DrawerParamList>;
   AuthNavigator: NavigatorScreenParams<DrawerAuthParamList>;
-  logout: undefined;
+  settings:undefined;
+  logout:undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +30,7 @@ export default function RootNavigator() {
           component={DrawerAuthNavigator}
         />
       )}
-      <RootStack.Screen name="logout" component={LogoutScreen} />
+      <RootStack.Screen name="settings" component={SettingsScreen} />
     </RootStack.Navigator>
   );
 }

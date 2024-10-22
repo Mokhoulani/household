@@ -12,6 +12,7 @@ export type RootStackParamList = {
   MainNavigator: NavigatorScreenParams<DrawerParamList>;
   AuthNavigator: NavigatorScreenParams<DrawerAuthParamList>;
   settings:undefined;
+  logout:undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();

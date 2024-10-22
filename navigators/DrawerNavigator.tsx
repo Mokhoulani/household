@@ -5,7 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
-import LogoutScreen from '../screens/logoutSceern';
+import LogoutScreen from '../screens/logoutScreen';
 
 export type DrawerParamList = {
   Hoursehold: NavigatorScreenParams<TabParamsList>;

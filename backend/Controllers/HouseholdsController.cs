@@ -67,7 +67,11 @@ public class HouseholdsController : ControllerBase
                 });
             }
 
-            household.Profiles.Any(m => m.AccountId == userId);
+            // Generate a code if it's required
+            if (string.IsNullOrEmpty(household.Code))
+            {
+                household.Code = GenerateHouseholdCode(); // Implement this method to generate a unique code
+            }
 
             await _householdRepository.AddAsync(household);
             await _householdRepository.SaveChangesAsync();
@@ -173,5 +177,11 @@ public class HouseholdsController : ControllerBase
     {
         return User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
     }
+
+    private string GenerateHouseholdCode()
+    {
+        return Guid.NewGuid().ToString().Substring(0, 8); // Generates an 8-character unique code
+    }
+
 }
 

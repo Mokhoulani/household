@@ -4,13 +4,13 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
-import SettingsScreen from '../screens/SettingScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
+import LogoutScreen from '../screens/logoutScreen';
 
 export type DrawerParamList = {
   Hoursehold: NavigatorScreenParams<TabParamsList>;
   Profile: undefined;
-  Settings: undefined;
+  signout:undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -22,10 +22,10 @@ export default function DrawerNavigator() {
         headerRight: (props) => (
           <MaterialIcons
             style={{ marginRight: 16 }}
-            name="login"
+            name="settings"
             size={24}
             color={props.tintColor}
-            onPress={() => navigation.navigate('logout')}
+            onPress={() => navigation.navigate('settings')}
           />
         ),
       })}>
@@ -44,13 +44,13 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="signout"
+        component={LogoutScreen}
         options={() => ({
           drawerLabel: () => (
             <MaterialIcons
               style={{ marginRight: 16 }}
-              name="settings"
+              name="logout"
               size={24}
             />
           ),

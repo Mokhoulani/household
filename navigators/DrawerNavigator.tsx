@@ -4,7 +4,6 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
-import SettingsScreen from '../screens/SettingScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import LogoutScreen from '../screens/logoutSceern';
 

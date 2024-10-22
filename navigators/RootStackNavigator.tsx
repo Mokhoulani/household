@@ -1,6 +1,5 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LogoutScreen from '../screens/logoutSceern';
 import { selectIsAuthenticated } from '../store/auth/selectors';
 import { useAppSelector } from '../store/hook';
 import DrawerNavigator, { DrawerParamList } from './DrawerNavigator';

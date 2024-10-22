@@ -4,9 +4,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
-import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
-import LogoutScreen from '../screens/logoutScreen';
 import CreateProfileScreen from '../screens/CreateprofileScreen';
+import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import { Household } from '../types/Household';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
@@ -21,9 +20,9 @@ export type DrawerParamList = {
   TodyView: NavigatorScreenParams<TabParamsList>;
   Household: NavigatorScreenParams<TabHouseholdParamsList>;
   Profile: NavigatorScreenParams<TabProfileParamsList>;
-  Settings: undefined;
   CreateProfile: { household: Household | null };
-  signout:undefined;
+  signout: undefined;
+  settings: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -93,6 +92,13 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="CreateProfile"
         component={CreateProfileScreen}
+        options={() => ({
+          drawerLabel: () => null,
+        })}
+      />
+      <Drawer.Screen
+        name="settings"
+        component={SettingsScreen}
         options={() => ({
           drawerLabel: () => null,
         })}

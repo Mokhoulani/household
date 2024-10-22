@@ -6,13 +6,10 @@ import DrawerNavigator, { DrawerParamList } from './DrawerNavigator';
 import DrawerAuthNavigator, {
   DrawerAuthParamList,
 } from './DrawerNavigatorAuth';
-import SettingsScreen from '../screens/SettingScreen';
 
 export type RootStackParamList = {
   MainNavigator: NavigatorScreenParams<DrawerParamList>;
   AuthNavigator: NavigatorScreenParams<DrawerAuthParamList>;
-  settings:undefined;
-  logout:undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -30,7 +27,6 @@ export default function RootNavigator() {
           component={DrawerAuthNavigator}
         />
       )}
-      <RootStack.Screen name="settings" component={SettingsScreen} />
     </RootStack.Navigator>
   );
 }

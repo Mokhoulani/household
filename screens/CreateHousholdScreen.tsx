@@ -47,7 +47,7 @@ export default function CreateHouseholdSceen(props: Props) {
     if (household) {
       props.navigation.navigate('CreateProfile', { household });
     }
-  }, [household]);
+  }, [household, props.navigation]);
 
   const handleSubmit = async () => {
     await dispatch(createHousehold({ name }));

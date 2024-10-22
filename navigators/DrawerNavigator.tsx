@@ -11,7 +11,6 @@ import LogoutScreen from '../screens/logoutSceern';
 export type DrawerParamList = {
   Hoursehold: NavigatorScreenParams<TabParamsList>;
   Profile: undefined;
-  Settings: undefined;
   signout:undefined;
 };
 

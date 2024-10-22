@@ -12,7 +12,6 @@ import SettingsScreen from '../screens/SettingScreen';
 export type RootStackParamList = {
   MainNavigator: NavigatorScreenParams<DrawerParamList>;
   AuthNavigator: NavigatorScreenParams<DrawerAuthParamList>;
-  logout: undefined;
   settings:undefined;
 };
 

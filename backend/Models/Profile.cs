@@ -11,6 +11,7 @@ public class Profile
 
     public bool IsOwner { get; set; }
     public bool IsRequest { get; set; }
+    public int AvatarId { get; set; }
 
     public int HouseholdId { get; set; } // Foreign key to Household
     public string? AccountId { get; set; } // Foreign key to Account

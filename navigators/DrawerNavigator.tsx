@@ -4,13 +4,23 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
+import CreateProfileScreen from '../screens/CreateprofileScreen';
 import SettingsScreen from '../screens/SettingScreen';
+import { Household } from '../types/Household';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
+import TopTabsNavigatorProfile, {
+  TabProfileParamsList,
+} from './TopTabsNavigatorProfile';
+import TopTabsNavigatorHousehold, {
+  TabHouseholdParamsList,
+} from './TopTabsNavigtorHouseHold';
 
 export type DrawerParamList = {
-  Hoursehold: NavigatorScreenParams<TabParamsList>;
-  Profile: undefined;
+  TodyView: NavigatorScreenParams<TabParamsList>;
+  Household: NavigatorScreenParams<TabHouseholdParamsList>;
+  Profile: NavigatorScreenParams<TabProfileParamsList>;
   Settings: undefined;
+  CreateProfile: { household: Household | null };
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -18,6 +28,7 @@ const Drawer = createDrawerNavigator<DrawerParamList>();
 export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
+      // initialRouteName="CraeteProfile"
       screenOptions={({ navigation }) => ({
         headerRight: (props) => (
           <MaterialIcons
@@ -30,8 +41,28 @@ export default function DrawerNavigator() {
         ),
       })}>
       <Drawer.Screen
-        name="Hoursehold"
+        name="TodyView"
         component={TopTabsNavigator}
+        options={() => ({
+          title: '',
+          drawerLabel: () => (
+            <MaterialIcons style={{ marginRight: 16 }} name="work" size={24} />
+          ),
+        })}
+      />
+      <Drawer.Screen
+        name="Household"
+        component={TopTabsNavigatorHousehold}
+        options={() => ({
+          title: '',
+          drawerLabel: () => (
+            <MaterialIcons style={{ marginRight: 16 }} name="house" size={24} />
+          ),
+        })}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={TopTabsNavigatorProfile}
         options={() => ({
           title: '',
           drawerLabel: () => (
@@ -54,6 +85,13 @@ export default function DrawerNavigator() {
               size={24}
             />
           ),
+        })}
+      />
+      <Drawer.Screen
+        name="CreateProfile"
+        component={CreateProfileScreen}
+        options={() => ({
+          drawerLabel: () => null,
         })}
       />
     </Drawer.Navigator>

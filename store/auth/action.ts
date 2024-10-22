@@ -1,11 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
+import apiService from '../../api/apiService';
+import { SavingData } from '../../types/SavingData';
 import { createAppAsyncThunk } from '../hook';
 
-// Move API_URL to an environment variable or configuration file
-const API_URL = 'http://192.168.8.165:5147/api/auth';
-
 // Standardize response types with camelCase
-type Account = {
+export type Account = {
   id: string;
   name: string;
   email: string;
@@ -17,13 +16,6 @@ type AuthenticationResponse = {
   account: Account;
 };
 
-type SavingData = {
-  accessToken: string;
-  refreshToken: string;
-  account: Account;
-  expiresAt: number;
-};
-
 type SignInPayload = {
   email: string;
   password: string;
@@ -32,38 +24,15 @@ type SignInPayload = {
 // Define a constant for token expiration time
 const TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
 
-// Create a separate API service
-const apiService = {
-  async post<T>(endpoint: string, body: object): Promise<T> {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage =
-        errorData.message || response.statusText || 'Unknown error occurred';
-      throw new Error(`API error: ${errorMessage}`);
-    }
-
-    return response.json();
-  },
-};
-
 export const signinUser = createAppAsyncThunk<
   AuthenticationResponse,
   SignInPayload
 >('auth/signinUser', async ({ email, password }, thunkAPI) => {
   try {
-    const data = await apiService.post<AuthenticationResponse>('/login', {
+    const data = await apiService.post<AuthenticationResponse>('auth/login', {
       email,
       password,
     });
-    console.log(data);
     await saveAccountData(data);
 
     return data;
@@ -84,11 +53,14 @@ export const signupUser = createAppAsyncThunk<
   SignupPayload
 >('auth/signupUser', async ({ email, password, fullName }, thunkAPI) => {
   try {
-    const data = await apiService.post<AuthenticationResponse>('/register', {
-      email,
-      password,
-      fullName,
-    });
+    const data = await apiService.post<AuthenticationResponse>(
+      'auth/register',
+      {
+        email,
+        password,
+        fullName,
+      },
+    );
 
     await saveAccountData(data);
 
@@ -110,7 +82,7 @@ export async function saveAccountData(data: AuthenticationResponse) {
   await SecureStore.setItemAsync('accountData', JSON.stringify(accountData));
 }
 
-async function getAccountData(): Promise<SavingData | null> {
+export async function getAccountData(): Promise<SavingData | null> {
   const accountDataString = await SecureStore.getItemAsync('accountData');
   return accountDataString ? JSON.parse(accountDataString) : null;
 }
@@ -172,7 +144,7 @@ export const refreshTokens = createAppAsyncThunk<AuthenticationResponse, void>(
       if (!accountData) throw new Error('No account data found');
       console.log('refreshTokens', accountData.refreshToken);
       const data = await apiService.post<AuthenticationResponse>(
-        '/refresh-token',
+        'auth/refresh-token',
         {
           userId: accountData.account?.id,
           refreshToken: accountData.refreshToken,

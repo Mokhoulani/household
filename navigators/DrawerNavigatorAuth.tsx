@@ -10,7 +10,7 @@ import TopTabsNavigatorAuth, {
 } from './TopTabsNavigatorAuth';
 
 export type DrawerAuthParamList = {
-  HourseholdAuth: NavigatorScreenParams<TabAuthParamsList>;
+  HouseholdAuth: NavigatorScreenParams<TabAuthParamsList>;
   Profile: undefined;
   Settings: undefined;
 };
@@ -32,7 +32,7 @@ export default function DrawerAuthNavigator() {
         ),
       })}>
       <Drawer.Screen
-        name="HourseholdAuth"
+        name="HouseholdAuth"
         component={TopTabsNavigatorAuth}
         options={() => ({
           title: '',

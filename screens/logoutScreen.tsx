@@ -1,41 +1,23 @@
-import { DrawerScreenProps } from '@react-navigation/drawer';
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
-import { CompositeScreenProps } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CommonActions } from '@react-navigation/native';
 import React from 'react';
 import { Alert, Button, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DrawerAuthParamList } from '../navigators/DrawerNavigatorAuth';
-import { RootStackParamList } from '../navigators/RootStackNavigator';
-import { TabAuthParamsList } from '../navigators/TopTabsNavigatorAuth';
 import { logout } from '../store/auth/action';
 import { useAppDispatch } from '../store/hook';
-
-type Props = CompositeScreenProps<
-  NativeStackScreenProps<RootStackParamList, 'logout'>,
-  CompositeScreenProps<
-    DrawerScreenProps<DrawerAuthParamList>,
-    MaterialTopTabScreenProps<TabAuthParamsList>
-  >
->;
 
 const colors = {
   background: '#fff',
 };
 
-export default function LogoutScreen({
-  navigation,
-}: Pick<Props, 'navigation'>) {
+export default function LogoutScreen() {
   const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
     try {
       await dispatch(logout());
-
-      // Reset navigation stack to the AuthNavigator after logout
-      navigation.reset({
+      CommonActions.reset({
         index: 0,
-        routes: [{ name: 'AuthNavigator' }], // Ensure 'AuthNavigator' is correct
+        routes: [{ name: 'AuthNavigator' }], // Replace with the correct name of your auth navigator
       });
     } catch (error) {
       console.error('Logout failed:', error);

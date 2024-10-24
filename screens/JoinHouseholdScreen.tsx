@@ -1,88 +1,207 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Button,
+  KeyboardAvoidingView,
+  Platform,
+  StyleProp,
+  StyleSheet,
   Text,
   TextInput,
+  TextStyle,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import { DrawerParamList } from '../navigators/DrawerNavigator';
+import { RootStackParamList } from '../navigators/RootStackNavigator';
+import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
+import { selectErrorMessage } from '../store/auth/selectors';
 import { useAppDispatch } from '../store/hook';
-
 import { addJoinRequest } from '../store/households/action';
-import {
-  selectHouseholdError,
-  selectHouseholdLoading,
-} from '../store/households/selectors';
-import { selectCurrentProfile } from '../store/profiles/selectors';
+import { RootState } from '../store/store';
 
-export default function JoinHouseholdScreen() {
+type Props = CompositeScreenProps<
+  MaterialTopTabScreenProps<TabHouseholdParamsList, 'JoinHousehold'>,
+  CompositeScreenProps<
+    DrawerScreenProps<DrawerParamList>,
+    NativeStackScreenProps<RootStackParamList>
+  >
+>;
+
+export default function JoinHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
-  const [joinCode, setJoinCode] = useState('');
-  const [message, setMessage] = useState('');
+  const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isLoading = useSelector(selectHouseholdLoading);
-  const error = useSelector(selectHouseholdError);
-  const currentProfile = useSelector(selectCurrentProfile); // Get the current user's profile
+  const isLoading = useSelector(
+    (state: RootState) => state.households.isLoading,
+  );
+  const error = useSelector(selectErrorMessage);
+
+  const validateForm = (): boolean => {
+    if (!code.trim()) {
+      setCodeError('Household code is required');
+      return false;
+    }
+    if (code.length !== 8) {
+      setCodeError('Household code must be 8 characters');
+      return false;
+    }
+    setCodeError(null);
+    return true;
+  };
 
   const handleSubmit = async () => {
-    if (!joinCode.trim()) {
-      Alert.alert('Error', 'Please enter the household join code');
-      return;
-    }
+    if (!validateForm() || isSubmitting) return;
 
-    // Simulated household data (replace with real API check in production)
-    const household = {
-      id: 1,
-      name: 'Sample Household',
-      joinCode: 'ABC123',
-    };
+    try {
+      setIsSubmitting(true);
+      const result = await dispatch(addJoinRequest({ code })).unwrap();
 
-    if (joinCode.trim() === household.joinCode) {
-      try {
-        await dispatch(addJoinRequest()).unwrap(); // Wait for the action to complete successfully
-
-        Alert.alert(
-          'Request Sent',
-          'Your request to join the household has been sent. You will be notified when it is approved.',
-          [{ text: 'OK', onPress: () => navigation.navigate('Dashboard') }],
-        );
-      } catch (error) {
-        Alert.alert('Error', error.message || 'Failed to send join request');
+      if (result) {
+        const profileData = {
+          ...result,
+          isOwner: false,
+          isRequest: false,
+        };
+        setCode('');
+        navigation.navigate('CreateProfile', { createProfile: profileData });
       }
-    } else {
-      Alert.alert('Error', 'Invalid join code');
+    } catch (err) {
+      Alert.alert(
+        'Join Request Failed',
+        'Unable to join household. Please verify the code and try again.',
+        [{ text: 'OK' }],
+      );
+      console.error('Join household failed:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const getInputStyle = (): StyleProp<TextStyle> => {
+    const baseStyle = styles.input;
+    if (codeError) {
+      return [baseStyle, styles.inputError];
+    }
+    return baseStyle;
+  };
+
   return (
-    <View>
-      <Text>Join a Household</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>Join Household</Text>
 
-      <TextInput
-        placeholder="Enter Join Code"
-        value={joinCode}
-        onChangeText={setJoinCode}
-        autoCapitalize="characters"
-      />
+        <Text style={styles.description}>
+          Enter the household code provided by the household owner to join their
+          household.
+        </Text>
 
-      <TextInput
-        placeholder="Add a message (optional)"
-        value={message}
-        onChangeText={setMessage}
-        multiline
-      />
+        <TextInput
+          placeholder="Enter 8-digit code"
+          value={code}
+          onChangeText={(text) => {
+            setCode(text.toUpperCase());
+            if (codeError) setCodeError(null);
+          }}
+          style={getInputStyle()}
+          editable={!isLoading}
+          maxLength={6}
+          autoCapitalize="characters"
+          autoCorrect={false}
+          keyboardType="default"
+          returnKeyType="done"
+          onSubmitEditing={handleSubmit}
+        />
 
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <Button title="Send Join Request" onPress={handleSubmit} />
-      )}
+        {codeError && <Text style={styles.errorText}>{codeError}</Text>}
 
-      {error && <Text>{error}</Text>}
-    </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            (isLoading || !code.trim()) && styles.submitButtonDisabled,
+          ]}
+          onPress={handleSubmit}
+          disabled={isLoading || !code.trim()}>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.submitButtonText}>Join Household</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  contentContainer: {
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: '#333333',
+  },
+  description: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 8,
+    padding: 15,
+    marginVertical: 10,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    fontSize: 20,
+    textAlign: 'center',
+    letterSpacing: 2,
+  },
+  inputError: {
+    borderColor: '#FF3B30',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    marginTop: 5,
+    alignSelf: 'flex-start',
+  },
+  submitButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    padding: 15,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

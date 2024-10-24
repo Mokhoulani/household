@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Household } from '../../types/Household';
 import {
-  acceptJoinRequestThunk,
   addJoinRequest,
+  approveJoinRequest,
   createHousehold,
-  rejectJoinRequestThunk,
+  rejectJoinRequest,
 } from './action';
 import { HouseholdState } from './state';
 
@@ -13,7 +13,7 @@ const initialState: HouseholdState = {
   currentHousehold: null,
   isLoading: false,
   error: null,
-  pendingRequests: [],
+  members: [],
 };
 
 const householdSlice = createSlice({
@@ -41,72 +41,54 @@ const householdSlice = createSlice({
       .addCase(createHousehold.rejected, (state, action) => {
         state.error = action.payload as string;
         state.isLoading = false;
+      })
+
+      // Handle Join Request
+      .addCase(addJoinRequest.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(addJoinRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentHousehold = action.payload;
+        state.error = null;
+      })
+      .addCase(addJoinRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // Handle Approve Request
+      .addCase(approveJoinRequest.fulfilled, (state, action) => {
+        if (!state.currentHousehold) return;
+
+        const memberIndex = state.currentHousehold.members.findIndex(
+          (m) => m.id === action.payload.memberId,
+        );
+
+        if (memberIndex !== -1) {
+          state.currentHousehold.members[memberIndex] = {
+            ...state.currentHousehold.members[memberIndex],
+            ...action.payload.updatedProfile,
+            isRequest: false,
+          };
+        }
+      })
+      .addCase(approveJoinRequest.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+
+      // Handle Reject Request
+      .addCase(rejectJoinRequest.fulfilled, (state, action) => {
+        if (!state.currentHousehold) return;
+
+        state.currentHousehold.members = state.currentHousehold.members.filter(
+          (member) => member.id !== action.payload,
+        );
+      })
+      .addCase(rejectJoinRequest.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
-    // Add Join Request
-    builder.addCase(addJoinRequest.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    });
-    builder.addCase(addJoinRequest.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.pendingRequests.push(action.payload);
-    });
-    builder.addCase(addJoinRequest.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload?.message || 'Failed to add join request';
-    });
-
-    // Accept Join Request
-    builder.addCase(acceptJoinRequestThunk.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    });
-
-    builder.addCase(acceptJoinRequestThunk.fulfilled, (state, action) => {
-      state.isLoading = false;
-
-      const index = state.pendingRequests.findIndex(
-        (req) =>
-          req.accountId === action.payload.accountId &&
-          req.householdId === action.payload.householdId,
-      );
-
-      if (index !== -1) {
-        state.pendingRequests[index] = {
-          ...state.pendingRequests[index],
-          status: 'accepted',
-          acceptedAt:
-            action.payload.acceptedAt ??
-            state.pendingRequests[index].acceptedAt,
-        };
-      }
-    });
-
-    builder.addCase(acceptJoinRequestThunk.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload?.message || 'Failed to accept join request';
-    });
-
-    // Reject Join Request
-    builder.addCase(rejectJoinRequestThunk.fulfilled, (state, action) => {
-      state.isLoading = false;
-
-      const index = state.pendingRequests.findIndex(
-        (req) =>
-          req.accountId === action.payload.accountId &&
-          req.householdId === action.payload.householdId,
-      );
-
-      if (index !== -1) {
-        state.pendingRequests[index] = {
-          ...state.pendingRequests[index],
-          status: 'rejected',
-          rejectedAt:
-            action.payload.rejectedAt ??
-            state.pendingRequests[index].rejectedAt,
-        };
-      }
-    });
   },
 });
 

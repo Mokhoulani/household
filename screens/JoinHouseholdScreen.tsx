@@ -33,6 +33,24 @@ type Props = CompositeScreenProps<
   >
 >;
 
+const theme = {
+  colors: {
+    primary: '#007AFF',
+    background: '#FFFFFF',
+    border: '#DDDDDD',
+    error: '#FF3B30',
+    text: {
+      primary: '#333333',
+      secondary: '#666666',
+      light: '#FFFFFF',
+    },
+    button: {
+      disabled: '#CCCCCC',
+      loading: '#0000FF',
+    },
+  },
+} as const;
+
 export default function JoinHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const [code, setCode] = useState('');
@@ -147,7 +165,7 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.background,
   },
   contentContainer: {
     padding: 20,
@@ -158,38 +176,39 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333333',
+    color: theme.colors.text.primary,
   },
   description: {
     fontSize: 16,
-    color: '#666666',
+    color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: 24,
     paddingHorizontal: 20,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#DDDDDD',
+    borderColor: theme.colors.border,
     borderRadius: 8,
     padding: 15,
     marginVertical: 10,
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.background,
     fontSize: 20,
     textAlign: 'center',
     letterSpacing: 2,
+    color: theme.colors.text.primary,
   },
   inputError: {
-    borderColor: '#FF3B30',
+    borderColor: theme.colors.error,
   },
   errorText: {
-    color: '#FF3B30',
+    color: theme.colors.error,
     fontSize: 14,
     marginTop: 5,
     alignSelf: 'flex-start',
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.colors.primary,
     borderRadius: 8,
     padding: 15,
     width: '100%',
@@ -197,10 +216,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: theme.colors.button.disabled,
   },
   submitButtonText: {
-    color: '#FFFFFF',
+    color: theme.colors.text.light,
     fontSize: 16,
     fontWeight: '600',
   },

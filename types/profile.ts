@@ -17,3 +17,6 @@ export type CreateProfilePayload = Omit<
   Profile,
   'id' | 'AccountId' | 'Account' | 'Household'
 >;
+export type ProfileDto = Pick<Profile, 'isOwner' | 'isRequest'>;
+
+export type CreateProfile = Household & ProfileDto;

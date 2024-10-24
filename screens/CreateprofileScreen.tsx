@@ -26,7 +26,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const [selectedAvatarId, setSelectedAvatarId] = useState<number | null>(null);
-  const householdId = route.params.household?.id;
+  const householdId = route.params.createProfile.id;
 
   const isLoading = useSelector((state: RootState) => state.profiles.isLoading);
   const error = useSelector((state: RootState) => state.profiles.error);

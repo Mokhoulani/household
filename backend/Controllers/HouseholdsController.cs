@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 [Route("api/[controller]")]
 [ApiController]
@@ -30,8 +27,11 @@ public class HouseholdsController : ControllerBase
             {
                 return Unauthorized(new ApiResponse<IEnumerable<Household>> { Message = "User is not authenticated." });
             }
-
-            var households = await _householdRepository.FindAsync(h => h.Profiles.Any(m => m.AccountId == userId));
+            var query = await _householdRepository.QueryAsync();
+            var households = await query
+            .Include(h => h.Profiles)
+            .Where(h => h.Profiles.Any(p => p.AccountId == userId))
+            .ToListAsync();
 
             if (!households.Any())
             {
@@ -173,7 +173,7 @@ public class HouseholdsController : ControllerBase
     }
 
     [HttpPost("by-code")]
-    public async Task<IActionResult> GetHouseholdByCode([FromBody] string householdCode)
+    public async Task<IActionResult> GetHouseholdByCode([FromBody] HouseholdCodeRequest householdCodeRequest)
     {
         try
         {
@@ -183,15 +183,17 @@ public class HouseholdsController : ControllerBase
                 return Unauthorized(new ApiResponse<Household> { Message = "User is not authenticated." });
             }
 
-            var household = await _householdRepository
-                .FindAsync(h => h.Code == householdCode);
+            var query = await _householdRepository.QueryAsync();
+            var household = await query
+                .Include(h => h.Profiles)
+                .FirstOrDefaultAsync(h => h.Code == householdCodeRequest.Code);
 
-            if (household == null || !household.Any())
+            if (household == null)
             {
                 return NotFound(new ApiResponse<Household> { Message = "Household not found." });
             }
 
-            return Ok(new ApiResponse<Household> { Data = household.FirstOrDefault(), Message = "Household retrieved successfully." });
+            return Ok(new ApiResponse<Household> { Data = household, Message = "Household retrieved successfully." });
         }
         catch (Exception ex)
         {

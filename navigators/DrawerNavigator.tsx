@@ -8,6 +8,7 @@ import CreateProfileScreen from '../screens/CreateprofileScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import { Household } from '../types/Household';
+import CreateTaskView from '../screens/CreateChoresScreen';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import TopTabsNavigatorProfile, {
   TabProfileParamsList,
@@ -23,6 +24,7 @@ export type DrawerParamList = {
   CreateProfile: { household: Household | null };
   signout: undefined;
   settings: undefined;
+  createTask: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -101,6 +103,16 @@ export default function DrawerNavigator() {
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => null,
+        })}
+      />
+      <Drawer.Screen
+        name="createTask"
+        component={CreateTaskView}
+        options={() => ({
+          title: '',
+          drawerLabel: () => (
+            <MaterialIcons style={{ marginRight: 16 }} name="work" size={24} />
+          ),
         })}
       />
     </Drawer.Navigator>

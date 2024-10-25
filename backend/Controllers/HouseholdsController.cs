@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 [Route("api/[controller]")]
 [ApiController]
@@ -30,8 +27,11 @@ public class HouseholdsController : ControllerBase
             {
                 return Unauthorized(new ApiResponse<IEnumerable<Household>> { Message = "User is not authenticated." });
             }
-
-            var households = await _householdRepository.FindAsync(h => h.Profiles.Any(m => m.AccountId == userId));
+            var query = await _householdRepository.QueryAsync();
+            var households = await query
+            .Include(h => h.Profiles)
+            .Where(h => h.Profiles.Any(p => p.AccountId == userId))
+            .ToListAsync();
 
             if (!households.Any())
             {
@@ -67,10 +67,9 @@ public class HouseholdsController : ControllerBase
                 });
             }
 
-            // Generate a code if it's required
             if (string.IsNullOrEmpty(household.Code))
             {
-                household.Code = GenerateHouseholdCode(); // Implement this method to generate a unique code
+                household.Code = await GenerateUniqueHouseholdCodeAsync();
             }
 
             await _householdRepository.AddAsync(household);
@@ -173,15 +172,61 @@ public class HouseholdsController : ControllerBase
         }
     }
 
+    [HttpPost("by-code")]
+    public async Task<IActionResult> GetHouseholdByCode([FromBody] HouseholdCodeRequest householdCodeRequest)
+    {
+        try
+        {
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<Household> { Message = "User is not authenticated." });
+            }
+
+            var query = await _householdRepository.QueryAsync();
+            var household = await query
+                .Include(h => h.Profiles)
+                .FirstOrDefaultAsync(h => h.Code == householdCodeRequest.Code);
+
+            if (household == null)
+            {
+                return NotFound(new ApiResponse<Household> { Message = "Household not found." });
+            }
+
+            return Ok(new ApiResponse<Household> { Data = household, Message = "Household retrieved successfully." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieving household by code");
+            return StatusCode(500, new ApiResponse<Household> { Message = "An error occurred while processing your request." });
+        }
+    }
+
     private string GetUserIdFromClaims()
     {
         return User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
     }
 
-    private string GenerateHouseholdCode()
+    private async Task<string> GenerateUniqueHouseholdCodeAsync()
     {
-        return Guid.NewGuid().ToString().Substring(0, 8); // Generates an 8-character unique code
+        string code;
+        bool isUnique = false;
+
+        do
+        {
+            code = Guid.NewGuid().ToString().Substring(0, 8);
+
+            var existingHousehold = await _householdRepository.FindAsync(h => h.Code == code);
+            if (!existingHousehold.Any())
+            {
+                isUnique = true;
+            }
+        }
+        while (!isUnique);
+
+        return code;
     }
+
 
 }
 

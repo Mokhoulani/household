@@ -13,10 +13,17 @@ import {
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { DrawerParamList } from '../navigators/DrawerNavigator';
-import { getAvailableAvatarsForProfile } from '../store/avatars/reducer';
+import { getAvailableAvatarsForProfile } from '../store/avatars/action';
+import { clearSelectedAvatar, selectAvatarId } from '../store/avatars/reducer';
+
+import {
+  selectAvailableAvatars,
+  selectAvatarsError,
+  selectAvatarsLoading,
+  selectSelectedAvatarId,
+} from '../store/avatars/selectors';
 import { useAppDispatch } from '../store/hook';
 import { createProfile } from '../store/profiles/action';
-import { RootState } from '../store/store';
 import { combinedLightTheme } from '../themes/theme';
 import { Avatar } from '../types/Avatar';
 
@@ -25,69 +32,74 @@ type Props = DrawerScreenProps<DrawerParamList, 'CreateProfile'>;
 export default function CreateProfileScreen({ navigation, route }: Props) {
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
-  const [selectedAvatarId, setSelectedAvatarId] = useState<number | null>(null);
-  const householdId = route.params.household?.id;
+  const householdId = route.params.createProfile.id;
+  const isOwner = route.params.createProfile.isOwner;
+  const isRequest = route.params.createProfile.isRequest;
 
-  const isLoading = useSelector((state: RootState) => state.profiles.isLoading);
-  const error = useSelector((state: RootState) => state.profiles.error);
-
-  // Get all available avatars
-  const allAvatars = useSelector((state: RootState) =>
-    getAvailableAvatarsForProfile(state),
-  );
-
-  // Get currently selected avatars in the household
-  const selectedAvatars = useSelector(
-    (state: RootState) => state.avatars.selectedAvatars,
-  );
-
-  // Filter out already selected avatars
-  const availableAvatars = allAvatars.filter(
-    (avatar) =>
-      !selectedAvatars.some((selected) => selected.avatarId === avatar.id),
-  );
+  // Use Redux state instead of local state for selectedAvatarId
+  const selectedAvatarId = useSelector(selectSelectedAvatarId);
+  const avatars = useSelector(selectAvailableAvatars);
+  const isLoading = useSelector(selectAvatarsLoading);
+  const error = useSelector(selectAvatarsError);
 
   useEffect(() => {
-    if (!householdId) {
-      Alert.alert('Error', 'No household selected', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+    if (householdId) {
+      dispatch(getAvailableAvatarsForProfile({ householdId }));
     }
-  }, [householdId, navigation]);
+    return () => {
+      dispatch(clearSelectedAvatar());
+    };
+  }, [dispatch, householdId]);
 
   const handleAvatarSelect = (avatar: Avatar) => {
-    setSelectedAvatarId(avatar.id);
+    if (avatar.id) {
+      // Add null check
+      dispatch(selectAvatarId(avatar.id));
+    }
   };
 
-  const handleSubmit = () => {
-    if (!name || !selectedAvatarId || !householdId) {
-      Alert.alert('Error', 'Please fill in all required fields');
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      Alert.alert('Error', 'Please enter a name');
       return;
     }
 
-    dispatch(
-      createProfile({
-        name,
-        AvatarId: selectedAvatarId,
-        isOwner: true,
-        isRequest: true,
-        HouseholdId: householdId,
-      }),
-    )
-      .then(() => {
-        navigation.goBack();
-      })
-      .catch((err) => {
-        console.error('Error creating profile:', err);
-        Alert.alert('Error', 'Failed to create profile');
-      });
+    if (!selectedAvatarId || selectedAvatarId === 0) {
+      // Add explicit check for 0
+      Alert.alert('Error', 'Please select an avatar');
+      return;
+    }
+
+    if (!householdId) {
+      Alert.alert('Error', 'Invalid household selection');
+      return;
+    }
+
+    try {
+      await dispatch(
+        createProfile({
+          name: name.trim(),
+          avatarId: selectedAvatarId,
+          isOwner: isOwner,
+          isRequest: isRequest,
+          HouseholdId: householdId,
+        }),
+      ).unwrap();
+
+      navigation.goBack();
+    } catch (err) {
+      console.error('Error creating profile:', err);
+      Alert.alert('Error', 'Failed to create profile');
+    }
   };
 
-  const isFormValid =
-    name.trim() !== '' &&
-    selectedAvatarId !== null &&
-    householdId !== undefined &&
-    availableAvatars.length > 0;
+  const isFormValid = Boolean(
+    name.trim() &&
+      selectedAvatarId &&
+      selectedAvatarId !== 0 && // Add explicit check for 0
+      householdId &&
+      avatars.length > 0,
+  );
 
   if (!householdId) {
     return (
@@ -112,8 +124,8 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
         <Text style={styles.subtitle}>Select an Avatar</Text>
 
         <View style={styles.avatarGrid}>
-          {availableAvatars.length > 0 ? (
-            availableAvatars.map((avatar) => (
+          {avatars.length > 0 ? (
+            avatars.map((avatar) => (
               <TouchableOpacity
                 key={avatar.id}
                 style={[
@@ -125,7 +137,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.avatarContainer}>
+            <Text style={styles.noAvatarText}>
               All avatars are currently in use
             </Text>
           )}
@@ -202,5 +214,10 @@ const styles = StyleSheet.create({
     color: combinedLightTheme.colors.error,
     marginTop: 10,
     textAlign: 'center',
+  },
+  noAvatarText: {
+    color: combinedLightTheme.colors.text,
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

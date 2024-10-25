@@ -7,8 +7,12 @@ import React from 'react';
 import CreateProfileScreen from '../screens/CreateprofileScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
+
 import { Household } from '../types/Household';
 import CreateTaskView from '../screens/CreateChoresScreen';
+
+import { CreateProfile } from '../types/profile';
+
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import TopTabsNavigatorProfile, {
   TabProfileParamsList,
@@ -21,7 +25,7 @@ export type DrawerParamList = {
   TodyView: NavigatorScreenParams<TabParamsList>;
   Household: NavigatorScreenParams<TabHouseholdParamsList>;
   Profile: NavigatorScreenParams<TabProfileParamsList>;
-  CreateProfile: { household: Household | null };
+  CreateProfile: { createProfile: CreateProfile };
   signout: undefined;
   settings: undefined;
   createTask: undefined;

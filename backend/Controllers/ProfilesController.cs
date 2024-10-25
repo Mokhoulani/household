@@ -47,6 +47,50 @@ public class ProfilesController : ControllerBase
             return StatusCode(500, new ApiResponse<IEnumerable<Profile>> { Message = "An error occurred while processing your request." });
         }
     }
+
+    [HttpGet("{householdId}")]
+    public async Task<IActionResult> GetProfilesByHouseholdId(int householdId)
+    {
+        try
+        {
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<IEnumerable<Profile>>
+                {
+                    Message = "User is not authenticated."
+                });
+            }
+
+            var query = await _profileRepository.QueryAsync();
+            var profiles = await query
+                .Where(p => p.HouseholdId == householdId)
+                .ToListAsync();
+
+            if (!profiles.Any())
+            {
+                return NotFound(new ApiResponse<IEnumerable<Profile>>
+                {
+                    Message = "No profiles found for the specified household and user."
+                });
+            }
+
+            return Ok(new ApiResponse<IEnumerable<Profile>>
+            {
+                Data = profiles,
+                Message = "Profiles retrieved successfully."
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieving profiles by household ID");
+            return StatusCode(500, new ApiResponse<IEnumerable<Profile>>
+            {
+                Message = "An error occurred while processing your request."
+            });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateProfile([FromBody] Profile profile)
     {

@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleProp,
@@ -21,11 +22,11 @@ import { RootStackParamList } from '../navigators/RootStackNavigator';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
 import { selectErrorMessage } from '../store/auth/selectors';
 import { useAppDispatch } from '../store/hook';
-import { createHousehold } from '../store/households/action';
+import { addJoinRequest } from '../store/households/action';
 import { RootState } from '../store/store';
 
 type Props = CompositeScreenProps<
-  MaterialTopTabScreenProps<TabHouseholdParamsList, 'CreateHousehold'>,
+  MaterialTopTabScreenProps<TabHouseholdParamsList, 'JoinHousehold'>,
   CompositeScreenProps<
     DrawerScreenProps<DrawerParamList>,
     NativeStackScreenProps<RootStackParamList>
@@ -50,10 +51,10 @@ const theme = {
   },
 } as const;
 
-export default function CreateHouseholdScreen({ navigation }: Props) {
+export default function JoinHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
-  const [name, setName] = useState('');
-  const [nameError, setNameError] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isLoading = useSelector(
@@ -62,15 +63,15 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
   const error = useSelector(selectErrorMessage);
 
   const validateForm = (): boolean => {
-    if (!name.trim()) {
-      setNameError('Household name is required');
+    if (!code.trim()) {
+      setCodeError('Household code is required');
       return false;
     }
-    if (name.length < 3) {
-      setNameError('Household name must be at least 3 characters');
+    if (code.length !== 8) {
+      setCodeError('Household code must be 8 characters');
       return false;
     }
-    setNameError(null);
+    setCodeError(null);
     return true;
   };
 
@@ -79,19 +80,24 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
 
     try {
       setIsSubmitting(true);
-      const result = await dispatch(createHousehold({ name })).unwrap();
+      const result = await dispatch(addJoinRequest({ code })).unwrap();
 
       if (result) {
         const profileData = {
           ...result,
-          isOwner: true,
-          isRequest: true,
+          isOwner: false,
+          isRequest: false,
         };
-        setName('');
+        setCode('');
         navigation.navigate('CreateProfile', { createProfile: profileData });
       }
     } catch (err) {
-      console.error('Household creation failed:', err);
+      Alert.alert(
+        'Join Request Failed',
+        'Unable to join household. Please verify the code and try again.',
+        [{ text: 'OK' }],
+      );
+      console.error('Join household failed:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -99,7 +105,7 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
 
   const getInputStyle = (): StyleProp<TextStyle> => {
     const baseStyle = styles.input;
-    if (nameError) {
+    if (codeError) {
       return [baseStyle, styles.inputError];
     }
     return baseStyle;
@@ -110,37 +116,45 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>Create Household</Text>
+        <Text style={styles.title}>Join Household</Text>
+
+        <Text style={styles.description}>
+          Enter the household code provided by the household owner to join their
+          household.
+        </Text>
 
         <TextInput
-          placeholder="Enter household name"
-          value={name}
+          placeholder="Enter 8-digit-characters code"
+          value={code}
           onChangeText={(text) => {
-            setName(text);
-            if (nameError) setNameError(null);
+            setCode(text);
+            if (codeError) setCodeError(null);
           }}
           style={getInputStyle()}
           editable={!isLoading}
-          maxLength={50}
-          autoCapitalize="words"
+          maxLength={8}
+          autoCapitalize="characters"
           autoCorrect={false}
+          keyboardType="default"
+          returnKeyType="done"
+          onSubmitEditing={handleSubmit}
         />
 
-        {nameError && <Text style={styles.errorText}>{nameError}</Text>}
+        {codeError && <Text style={styles.errorText}>{codeError}</Text>}
 
         {error && <Text style={styles.errorText}>{error}</Text>}
 
         <TouchableOpacity
           style={[
             styles.submitButton,
-            (isLoading || !name.trim()) && styles.submitButtonDisabled,
+            (isLoading || !code.trim()) && styles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
-          disabled={isLoading || !name.trim()}>
+          disabled={isLoading || !code.trim()}>
           {isLoading ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.submitButtonText}>Create Household</Text>
+            <Text style={styles.submitButtonText}>Join Household</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -163,6 +177,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
     color: theme.colors.text.primary,
+  },
+  description: {
+    fontSize: 16,
+    color: theme.colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 20,
   },
   input: {
     borderWidth: 1,

@@ -33,6 +33,8 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const householdId = route.params.createProfile.id;
+  const isOwner = route.params.createProfile.isOwner;
+  const isRequest = route.params.createProfile.isRequest;
 
   // Use Redux state instead of local state for selectedAvatarId
   const selectedAvatarId = useSelector(selectSelectedAvatarId);
@@ -78,8 +80,8 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
         createProfile({
           name: name.trim(),
           avatarId: selectedAvatarId,
-          isOwner: true,
-          isRequest: true,
+          isOwner: isOwner,
+          isRequest: isRequest,
           HouseholdId: householdId,
         }),
       ).unwrap();

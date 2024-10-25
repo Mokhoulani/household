@@ -8,7 +8,7 @@ import CreateProfileScreen from '../screens/CreateprofileScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
 
-import { Household } from '../types/Household';
+// import { Household } from '../types/Household';
 import CreateTaskView from '../screens/CreateChoresScreen';
 
 import { CreateProfile } from '../types/profile';

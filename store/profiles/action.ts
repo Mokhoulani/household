@@ -5,12 +5,12 @@ import { createAppAsyncThunk } from '../hook';
 
 export const createProfile = createAppAsyncThunk<Profile, CreateProfilePayload>(
   'profiles/createProfile',
-  async ({ name, AvatarId, isOwner, isRequest, HouseholdId }, thunkAPI) => {
+  async ({ name, avatarId, isOwner, isRequest, HouseholdId }, thunkAPI) => {
     try {
       initializeApp();
       const response = await apiService.post<ApiResponse<Profile>>('Profiles', {
         name,
-        AvatarId,
+        avatarId,
         isOwner,
         isRequest,
         HouseholdId,

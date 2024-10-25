@@ -10,10 +10,13 @@ export type Profile = {
   Household: Household;
   Account: Account;
   AccountId: string;
-  AvatarId: number;
+  avatarId: number;
 };
 
 export type CreateProfilePayload = Omit<
   Profile,
   'id' | 'AccountId' | 'Account' | 'Household'
 >;
+export type ProfileDto = Pick<Profile, 'isOwner' | 'isRequest'>;
+
+export type CreateProfile = Household & ProfileDto;

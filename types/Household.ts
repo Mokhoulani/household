@@ -8,3 +8,11 @@ export type Household = {
   members: Profile[];
   tasks: HouseholdTask[];
 };
+
+export type CreateHousehold = {
+  name: string;
+};
+
+export type joinHousehold = {
+  code: string;
+};

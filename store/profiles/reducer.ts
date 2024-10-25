@@ -14,11 +14,24 @@ const profilesSlice = createSlice({
   name: 'profiles',
   initialState,
   reducers: {
+    setProfileLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    setProfileError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
     setCurrentProfile: (state, action: PayloadAction<Profile>) => {
       state.currentProfile = action.payload;
     },
-    clearHouseholdError: (state) => {
-      state.error = null;
+    setIsOwner: (state, action: PayloadAction<boolean>) => {
+      if (state.currentProfile) {
+        state.currentProfile.isOwner = action.payload;
+      }
+    },
+    setIsRequest: (state, action: PayloadAction<boolean>) => {
+      if (state.currentProfile) {
+        state.currentProfile.isRequest = action.payload;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -39,5 +52,11 @@ const profilesSlice = createSlice({
   },
 });
 
-export const { setCurrentProfile, clearHouseholdError } = profilesSlice.actions;
+export const {
+  setCurrentProfile,
+  setProfileLoading,
+  setIsOwner,
+  setIsRequest,
+  setProfileError,
+} = profilesSlice.actions;
 export const profilesReducer = profilesSlice.reducer;

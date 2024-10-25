@@ -124,15 +124,15 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
         </Text>
 
         <TextInput
-          placeholder="Enter 8-digit code"
+          placeholder="Enter 8-digit-characters code"
           value={code}
           onChangeText={(text) => {
-            setCode(text.toUpperCase());
+            setCode(text);
             if (codeError) setCodeError(null);
           }}
           style={getInputStyle()}
           editable={!isLoading}
-          maxLength={6}
+          maxLength={8}
           autoCapitalize="characters"
           autoCorrect={false}
           keyboardType="default"

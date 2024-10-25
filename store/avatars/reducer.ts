@@ -1,103 +1,53 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Avatar } from '../../types/Avatar';
-import { AvatarState } from './state';
-
-interface AvatarSelection {
-  profileId: number;
-  avatarId: number;
-}
-
-interface ExtendedAvatarState extends AvatarState {
-  selectedAvatars: AvatarSelection[];
-}
-
-const initialAvatars: Avatar[] = [
-  { id: 1, icon: '🐅', color: '#FFA500' }, // Orange for Tiger
-  { id: 2, icon: '🐇', color: '#D3D3D3' }, // Light Gray for Rabbit
-  { id: 3, icon: '🐧', color: '#000000' }, // Black for Penguin
-  { id: 4, icon: '🐯', color: '#FFA500' }, // Orange for Tiger Face
-  { id: 5, icon: '🐲', color: '#008000' }, // Green for Dragon
-  { id: 6, icon: '🐳', color: '#0000FF' }, // Blue for Whale
-  { id: 7, icon: '🐦', color: '#FF0000' }, // Red for Bird
-  { id: 8, icon: '🐎', color: '#A52A2A' }, // Brown for Horse
-];
-
-const initialState: ExtendedAvatarState = {
-  availableAvatars: initialAvatars,
-  selectedAvatar: null,
-  selectedAvatars: [],
-  isLoading: false,
-  error: null,
-};
+import { getAvailableAvatarsForProfile } from './action';
+import { initialState } from './state';
 
 const avatarSlice = createSlice({
   name: 'avatars',
   initialState,
   reducers: {
-    setSelectedAvatar: (
-      state,
-      action: PayloadAction<{ avatar: Avatar; profileId: number }>,
-    ) => {
-      const { avatar, profileId } = action.payload;
-
-      // Check if avatar is already selected by another profile
-      const isAvatarTaken = state.selectedAvatars.some(
-        (selection) =>
-          selection.avatarId === avatar.id && selection.profileId !== profileId,
+    selectAvatarId: (state, action: PayloadAction<number>) => {
+      // Add validation
+      const avatarExists = state.availableAvatars.some(
+        (avatar) => avatar.id === action.payload,
       );
-
-      if (isAvatarTaken) {
-        state.error =
-          'This avatar is already selected by another household member';
-        return;
+      if (avatarExists) {
+        state.selectedAvatarId = action.payload;
       }
-
-      // Remove any existing avatar selection for this profile
-      state.selectedAvatars = state.selectedAvatars.filter(
-        (selection) => selection.profileId !== profileId,
-      );
-
-      // Add new selection
-      state.selectedAvatars.push({
-        profileId,
-        avatarId: avatar.id,
-      });
-
-      state.selectedAvatar = avatar;
+    },
+    clearSelectedAvatar: (state) => {
+      state.selectedAvatarId = 0;
+    },
+    clearError: (state) => {
       state.error = null;
     },
-
-    clearSelectedAvatar: (state, action: PayloadAction<number>) => {
-      const profileId = action.payload;
-      // Remove avatar selection for this profile
-      state.selectedAvatars = state.selectedAvatars.filter(
-        (selection) => selection.profileId !== profileId,
-      );
-      state.selectedAvatar = null;
-    },
-
-    setAvatarLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-
-    setAvatarError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-    },
+    resetAvatars: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAvailableAvatarsForProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getAvailableAvatarsForProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.availableAvatars = action.payload;
+        // Clear selected avatar if it's no longer available
+        if (
+          state.selectedAvatarId &&
+          !action.payload.some((avatar) => avatar.id === state.selectedAvatarId)
+        ) {
+          state.selectedAvatarId = null;
+        }
+      })
+      .addCase(getAvailableAvatarsForProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message ?? 'Failed to fetch avatars';
+      });
   },
 });
 
-export const {
-  setSelectedAvatar,
-  clearSelectedAvatar,
-  setAvatarLoading,
-  setAvatarError,
-} = avatarSlice.actions;
-
-// Updated selector that takes the entire state and profileId
-export const getAvailableAvatarsForProfile = (state: {
-  avatars: ExtendedAvatarState;
-}) => {
-  return state.avatars.availableAvatars;
-};
+export const { selectAvatarId, clearSelectedAvatar, clearError, resetAvatars } =
+  avatarSlice.actions;
 
 export default avatarSlice.reducer;

@@ -32,7 +32,12 @@ public class ProfilesController : ControllerBase
                 return Unauthorized(new ApiResponse<IEnumerable<Profile>> { Message = "User is not authenticated." });
             }
 
-            var profiles = await _profileRepository.FindAsync(p => p.AccountId == userId);
+            var query = await _profileRepository.QueryAsync();
+            var profiles = await query
+            .Include(p => p.Household)
+            .Where(p => p.AccountId == userId)
+
+            .ToListAsync();
 
             if (!profiles.Any())
             {

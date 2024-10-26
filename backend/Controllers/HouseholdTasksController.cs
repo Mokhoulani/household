@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,12 @@ public class HouseholdTasksController : ControllerBase
                 return Unauthorized(new ApiResponse<IEnumerable<HouseholdTask>> { Message = "User is not authenticated." });
             }
 
-            var householdTasks = await _householdTaskRepository.FindAsync(t => t.Household.Profiles.Any(m => m.AccountId == userId));
+            var query = await _householdTaskRepository.QueryAsync();
+            var householdTasks = await query
+            .Include(t => t.Household).ThenInclude(h => h.Profiles)
+            .Where(t => t.Household.Profiles.Any(m => m.AccountId == userId))
+            .Include(t => t.CompletedTasks)
+            .ToListAsync();
 
             if (!householdTasks.Any())
             {

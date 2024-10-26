@@ -4,6 +4,7 @@ import {
   addJoinRequest,
   approveJoinRequest,
   createHousehold,
+  getHouseholds,
   rejectJoinRequest,
 } from './action';
 import { HouseholdState } from './state';
@@ -13,7 +14,7 @@ const initialState: HouseholdState = {
   currentHousehold: null,
   isLoading: false,
   error: null,
-  members: [],
+  profiles: [],
 };
 
 const householdSlice = createSlice({
@@ -29,10 +30,24 @@ const householdSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getHouseholds.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getHouseholds.fulfilled, (state, action) => {
+        state.households = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(getHouseholds.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.isLoading = false;
+      })
+
       .addCase(createHousehold.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
+
       .addCase(createHousehold.fulfilled, (state, action) => {
         state.households.push(action.payload);
         state.currentHousehold = action.payload;
@@ -62,13 +77,13 @@ const householdSlice = createSlice({
       .addCase(approveJoinRequest.fulfilled, (state, action) => {
         if (!state.currentHousehold) return;
 
-        const memberIndex = state.currentHousehold.members.findIndex(
+        const memberIndex = state.currentHousehold.profiles.$values.findIndex(
           (m) => m.id === action.payload.memberId,
         );
 
         if (memberIndex !== -1) {
-          state.currentHousehold.members[memberIndex] = {
-            ...state.currentHousehold.members[memberIndex],
+          state.currentHousehold.profiles.$values[memberIndex] = {
+            ...state.currentHousehold.profiles.$values[memberIndex],
             ...action.payload.updatedProfile,
             isRequest: false,
           };
@@ -82,9 +97,10 @@ const householdSlice = createSlice({
       .addCase(rejectJoinRequest.fulfilled, (state, action) => {
         if (!state.currentHousehold) return;
 
-        state.currentHousehold.members = state.currentHousehold.members.filter(
-          (member) => member.id !== action.payload,
-        );
+        state.currentHousehold.profiles.$values =
+          state.currentHousehold.profiles.$values.filter(
+            (member) => member.id !== action.payload,
+          );
       })
       .addCase(rejectJoinRequest.rejected, (state, action) => {
         state.error = action.payload as string;

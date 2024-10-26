@@ -4,6 +4,8 @@ import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, Surface } from 'react-native-paper';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
+import { useAppSelector } from '../store/hook';
+import { selectCurrentProfile } from '../store/profiles/selectors';
 
 type Props = MaterialTopTabScreenProps<
   TabHouseholdParamsList,
@@ -11,8 +13,9 @@ type Props = MaterialTopTabScreenProps<
 >;
 
 export default function HouseholdDetailsScreen({ route }: Props) {
+  const currentProfile = useAppSelector(selectCurrentProfile);
+  console.log('Current profile:', currentProfile);
   const household = route.params?.household;
-  console.log('Household details screen:', household);
 
   return (
     <SafeAreaView style={styles.container}>

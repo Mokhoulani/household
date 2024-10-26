@@ -1,7 +1,11 @@
+/* eslint-disable react/no-unstable-nested-components */
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import React from 'react';
 import { SafeAreaView, StyleSheet, useWindowDimensions } from 'react-native';
 import CreateHouseholdSceen from '../screens/CreateHousholdScreen';
-import DashboardScreen from '../screens/DashboardScreen';
+import DashboardScreen from '../screens/DashboardHouseholdScreen';
 import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
 import JoinHouseholdScreen from '../screens/JoinHouseholdScreen';
 import { Household } from '../types/Household';
@@ -46,28 +50,40 @@ export default function TopTabsNavigatorHousehold() {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          title: 'My Households',
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="dashboard" size={24} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="DetailsHousehold"
         component={HouseholdDetailsScreen}
         options={{
-          title: 'Details',
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="details" size={24} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="CreateHousehold"
         component={CreateHouseholdSceen}
         options={{
-          title: 'Create New',
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="add-business" size={24} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="JoinHousehold"
         component={JoinHouseholdScreen}
         options={{
-          title: 'Join Existing',
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="adduser" size={24} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -85,6 +101,5 @@ export function HouseholdNavigationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
 });

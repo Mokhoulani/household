@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ActivityIndicator, Card, Surface } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
-import { useAppDispatch } from '../store/hook';
+import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getHouseholds } from '../store/households/action';
 import { setCurrentHousehold } from '../store/households/reducer';
 import {
@@ -24,11 +23,11 @@ import { Household } from '../types/Household';
 
 type Props = MaterialTopTabScreenProps<TabHouseholdParamsList, 'Dashboard'>;
 
-export default function DashboardScreen({ navigation }: Props) {
+export default function DashboardHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
-  const households = useSelector(selectHouseholds) || [];
-  const isLoading = useSelector(selectHouseholdLoading);
-  const error = useSelector(selectHouseholdError);
+  const households = useAppSelector(selectHouseholds) || [];
+  const isLoading = useAppSelector(selectHouseholdLoading);
+  const error = useAppSelector(selectHouseholdError);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchHouseholds = useCallback(() => {

@@ -13,11 +13,11 @@ import { ActivityIndicator, Card, Surface } from 'react-native-paper';
 import { TabProfileParamsList } from '../navigators/TopTabsNavigatorProfile';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getProfiles } from '../store/profiles/action';
+import { setCurrentProfile } from '../store/profiles/reducer';
 import {
   selectProfileError,
   selectProfileIsLoading,
   selectProfiles,
-  setCurrentProfile,
 } from '../store/profiles/selectors';
 import { Profile } from '../types/profile';
 

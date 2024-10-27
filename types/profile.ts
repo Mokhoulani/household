@@ -6,10 +6,10 @@ export type Profile = {
   name: string;
   isOwner: boolean;
   isRequest: boolean;
-  HouseholdId: number | undefined;
-  Household: Household;
+  householdId: number | undefined;
+  Household: Household | null;
   Account: Account;
-  AccountId: string;
+  accountId: string;
   avatarId: number;
 };
 

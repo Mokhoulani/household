@@ -78,14 +78,14 @@ const householdSlice = createSlice({
         if (!state.currentHousehold) return;
 
         const memberIndex = state.currentHousehold.profiles.$values.findIndex(
-          (m) => m.id === action.payload.memberId,
+          (p) => p.id === action.payload.id,
         );
 
         if (memberIndex !== -1) {
           state.currentHousehold.profiles.$values[memberIndex] = {
             ...state.currentHousehold.profiles.$values[memberIndex],
-            ...action.payload.updatedProfile,
-            isRequest: false,
+            ...action.payload,
+            isRequest: true,
           };
         }
       })

@@ -61,38 +61,41 @@ export const addJoinRequest = createAppAsyncThunk<Household, { code: string }>(
   },
 );
 
-export const approveJoinRequest = createAppAsyncThunk<
-  { updatedProfile: Profile; memberId: number },
-  Profile
->('household/approveJoinRequest', async (profile, thunkAPI) => {
-  try {
-    await initializeApp();
-    const response = await apiService.put<ApiResponse<Profile>>(
-      `/profiles/${profile.id}`,
-      { profile },
-    );
-    return {
-      updatedProfile: response.data,
-      memberId: profile.id,
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      return thunkAPI.rejectWithValue(
-        error.message || 'Failed to approve join request',
+export const approveJoinRequest = createAppAsyncThunk<Profile, Profile>(
+  'household/approveJoinRequest',
+  async (profile, thunkAPI) => {
+    try {
+      await initializeApp();
+      console.log('dddd', profile);
+      const response = await apiService.put<ApiResponse<Profile>>(
+        `profiles/${profile.id}`,
+        {
+          ...profile,
+        },
       );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        return thunkAPI.rejectWithValue(
+          error.message || 'Failed to approve join request',
+        );
+      }
+      return thunkAPI.rejectWithValue('Failed to approve join request');
     }
-    return thunkAPI.rejectWithValue('Failed to approve join request');
-  }
-});
+  },
+);
 
 export const rejectJoinRequest = createAppAsyncThunk<number, Profile>(
   'household/rejectJoinRequest',
   async (profile, thunkAPI) => {
     try {
       await initializeApp();
-      await apiService.delete(`/profiles/${profile.id}`);
+      await apiService.delete(`profiles/${profile.id}`);
       return profile.id;
     } catch (error) {
+      console.error(error);
       if (error instanceof Error) {
         return thunkAPI.rejectWithValue(
           error.message || 'Failed to reject join request',

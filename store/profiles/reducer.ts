@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Profile } from '../../types/profile';
-import { createProfile } from './action';
+import { createProfile, getProfiles } from './action';
 import { ProfileState } from './state';
 
 const initialState: ProfileState = {
@@ -36,6 +36,19 @@ const profilesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getProfiles.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getProfiles.fulfilled, (state, action) => {
+        state.profiles = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(getProfiles.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.isLoading = false;
+      })
+
       .addCase(createProfile.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -59,4 +72,5 @@ export const {
   setIsRequest,
   setProfileError,
 } = profilesSlice.actions;
+
 export const profilesReducer = profilesSlice.reducer;

@@ -1,21 +1,19 @@
-import { DrawerScreenProps } from '@react-navigation/drawer';
-import { useEffect, useState } from 'react';
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Button,
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import { Text } from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Button, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { DrawerParamList } from '../navigators/DrawerNavigator';
+import { TabProfileParamsList } from '../navigators/TopTabsNavigatorProfile';
 import { getAvailableAvatarsForProfile } from '../store/avatars/action';
 import { clearSelectedAvatar, selectAvatarId } from '../store/avatars/reducer';
-
 import {
   selectAvailableAvatars,
   selectAvatarsError,
@@ -23,20 +21,20 @@ import {
   selectSelectedAvatarId,
 } from '../store/avatars/selectors';
 import { useAppDispatch } from '../store/hook';
-import { createProfile } from '../store/profiles/action';
+import { approveJoinRequest } from '../store/households/action';
 import { combinedLightTheme } from '../themes/theme';
 import { Avatar } from '../types/Avatar';
 
-type Props = DrawerScreenProps<DrawerParamList, 'CreateProfile'>;
+type Props = MaterialTopTabScreenProps<TabProfileParamsList, 'EditProfile'>;
 
-export default function CreateProfileScreen({ navigation, route }: Props) {
+export default function EditProfileScreen({ navigation, route }: Props) {
   const dispatch = useAppDispatch();
-  const [name, setName] = useState('');
-  const householdId = route.params.createProfile.id;
-  const isOwner = route.params.createProfile.isOwner;
-  const isRequest = route.params.createProfile.isRequest;
+  const profile = route.params?.profile;
+  console.log('EditProfileScreen', profile);
+  const householdId = profile?.household?.id;
+  // Add null check for initial name value
+  const [name, setName] = useState(profile?.name || '');
 
-  // Use Redux state instead of local state for selectedAvatarId
   const selectedAvatarId = useSelector(selectSelectedAvatarId);
   const avatars = useSelector(selectAvailableAvatars);
   const isLoading = useSelector(selectAvatarsLoading);
@@ -53,58 +51,90 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
 
   const handleAvatarSelect = (avatar: Avatar) => {
     if (avatar.id) {
-      // Add null check
       dispatch(selectAvatarId(avatar.id));
     }
   };
 
+  // Add null checks and proper validation
+  const isFormValid = Boolean(
+    name?.trim() &&
+      selectedAvatarId &&
+      selectedAvatarId !== 0 &&
+      householdId &&
+      avatars?.length > 0,
+  );
+
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a name');
+    if (!profile || !profile.household?.id) {
+      Alert.alert('Error', 'Missing required profile data');
       return;
     }
 
     if (!selectedAvatarId || selectedAvatarId === 0) {
-      // Add explicit check for 0
       Alert.alert('Error', 'Please select an avatar');
       return;
     }
 
-    if (!householdId) {
-      Alert.alert('Error', 'Invalid household selection');
+    if (!name.trim()) {
+      Alert.alert('Error', 'Please enter a valid name');
       return;
     }
 
-    try {
-      await dispatch(
-        createProfile({
-          name: name.trim(),
-          avatarId: selectedAvatarId,
-          isOwner: isOwner,
-          isRequest: isRequest,
-          householdId: householdId,
-        }),
-      ).unwrap();
+    Alert.alert(
+      'Save Changes',
+      'Are you sure you want to save these profile changes?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Save',
+          style: 'default',
+          onPress: async () => {
+            try {
+              await dispatch(
+                approveJoinRequest({
+                  id: profile.id,
+                  name: name.trim(),
+                  isOwner: profile.isOwner,
+                  isRequest: profile.isRequest,
+                  householdId: profile.householdId,
+                  accountId: profile.accountId,
+                  avatarId: selectedAvatarId,
+                  household: null,
+                  Account: null,
+                }),
+              );
 
-      navigation.goBack();
-    } catch (err) {
-      console.error('Error creating profile:', err);
-      Alert.alert('Error', 'Failed to create profile');
-    }
+              Alert.alert('Success', 'Profile updated successfully', [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.navigate('Dashboard'),
+                },
+              ]);
+              // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
+            } catch (error) {
+              console.error('Failed to approve request:', error);
+              Alert.alert(
+                'Error',
+                'Failed to update profile. Please try again.',
+                [{ text: 'OK' }],
+              );
+            } finally {
+              dispatch(clearSelectedAvatar());
+              setName('');
+            }
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
-
-  const isFormValid = Boolean(
-    name.trim() &&
-      selectedAvatarId &&
-      selectedAvatarId !== 0 && // Add explicit check for 0
-      householdId &&
-      avatars.length > 0,
-  );
-
-  if (!householdId) {
+  if (!profile) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Invalid household selection</Text>
+        <Text>No profile data available</Text>
       </View>
     );
   }
@@ -112,7 +142,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.title}>Create Profile</Text>
+        <Text style={styles.title}>Edit Profile</Text>
 
         <TextInput
           placeholder="Enter your name"
@@ -124,7 +154,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
         <Text style={styles.subtitle}>Select an Avatar</Text>
 
         <View style={styles.avatarGrid}>
-          {avatars.length > 0 ? (
+          {avatars?.length > 0 ? (
             avatars.map((avatar) => (
               <TouchableOpacity
                 key={avatar.id}
@@ -150,10 +180,11 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
           />
         ) : (
           <Button
-            title="Create Profile"
+            mode="contained"
             onPress={handleSubmit}
-            disabled={!isFormValid}
-          />
+            disabled={!isFormValid}>
+            Save Changes
+          </Button>
         )}
 
         {error && <Text style={styles.errorText}>{error}</Text>}

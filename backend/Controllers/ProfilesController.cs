@@ -370,7 +370,8 @@ public class ProfilesController : ControllerBase
 
     private async Task UpdateProfileSafely(Profile existingProfile, Profile updatedProfile)
     {
-
+        existingProfile.Name = updatedProfile.Name;
+        existingProfile.AvatarId = updatedProfile.AvatarId;
         existingProfile.IsRequest = updatedProfile.IsRequest;
 
         await _profileRepository.UpdateAsync(existingProfile);

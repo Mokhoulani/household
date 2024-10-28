@@ -1,6 +1,6 @@
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Alert, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Card, Surface, Text } from 'react-native-paper';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
@@ -39,23 +39,34 @@ export default function HouseholdDetailsScreen({ route }: Props) {
       return;
     }
 
-    try {
-      await dispatch(
-        approveJoinRequest({
-          id: profile.id,
-          name: profile.name,
-          isOwner: profile.isOwner,
-          isRequest: profile.isRequest,
-          householdId: household?.id,
-          accountId: profile.accountId,
-          avatarId: profile.avatarId,
-          household: null,
-          Account: null,
-        }),
-      );
-    } catch (error) {
-      console.error('Failed to approve request:', error);
-    }
+    Alert.alert(
+      'Approve Request',
+      `Are you sure you want to approve ${profile.name}'s join request?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Approve',
+          style: 'default',
+          onPress: async () => {
+            try {
+              await dispatch(approveJoinRequest(profile));
+            } catch (error) {
+              console.error('Failed to approve request:', error);
+              // Show error alert
+              Alert.alert(
+                'Error',
+                'Failed to approve the request. Please try again.',
+                [{ text: 'OK' }],
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   const handleRejectRequest = async (profile: Profile) => {
@@ -65,11 +76,34 @@ export default function HouseholdDetailsScreen({ route }: Props) {
       return;
     }
 
-    try {
-      await dispatch(rejectJoinRequest(profile));
-    } catch (error) {
-      console.error('Failed to reject request:', error);
-    }
+    Alert.alert(
+      'Reject Request',
+      `Are you sure you want to reject ${profile.name}'s join request?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Reject',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await dispatch(rejectJoinRequest(profile));
+            } catch (error) {
+              console.error('Failed to reject request:', error);
+              // Show error alert
+              Alert.alert(
+                'Error',
+                'Failed to reject the request. Please try again.',
+                [{ text: 'OK' }],
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   // Regular members section - visible to all

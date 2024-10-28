@@ -61,11 +61,10 @@ export default function DashboardProfileScreen({ navigation }: Props) {
     (profile: Profile) => {
       if (profile?.id) {
         dispatch(setCurrentProfile(profile));
-        // If you want to navigate to a details screen, uncomment and modify:
-        // navigation.navigate('ProfileDetails', { profileId: profile.id });
+        navigation.navigate('DetailsProfile', { profile: profile });
       }
     },
-    [dispatch],
+    [dispatch, navigation],
   );
 
   const renderProfileItem = useCallback(

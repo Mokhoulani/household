@@ -3,7 +3,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { SafeAreaView, StyleSheet, useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 import CreateHouseholdSceen from '../screens/CreateHousholdScreen';
 import DashboardScreen from '../screens/DashboardHouseholdScreen';
 import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
@@ -35,9 +35,7 @@ export default function TopTabsNavigatorHousehold() {
           height: 3,
         },
         tabBarLabelStyle: {
-          textTransform: 'none',
-          fontSize: 14,
-          fontWeight: '600',
+          fontSize: 0,
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',
@@ -89,17 +87,3 @@ export default function TopTabsNavigatorHousehold() {
     </Tab.Navigator>
   );
 }
-
-export function HouseholdNavigationScreen() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <TopTabsNavigatorHousehold />
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

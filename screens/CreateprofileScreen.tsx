@@ -82,7 +82,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
           avatarId: selectedAvatarId,
           isOwner: isOwner,
           isRequest: isRequest,
-          HouseholdId: householdId,
+          householdId: householdId,
         }),
       ).unwrap();
 

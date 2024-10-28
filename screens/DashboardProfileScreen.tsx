@@ -11,6 +11,7 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ActivityIndicator, Card, Surface } from 'react-native-paper';
 import { TabProfileParamsList } from '../navigators/TopTabsNavigatorProfile';
+import { initialAvatars } from '../store/avatars/state';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getProfiles } from '../store/profiles/action';
 import { setCurrentProfile } from '../store/profiles/reducer';
@@ -21,6 +22,15 @@ import {
 } from '../store/profiles/selectors';
 import { Profile } from '../types/profile';
 
+const colors = {
+  white: '#fff',
+  background: '#f5f5f5',
+  gray: 'gray',
+  error: '#dc3545',
+  primary: '#007AFF',
+  gold: 'gold',
+};
+
 type Props = MaterialTopTabScreenProps<TabProfileParamsList, 'Dashboard'>;
 
 export default function DashboardProfileScreen({ navigation }: Props) {
@@ -30,6 +40,7 @@ export default function DashboardProfileScreen({ navigation }: Props) {
   const isLoading = useAppSelector(selectProfileIsLoading);
   const error = useAppSelector(selectProfileError);
   const [refreshing, setRefreshing] = useState(false);
+  const avatar = initialAvatars;
 
   const fetchProfiles = useCallback(() => {
     dispatch(getProfiles()).catch((error) => {
@@ -60,9 +71,9 @@ export default function DashboardProfileScreen({ navigation }: Props) {
   const renderProfileItem = useCallback(
     (profile: Profile) => {
       if (!profile?.id) return null;
-
-      const subtitle = profile.Household
-        ? `${profile.isOwner ? 'Owner' : 'Member'} of ${profile.Household.name}`
+      const selectedAvatar = avatar.find((a) => a.id === profile.avatarId);
+      const subtitle = profile.household
+        ? `${profile.isOwner ? 'Owner' : 'Member'} of ${profile.household.name}`
         : profile.isRequest
           ? 'Pending Request'
           : 'No Household';
@@ -78,12 +89,27 @@ export default function DashboardProfileScreen({ navigation }: Props) {
             <Card.Title
               title={profile.name || 'Unnamed Profile'}
               subtitle={subtitle}
+              subtitleStyle={
+                profile.isOwner ? styles.ownerSubtitle : styles.memberSubtitle
+              }
+              // eslint-disable-next-line react/no-unstable-nested-components
+              right={() =>
+                profile.isOwner ? (
+                  <>
+                    {selectedAvatar && (
+                      <Text style={styles.avatarIcon}>
+                        {selectedAvatar.icon}
+                      </Text>
+                    )}
+                  </>
+                ) : null
+              }
             />
           </Card>
         </TouchableOpacity>
       );
     },
-    [handlePress],
+    [handlePress, avatar],
   );
 
   useEffect(() => {
@@ -119,7 +145,7 @@ export default function DashboardProfileScreen({ navigation }: Props) {
       return <Text style={styles.emptyMessage}>No profiles available</Text>;
     }
 
-    return profiles.map(renderProfileItem);
+    return profiles?.map(renderProfileItem);
   };
 
   return (
@@ -138,11 +164,10 @@ export default function DashboardProfileScreen({ navigation }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   scrollContent: {
     flexGrow: 1,
@@ -151,7 +176,7 @@ const styles = StyleSheet.create({
     margin: 16,
     elevation: 2,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   cardTouchable: {
     marginVertical: 8,
@@ -174,23 +199,34 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
     fontSize: 16,
-    color: 'gray',
+    color: colors.gray,
   },
   errorMessage: {
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 16,
-    color: '#dc3545',
+    color: colors.error,
   },
   retryButton: {
     marginTop: 10,
     padding: 12,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     borderRadius: 8,
   },
   retryText: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
+  },
+  ownerSubtitle: {
+    color: colors.gold,
+    fontWeight: 'bold',
+  },
+  memberSubtitle: {
+    color: colors.gray,
+    fontStyle: 'italic',
+  },
+  avatarIcon: {
+    fontSize: 30,
   },
 });

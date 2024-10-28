@@ -7,7 +7,7 @@ export type Profile = {
   isOwner: boolean;
   isRequest: boolean;
   householdId: number | undefined;
-  Household: Household | null;
+  household: Household | null;
   Account: Account;
   accountId: string;
   avatarId: number;
@@ -15,7 +15,7 @@ export type Profile = {
 
 export type CreateProfilePayload = Omit<
   Profile,
-  'id' | 'AccountId' | 'Account' | 'Household'
+  'id' | 'accountId' | 'Account' | 'household'
 >;
 export type ProfileDto = Pick<Profile, 'isOwner' | 'isRequest'>;
 

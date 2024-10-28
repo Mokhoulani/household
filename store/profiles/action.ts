@@ -21,7 +21,7 @@ export const getProfiles = createAppAsyncThunk<Profile[], void>(
 
 export const createProfile = createAppAsyncThunk<Profile, CreateProfilePayload>(
   'profiles/createProfile',
-  async ({ name, avatarId, isOwner, isRequest, HouseholdId }, thunkAPI) => {
+  async ({ name, avatarId, isOwner, isRequest, householdId }, thunkAPI) => {
     try {
       initializeApp();
       const response = await apiService.post<ApiResponse<Profile>>('Profiles', {
@@ -29,7 +29,7 @@ export const createProfile = createAppAsyncThunk<Profile, CreateProfilePayload>(
         avatarId,
         isOwner,
         isRequest,
-        HouseholdId,
+        householdId,
       });
       return response.data;
     } catch (error: any) {

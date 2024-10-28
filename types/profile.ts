@@ -6,16 +6,16 @@ export type Profile = {
   name: string;
   isOwner: boolean;
   isRequest: boolean;
-  HouseholdId: number | undefined;
-  Household: Household;
+  householdId: number | undefined;
+  household: Household | null;
   Account: Account;
-  AccountId: string;
+  accountId: string;
   avatarId: number;
 };
 
 export type CreateProfilePayload = Omit<
   Profile,
-  'id' | 'AccountId' | 'Account' | 'Household'
+  'id' | 'accountId' | 'Account' | 'household'
 >;
 export type ProfileDto = Pick<Profile, 'isOwner' | 'isRequest'>;
 

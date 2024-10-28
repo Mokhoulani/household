@@ -6,5 +6,5 @@ export type HouseholdState = {
   currentHousehold: Household | null;
   isLoading: boolean;
   error: string | null;
-  members: Profile[];
+  profiles: Profile[];
 };

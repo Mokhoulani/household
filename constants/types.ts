@@ -8,7 +8,6 @@ export interface Field<T> {
   secureText?: boolean;
 }
 
-/// För sampledata bara
 type Emoji = (typeof emojies)[number];
 type Color = (typeof colors)[number];
 
@@ -28,6 +27,9 @@ export interface Task {
   id: string;
   Title: string;
   Difficulty: number;
+  lastCompletedDate: string;
+  emoji?: string;
+  color?: string;
 }
 
 export interface CompletedTask {

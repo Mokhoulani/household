@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CreateHouseholdSceen from '../screens/CreateHousholdScreen';
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/DailyViewScreen';
 import JoinHouseholdScreen from '../screens/JoinHouseholdScreen';
 
 export type TabHouseholdParamsList = {

@@ -1,5 +1,5 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/DailyViewScreen';
 
 export type TabProfileParamsList = {
   DetailsProfile: undefined;

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -31,7 +32,12 @@ public class CompleteTasksController : ControllerBase
                 return Unauthorized(new ApiResponse<IEnumerable<CompleteTask>> { Message = "User is not authenticated." });
             }
 
-            var completedTasks = await _completeTaskRepository.FindAsync(t => t.Profile.AccountId == userId);
+            var query = await _completeTaskRepository.QueryAsync();
+            var completedTasks = await query
+            .Include(t => t.Profile)
+            .Where(t => t.Profile.AccountId == userId)
+            .Include(t => t.HouseholdTask)
+            .ToListAsync();
 
             if (!completedTasks.Any())
             {

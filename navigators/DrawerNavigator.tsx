@@ -1,5 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
@@ -54,7 +56,7 @@ export default function DrawerNavigator() {
         options={() => ({
           title: '',
           drawerLabel: () => (
-            <MaterialIcons style={{ marginRight: 16 }} name="work" size={24} />
+            <FontAwesome5 style={{ marginRight: 16 }} name="tasks" size={24} />
           ),
         })}
       />
@@ -74,11 +76,7 @@ export default function DrawerNavigator() {
         options={() => ({
           title: '',
           drawerLabel: () => (
-            <MaterialIcons
-              style={{ marginRight: 16 }}
-              name="person"
-              size={24}
-            />
+            <AntDesign style={{ marginRight: 16 }} name="profile" size={24} />
           ),
         })}
       />

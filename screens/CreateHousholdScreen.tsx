@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleProp,
@@ -77,24 +78,48 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
   const handleSubmit = async () => {
     if (!validateForm() || isSubmitting) return;
 
-    try {
-      setIsSubmitting(true);
-      const result = await dispatch(createHousehold({ name })).unwrap();
+    Alert.alert(
+      'Create Household',
+      `Are you sure you want to create a household named "${name}"?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Create',
+          style: 'default',
+          onPress: async () => {
+            try {
+              setIsSubmitting(true);
+              const result = await dispatch(createHousehold({ name })).unwrap();
 
-      if (result) {
-        const profileData = {
-          ...result,
-          isOwner: true,
-          isRequest: true,
-        };
-        setName('');
-        navigation.navigate('CreateProfile', { createProfile: profileData });
-      }
-    } catch (err) {
-      console.error('Household creation failed:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
+              if (result) {
+                const profileData = {
+                  ...result,
+                  isOwner: true,
+                  isRequest: true,
+                };
+                setName('');
+                navigation.navigate('CreateProfile', {
+                  createProfile: profileData,
+                });
+              }
+            } catch (err) {
+              console.error('Household creation failed:', err);
+              Alert.alert(
+                'Error',
+                'Failed to create household. Please try again.',
+                [{ text: 'OK' }],
+              );
+            } finally {
+              setIsSubmitting(false);
+            }
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   const getInputStyle = (): StyleProp<TextStyle> => {

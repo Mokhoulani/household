@@ -1,5 +1,6 @@
 import { RootState } from '../store';
 
+export const selectAvatars = (state: RootState) => state;
 export const selectAvailableAvatars = (state: RootState) =>
   state.avatars.availableAvatars;
 export const selectSelectedAvatarId = (state: RootState) =>

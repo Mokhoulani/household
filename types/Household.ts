@@ -5,8 +5,8 @@ export type Household = {
   id: number;
   name: string;
   code: string;
-  members: Profile[];
-  tasks: HouseholdTask[];
+  profiles: { $values: Profile[] };
+  tasks: { $values: HouseholdTask[] };
 };
 
 export type CreateHousehold = {

@@ -1,6 +1,6 @@
 import initializeToken from './initialToken';
 
-const API_URL = 'http://188.151.47.88:5147/api/';
+const API_URL = 'http://193.13.169.110:5147/api/';
 
 interface ApiError extends Error {
   status: number;

@@ -31,6 +31,7 @@ public class HouseholdsController : ControllerBase
             var households = await query
             .Include(h => h.Profiles)
             .Where(h => h.Profiles.Any(p => p.AccountId == userId))
+            .Include(t => t.Tasks)
             .ToListAsync();
 
             if (!households.Any())

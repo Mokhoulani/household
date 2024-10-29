@@ -3,6 +3,7 @@ import authReducer from './auth/reducer';
 import avatarReducer from './avatars/reducer';
 import householdReducer from './households/reducer';
 import { profilesReducer } from './profiles/reducer';
+import { tasksReducer } from './tasks/reducer';
 import themereducer from './theme/reducer';
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     households: householdReducer,
     profiles: profilesReducer,
     avatars: avatarReducer,
+    tasks: tasksReducer,
   },
 });
 

@@ -11,10 +11,12 @@ import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
 
 // import { Household } from '../types/Household';
-import CreateTaskView from '../screens/CreateChoresScreen';
 
 import { CreateProfile } from '../types/profile';
 
+import TopTabsNavigatorChore, {
+  TabChoreParamsList,
+} from './TopTabsNavigatorChore';
 import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import TopTabsNavigatorProfile, {
   TabProfileParamsList,
@@ -27,6 +29,7 @@ export type DrawerParamList = {
   TodyView: NavigatorScreenParams<TabParamsList>;
   Household: NavigatorScreenParams<TabHouseholdParamsList>;
   Profile: NavigatorScreenParams<TabProfileParamsList>;
+  Chore: NavigatorScreenParams<TabChoreParamsList>;
   CreateProfile: { createProfile: CreateProfile };
   signout: undefined;
   settings: undefined;
@@ -37,19 +40,7 @@ const Drawer = createDrawerNavigator<DrawerParamList>();
 
 export default function DrawerNavigator() {
   return (
-    <Drawer.Navigator
-      // initialRouteName="CraeteProfile"
-      screenOptions={({ navigation }) => ({
-        headerRight: (props) => (
-          <MaterialIcons
-            style={{ marginRight: 16 }}
-            name="settings"
-            size={24}
-            color={props.tintColor}
-            onPress={() => navigation.navigate('settings')}
-          />
-        ),
-      })}>
+    <Drawer.Navigator>
       <Drawer.Screen
         name="TodyView"
         component={TopTabsNavigator}
@@ -81,6 +72,16 @@ export default function DrawerNavigator() {
         })}
       />
       <Drawer.Screen
+        name="Chore"
+        component={TopTabsNavigatorChore}
+        options={() => ({
+          title: '',
+          drawerLabel: () => (
+            <FontAwesome5 style={{ marginRight: 16 }} name="tasks" size={24} />
+          ),
+        })}
+      />
+      <Drawer.Screen
         name="signout"
         component={LogoutScreen}
         options={() => ({
@@ -105,16 +106,6 @@ export default function DrawerNavigator() {
         component={SettingsScreen}
         options={() => ({
           drawerLabel: () => null,
-        })}
-      />
-      <Drawer.Screen
-        name="createTask"
-        component={CreateTaskView}
-        options={() => ({
-          title: '',
-          drawerLabel: () => (
-            <MaterialIcons style={{ marginRight: 16 }} name="work" size={24} />
-          ),
         })}
       />
     </Drawer.Navigator>

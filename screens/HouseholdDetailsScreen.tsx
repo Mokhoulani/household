@@ -1,6 +1,6 @@
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Alert, SafeAreaView, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Card, Surface, Text } from 'react-native-paper';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
@@ -11,6 +11,7 @@ import {
   rejectJoinRequest,
 } from '../store/households/action';
 import { selectCurrentProfileByAccountId } from '../store/households/selectors';
+import { globalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
 
 type Props = MaterialTopTabScreenProps<
@@ -29,7 +30,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
 
   // Get pending requests - only if user is owner
   const pendingRequests = isHouseholdOwner
-    ? household?.profiles?.$values?.filter((profile) => !profile.isRequest)
+    ? household?.profiles?.$values?.filter((profile) => profile.isRequest)
     : [];
 
   const handleApproveRequest = async (profile: Profile) => {
@@ -108,18 +109,20 @@ export default function HouseholdDetailsScreen({ route }: Props) {
 
   // Regular members section - visible to all
   const regularMembersSection = (
-    <Surface style={styles.surface}>
-      <Card style={styles.card}>
+    <Surface style={globalStyles.surface}>
+      <Card style={globalStyles.card}>
         <Card.Title
           title={household?.name}
-          titleStyle={styles.title}
+          titleStyle={globalStyles.title}
           // eslint-disable-next-line react/no-unstable-nested-components
-          left={() => <Text style={styles.avatarIcon}>🏠</Text>}
-          subtitle={`Members (${household?.profiles?.$values?.filter((p) => p.isRequest).length ?? 0})`}
-          subtitleStyle={styles.subtitle}
+          left={() => <Text style={globalStyles.avatarIcon}>🏠</Text>}
+          subtitle={`Members (${
+            household?.profiles?.$values?.filter((p) => p.isRequest).length ?? 0
+          })`}
+          subtitleStyle={globalStyles.subtitle}
         />
-        <Card.Content style={styles.cardContent}>
-          <Text style={styles.code}>code :{household?.code}</Text>
+        <Card.Content style={globalStyles.cardContent}>
+          <Text style={globalStyles.code}>code :{household?.code}</Text>
         </Card.Content>
         {household?.profiles?.$values
           ?.filter((profile) => profile.isRequest)
@@ -132,19 +135,19 @@ export default function HouseholdDetailsScreen({ route }: Props) {
             return (
               <TouchableOpacity
                 key={profile.id}
-                style={styles.cardTouchable}
+                style={globalStyles.cardTouchable}
                 onPress={() => console.log('Profile clicked:', profile)}>
-                <Card style={styles.card}>
+                <Card style={globalStyles.card}>
                   <Card.Title
                     title={profile.name}
-                    titleStyle={styles.nameBadge}
+                    titleStyle={globalStyles.nameBadge}
                     subtitle={profile.isOwner ? 'Owner' : 'Member'}
                     // eslint-disable-next-line react/no-unstable-nested-components
                     right={() =>
                       profile.isOwner ? (
                         <>
                           {selectedAvatar && (
-                            <Text style={styles.avatarIcon}>
+                            <Text style={globalStyles.avatarIcon}>
                               {selectedAvatar.icon}
                             </Text>
                           )}
@@ -163,26 +166,26 @@ export default function HouseholdDetailsScreen({ route }: Props) {
   // Pending requests section - only rendered for owner
   const pendingRequestsSection =
     isHouseholdOwner && pendingRequests && pendingRequests.length > 0 ? (
-      <Surface style={styles.surface}>
-        <Card style={styles.card}>
+      <Surface style={globalStyles.surface}>
+        <Card style={globalStyles.card}>
           <Card.Title
             title="Pending Join Requests"
             subtitle={`${pendingRequests.length} pending`}
           />
           {pendingRequests.map((profile) => (
-            <Card key={profile.id} style={styles.requestCard}>
+            <Card key={profile.id} style={globalStyles.requestCard}>
               <Card.Title title={profile.name} />
-              <Card.Actions style={styles.actions}>
+              <Card.Actions style={globalStyles.actions}>
                 <Button
                   mode="contained"
                   onPress={() => handleApproveRequest(profile)}
-                  style={styles.actionButton}>
+                  style={globalStyles.actionButton}>
                   Approve
                 </Button>
                 <Button
                   mode="outlined"
                   onPress={() => handleRejectRequest(profile)}
-                  style={styles.actionButton}
+                  style={globalStyles.actionButton}
                   buttonColor="#fff">
                   Reject
                 </Button>
@@ -194,7 +197,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
     ) : null;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
       <ScrollView>
         {regularMembersSection}
         {pendingRequestsSection}
@@ -202,59 +205,3 @@ export default function HouseholdDetailsScreen({ route }: Props) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  surface: {
-    margin: 16,
-    elevation: 2,
-    borderRadius: 8,
-  },
-  cardTouchable: {
-    marginVertical: 8,
-  },
-  card: {
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  requestCard: {
-    marginVertical: 8,
-    borderRadius: 8,
-  },
-  actions: {
-    justifyContent: 'flex-end',
-    paddingRight: 8,
-    paddingBottom: 8,
-  },
-  actionButton: {
-    marginLeft: 8,
-  },
-  avatarIcon: {
-    fontSize: 30,
-  },
-  code: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginRight: 16,
-  },
-  title: {
-    fontWeight: 'bold',
-    marginRight: 16,
-    alignSelf: 'center',
-  },
-  subtitle: {
-    fontWeight: 'bold',
-    marginRight: 16,
-    alignSelf: 'center',
-  },
-  nameBadge: {
-    fontWeight: 'bold',
-    marginRight: 16,
-  },
-  cardContent: {
-    padding: 20,
-    alignItems: 'center',
-  },
-});

@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleProp,
-  StyleSheet,
   Text,
   TextInput,
   TextStyle,
@@ -24,6 +23,7 @@ import { selectErrorMessage } from '../store/auth/selectors';
 import { useAppDispatch } from '../store/hook';
 import { addJoinRequest } from '../store/households/action';
 import { RootState } from '../store/store';
+import { globalStyles } from '../themes/styles';
 
 type Props = CompositeScreenProps<
   MaterialTopTabScreenProps<TabHouseholdParamsList, 'JoinHousehold'>,
@@ -32,24 +32,6 @@ type Props = CompositeScreenProps<
     NativeStackScreenProps<RootStackParamList>
   >
 >;
-
-const theme = {
-  colors: {
-    primary: '#007AFF',
-    background: '#FFFFFF',
-    border: '#DDDDDD',
-    error: '#FF3B30',
-    text: {
-      primary: '#333333',
-      secondary: '#666666',
-      light: '#FFFFFF',
-    },
-    button: {
-      disabled: '#CCCCCC',
-      loading: '#0000FF',
-    },
-  },
-} as const;
 
 export default function JoinHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
@@ -86,7 +68,7 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
         const profileData = {
           ...result,
           isOwner: false,
-          isRequest: false,
+          isRequest: true,
         };
         setCode('');
         navigation.navigate('CreateProfile', { createProfile: profileData });
@@ -104,9 +86,9 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
   };
 
   const getInputStyle = (): StyleProp<TextStyle> => {
-    const baseStyle = styles.input;
+    const baseStyle = globalStyles.input;
     if (codeError) {
-      return [baseStyle, styles.inputError];
+      return [baseStyle, globalStyles.inputError];
     }
     return baseStyle;
   };
@@ -114,11 +96,11 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>Join Household</Text>
+      style={globalStyles.container}>
+      <View style={globalStyles.contentContainer}>
+        <Text style={globalStyles.title}>Join Household</Text>
 
-        <Text style={styles.description}>
+        <Text style={globalStyles.description}>
           Enter the household code provided by the household owner to join their
           household.
         </Text>
@@ -140,87 +122,24 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
           onSubmitEditing={handleSubmit}
         />
 
-        {codeError && <Text style={styles.errorText}>{codeError}</Text>}
+        {codeError && <Text style={globalStyles.errorText}>{codeError}</Text>}
 
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        {error && <Text style={globalStyles.errorText}>{error}</Text>}
 
         <TouchableOpacity
           style={[
-            styles.submitButton,
-            (isLoading || !code.trim()) && styles.submitButtonDisabled,
+            globalStyles.submitButton,
+            (isLoading || !code.trim()) && globalStyles.submitButtonDisabled,
           ]}
           onPress={handleSubmit}
           disabled={isLoading || !code.trim()}>
           {isLoading ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.submitButtonText}>Join Household</Text>
+            <Text style={globalStyles.submitButtonText}>Join Household</Text>
           )}
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  contentContainer: {
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: theme.colors.text.primary,
-  },
-  description: {
-    fontSize: 16,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: 24,
-    paddingHorizontal: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: 8,
-    padding: 15,
-    marginVertical: 10,
-    width: '100%',
-    backgroundColor: theme.colors.background,
-    fontSize: 20,
-    textAlign: 'center',
-    letterSpacing: 2,
-    color: theme.colors.text.primary,
-  },
-  inputError: {
-    borderColor: theme.colors.error,
-  },
-  errorText: {
-    color: theme.colors.error,
-    fontSize: 14,
-    marginTop: 5,
-    alignSelf: 'flex-start',
-  },
-  submitButton: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 8,
-    padding: 15,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  submitButtonDisabled: {
-    backgroundColor: theme.colors.button.disabled,
-  },
-  submitButtonText: {
-    color: theme.colors.text.light,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

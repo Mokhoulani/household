@@ -14,11 +14,11 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:5147/api/auth/register
+POST http://192.168.8.165:5147/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "newuseer3@example.com",
+  "email": "newuseer2@example.com",
   "password": "NewUserPassword123!",
   "fullName": "New User1"
 }
@@ -68,4 +68,25 @@ Content-Type: application/json
 
 ###
 GET  http://192.168.8.165:5147/api/HouseholdTasks
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-8J6waKT_KmNFIHhk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJqdGkiOiJlNzg1YTNiNy04MzNmLTRkYTItYTRkMS0zODdjYjBlZDgyMjIiLCJ1c2VySWQiOiJmZjkwYjliNC04YTFkLTRkYjMtOWUyYi02YjcyODFmYWZkNzgiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3MjkxNDAxNTgsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.q_e--vKlXz_J0vRVIqacxOImqn-
+
+###
+POST http://192.168.8.165:5147/api/HouseholdTasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJqdGkiOiIwMzFjOWFhYy05YjcyLTQ0YTMtODBkZi1jZWIyZDg0NzQzNDgiLCJ1c2VySWQiOiI4NjlkZGQ3MS02NzFkLTRhZGUtOTRlYS1mNDkyM2NhMTkwNWIiLCJuYW1lIjoiTmV3IFVzZXIxIiwiZW1haWwiOiJuZXd1c2VlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3MzAxMzg1OTAsImlzcyI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDciLCJhdWQiOiJodHRwOi8vMTkyLjE2OC44LjE2NTo1MTQ3In0.23zWea1coa-Q15ruscTrbgy7IdSh3lbDyeCjKonGzYA
+Content-Type: application/json
+
+ {
+
+   "HouseholdId" : 3,
+    "Interval" : 7, 
+    "IsArchived" : false,
+    "Title" : "Grocery Shopping",
+     "Description" : "Weekly grocery shopping task for the household.",
+    "Difficulty" : 3
+  }
+
+###
+GET  http://192.168.8.165:5147/api/HouseholdTasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtb2tAZ21haWwuY29tIiwianRpIjoiNDdmMTI0OTgtYTRiYS00YzE4LWIxYzAtMTA5MTUwOGU3NzA0IiwidXNlcklkIjoiZDJhMDVlYmItMGU3MC00NGUyLWI1NWMtMmNiNWFhYTZhZTBkIiwibmFtZSI6Ik1vayIsImVtYWlsIjoibW9rQGdtYWlsLmNvbSIsImV4cCI6MTczMDE0MTQ0NiwiaXNzIjoiaHR0cDovLzE5Mi4xNjguOC4xNjU6NTE0NyIsImF1ZCI6Imh0dHA6Ly8xOTIuMTY4LjguMTY1OjUxNDcifQ.X_YISsqqvRmsyrI9pMIUVKJ1iMd8zId-D0lwNZYOqXs
+Content-Type: application/json
+

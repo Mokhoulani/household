@@ -168,9 +168,19 @@ public class HouseholdTasksController : ControllerBase
     }
     private async Task<bool> UserBelongsToHouseholdAsync(string userId, int householdId)
     {
-        var household = await _householdTaskRepository.GetByIdAsync(householdId);
-        return household?.Household.Profiles.Any(p => p.AccountId == userId) ?? false;
+        if (householdId <= 0)
+            throw new ArgumentException("Household ID must be positive", nameof(householdId));
+
+        var query = await _householdTaskRepository.QueryAsync();
+        var isBelong = await query
+            .Where(ht => ht.HouseholdId == householdId)  // Filter by householdId first
+            .Select(ht => ht.Household)
+            .SelectMany(h => h.Profiles)
+            .AnyAsync(p => p.AccountId == userId);
+        return isBelong;
     }
+
+
 }
 
 

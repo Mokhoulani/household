@@ -1,79 +1,185 @@
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  ScrollView,
+  View,
+} from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
+import { TabChoreParamsList } from '../navigators/TopTabsNavigatorChore';
+import { useAppDispatch, useAppSelector } from '../store/hook';
+import { selectCurrentHousehold } from '../store/households/selectors';
+import { selectCurrentProfile } from '../store/profiles/selectors';
+import { addTask } from '../store/tasks/action';
+import { globalStyles } from '../themes/styles';
+import { combinedLightTheme } from '../themes/theme';
 
-interface Task {
-    id: string;
-    value: string;
+interface TaskFormData {
+  title: string;
+  description: string;
+  difficulty: number;
+  interval: number;
 }
 
-export default function CreateTaskView() {
-    // State för att hålla inmatad text och listan med sysslor
-    const [text, setText] = useState<string>('');  // Typen för text är string
-    const [tasks, setTasks] = useState<Task[]>([]);  // Typen för tasks är en array av Task-objekt
+const initialFormState: TaskFormData = {
+  title: '',
+  description: '',
+  difficulty: 0,
+  interval: 0,
+};
 
-    // Funktion för att lägga till en ny syssla
-    const addTask = () => {
-        if (text.length > 0) {
-            const newTask: Task = { id: tasks.length.toString(), value: text };
-            setTasks([...tasks, newTask]);
-            setText(''); // Tömmer inmatningsfältet efter att sysslan har lagts till
-        }
-    };
+type Props = MaterialTopTabScreenProps<TabChoreParamsList, 'CreateChore'>;
 
+export default function CreateTaskView({ navigation }: Props) {
+  const dispatch = useAppDispatch();
+  const [formData, setFormData] = useState<TaskFormData>(initialFormState);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isOwner = useAppSelector(selectCurrentProfile);
+  const household = useAppSelector(selectCurrentHousehold);
+
+  if (!isOwner) {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Skapa en ny syssla</Text>
-
-            {/* TextInput för att skriva in en syssla */}
-            <TextInput
-                style={styles.input}
-                placeholder="Ange en syssla..."
-                onChangeText={setText}
-                value={text}
-            />
-
-            {/* Button för att lägga till sysslan */}
-            <Button title="Lägg till syssla" onPress={addTask} />
-
-            {/* Lista över sysslor */}
-            <FlatList
-                data={tasks}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.taskItem}>
-                        <Text>{item.value}</Text>
-                    </View>
-                )}
-            />
-        </View>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.errorText}>
+          You are not the owner of this household
+        </Text>
+      </View>
     );
-}
+  }
 
-// Styles för layouten
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 20,
-        justifyContent: 'center',
+  if (!household) {
+    return (
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.errorText}>No household selected</Text>
+      </View>
+    );
+  }
+
+  const isFormValid = Boolean(
+    formData.title.trim() && formData.description.trim(),
+  );
+
+  const handleChange = (field: keyof TaskFormData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]:
+        field === 'title' || field === 'description' ? value : Number(value),
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!isFormValid) {
+      Alert.alert('Error', 'Please enter a title and description');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await dispatch(
+        addTask({
+          ...formData,
+          householdId: household.id,
+          isArchived: false,
+        }),
+      );
+      Alert.alert('Success', 'Task created successfully');
+      setFormData(initialFormState);
+      navigation.navigate('TasksDetails');
+    } catch (err) {
+      setError('Failed to create task. Please try again later.');
+      console.error('Task creation error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderFormField = (
+    label: string,
+    field: keyof TaskFormData,
+    placeholder: string,
+    options?: {
+      multiline?: boolean;
+      keyboardType?: 'default' | 'numeric';
+      hint?: string;
     },
-    title: {
-        fontSize: 24,
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 20,
-        borderRadius: 5,
-    },
-    taskItem: {
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        marginTop: 10,
-    },
-});
+  ) => (
+    <View style={globalStyles.inputContainer}>
+      <Text style={globalStyles.label}>{label}</Text>
+      <TextInput
+        placeholder={placeholder}
+        value={String(formData[field])}
+        onChangeText={(value) => handleChange(field, value)}
+        style={[
+          globalStyles.input,
+          options?.multiline && globalStyles.multilineInput,
+        ]}
+        multiline={options?.multiline}
+        keyboardType={options?.keyboardType || 'default'}
+        testID={`task-${field}-input`}
+      />
+      {options?.hint && (
+        <Text style={globalStyles.hintText}>{options.hint}</Text>
+      )}
+    </View>
+  );
+
+  return (
+    <ScrollView contentContainerStyle={globalStyles.scrollContent}>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.title}>Create Task</Text>
+
+        {renderFormField('Task Title *', 'title', 'Enter your title', {
+          hint: 'Give your task a clear and descriptive title',
+        })}
+
+        {renderFormField(
+          'Description *',
+          'description',
+          'Enter your description',
+          {
+            multiline: true,
+            hint: 'Provide detailed instructions for the task',
+          },
+        )}
+
+        {renderFormField(
+          'Difficulty Level',
+          'difficulty',
+          'Enter difficulty level',
+          {
+            keyboardType: 'numeric',
+            hint: 'Rate difficulty from 0 (easiest) to 10 (hardest)',
+          },
+        )}
+
+        {renderFormField('Interval', 'interval', 'Enter interval', {
+          keyboardType: 'numeric',
+          hint: 'How often should this task repeat? (in days)',
+        })}
+
+        {error && <Text style={globalStyles.errorText}>{error}</Text>}
+
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color={combinedLightTheme.colors.primary}
+            testID="loading-indicator"
+          />
+        ) : (
+          <Button
+            title="Create Task"
+            onPress={handleSubmit}
+            disabled={!isFormValid}
+            testID="submit-button"
+          />
+        )}
+      </View>
+    </ScrollView>
+  );
+}

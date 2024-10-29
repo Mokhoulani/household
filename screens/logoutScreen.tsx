@@ -1,13 +1,10 @@
 import { CommonActions } from '@react-navigation/native';
 import React from 'react';
-import { Alert, Button, StyleSheet, View } from 'react-native';
+import { Alert, Button, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { logout } from '../store/auth/action';
 import { useAppDispatch } from '../store/hook';
-
-const colors = {
-  background: '#fff',
-};
+import { globalStyles } from '../themes/styles';
 
 export default function LogoutScreen() {
   const dispatch = useAppDispatch();
@@ -26,21 +23,9 @@ export default function LogoutScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
       <Button title="Logout" onPress={handleLogout} />
-      <View style={styles.spacer} />
+      <View style={globalStyles.spacer} />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  spacer: {
-    marginVertical: 10,
-  },
-});

@@ -4,9 +4,11 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import CreateTaskView from '../screens/CreateChoresScreen';
+import TasksDetailsScreen from '../screens/TasksDetailsScreen';
 
 export type TabChoreParamsList = {
   CreateChore: undefined;
+  TasksDetails: undefined;
 };
 
 const Tab = createMaterialTopTabNavigator<TabChoreParamsList>();
@@ -38,6 +40,16 @@ export default function TopTabsNavigatorChore() {
       <Tab.Screen
         name="CreateChore"
         component={CreateTaskView}
+        options={{
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="add-home-work" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TasksDetails"
+        component={TasksDetailsScreen}
         options={{
           title: '',
           tabBarIcon: ({ color }) => (

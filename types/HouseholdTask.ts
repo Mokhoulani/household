@@ -6,7 +6,17 @@ export type HouseholdTask = {
   description: string;
   householdId: number;
   household: Household;
-  Difficulty: number;
-  Interval: number;
-  IsArchived: boolean;
+  difficulty: number;
+  interval: number;
+  isArchived: boolean;
 };
+
+export type TaskPayload = Pick<
+  HouseholdTask,
+  | 'title'
+  | 'description'
+  | 'difficulty'
+  | 'interval'
+  | 'isArchived'
+  | 'householdId'
+>;

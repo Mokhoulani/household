@@ -22,7 +22,7 @@ export default function StatisticsScreen() {
     }
   }, [dispatch, currentHousehold?.id]);
 
-  const completedTasksArray = cT.completedTasks || [];
+  const completedTasksArray: CompleteTask[] = cT.completedTasks || [];
 
   return (
     <SafeAreaView style={styles.page}>

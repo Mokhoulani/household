@@ -91,7 +91,7 @@ export default function EditProfileScreen({ navigation, route }: Props) {
         }),
       );
       navigation.navigate('Dashboard');
-      // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
+      // eslint-disable-next-line no-catch-shadow,
     } catch (error) {
       console.error('Failed to approve request:', error);
     }

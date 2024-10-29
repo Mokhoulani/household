@@ -29,6 +29,7 @@ module.exports = {
         tabWidth: 2,
       },
     ],
+    '@typescript-eslint/no-shadow': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-native/no-unused-styles': 'warn',
     'react-native/split-platform-components': 'warn',

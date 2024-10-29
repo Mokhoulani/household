@@ -26,7 +26,6 @@ export default function ProfileDetailsScreen({ navigation, route }: Props) {
     <MaterialIcons name="edit" size={24} color="black" />
   );
   const handlePress = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     (profile: Profile) => {
       if (profile?.id) {
         dispatch(setCurrentProfile(profile));
@@ -51,7 +50,7 @@ export default function ProfileDetailsScreen({ navigation, route }: Props) {
           <Card style={globalStyles.card}>
             <Card.Title
               title={profile?.name ?? 'No Name'}
-              titleStyle={globalStyles.titleStyle}
+              titleStyle={globalStyles.title}
               left={renderLeftIcon}
               subtitle={profile?.isOwner ? 'Owner' : 'Member'}
               subtitleStyle={globalStyles.subtitle}
@@ -63,7 +62,7 @@ export default function ProfileDetailsScreen({ navigation, route }: Props) {
               <Card style={globalStyles.innerCard}>
                 <Card.Title
                   title={profile?.name ?? 'Profile Name'}
-                  titleStyle={globalStyles.titleStyle}
+                  titleStyle={globalStyles.title}
                   subtitle={profile?.isOwner ? 'Owner' : 'Member'}
                   left={renderLeftIcon}
                   right={renderRightIcon}

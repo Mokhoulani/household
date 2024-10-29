@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,7 +14,7 @@ import { globalStyles } from '../themes/styles';
 import { HouseholdTask } from '../types/HouseholdTask';
 
 export default function TasksDetailsScreen() {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -25,7 +24,7 @@ export default function TasksDetailsScreen() {
   const error = useAppSelector((state) => state.tasks?.error ?? null);
 
   const fetchTasks = useCallback(() => {
-    return dispatch(getTasks()).catch((error) => {
+    return dispatch(getTasks()).catch(function (error) {
       console.error('Failed to fetch tasks', error);
     });
   }, [dispatch]);
@@ -43,13 +42,10 @@ export default function TasksDetailsScreen() {
     }
   }, [fetchTasks]);
 
-  const handlePress = useCallback(
-    (task: HouseholdTask) => {
-      if (task?.id) {
-      }
-    },
-    [navigation],
-  );
+  const handlePress = useCallback((task: HouseholdTask) => {
+    if (task?.id) {
+    }
+  }, []);
 
   const renderTaskItem = useCallback(
     ({ item }: { item: HouseholdTask | null }) => {
@@ -106,7 +102,7 @@ export default function TasksDetailsScreen() {
           Error loading tasks. Please try again.
         </Text>
         <TouchableOpacity style={globalStyles.retryButton} onPress={fetchTasks}>
-          <Text style={globalStyles.retryButtonText}>Retry</Text>
+          <Text style={globalStyles.retryButton}>Retry</Text>
         </TouchableOpacity>
       </View>
     );

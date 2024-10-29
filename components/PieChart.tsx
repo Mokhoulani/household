@@ -1,10 +1,11 @@
 import React from 'react';
 import { VictoryPie } from 'victory-native';
 import { View, StyleSheet, Text } from 'react-native';
-import { CompletedTask } from '../constants/types';
+import { CompleteTask } from '../types/CompleteTask';
+import { initialAvatars } from '../store/avatars/state';
 
 interface Props {
-  completedTasks: CompletedTask[];
+  completedTasks: CompleteTask[];
   chartTitle: string;
   useLabel?: boolean;
   width: number;
@@ -22,14 +23,17 @@ export default function PieChart({
         acc: { [key: string]: { x: string; y: number; color: string } },
         item,
       ) => {
-        if (!acc[item.Profile.id]) {
-          acc[item.Profile.id] = {
-            color: item.Profile.Avatar.color,
-            x: item.Profile.Avatar.icon,
-            y: item.Task.Difficulty,
+        if (!acc[item.profileId]) {
+          const avatar = initialAvatars.find(
+            (a) => a.id === item.profile.avatarId,
+          );
+          acc[item.profileId] = {
+            color: avatar?.color || 'black',
+            x: avatar?.icon || '',
+            y: item.householdTask.difficulty,
           };
         } else {
-          acc[item.Profile.id].y += item.Task.Difficulty;
+          acc[item.profileId].y += item.householdTask.difficulty;
         }
 
         return acc;

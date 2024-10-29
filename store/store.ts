@@ -5,6 +5,7 @@ import householdReducer from './households/reducer';
 import { profilesReducer } from './profiles/reducer';
 import { tasksReducer } from './tasks/reducer';
 import themereducer from './theme/reducer';
+import completedTasksReducer from './completedTasks/reducer';
 export const store = configureStore({
   reducer: {
     theme: themereducer,
@@ -12,6 +13,7 @@ export const store = configureStore({
     households: householdReducer,
     profiles: profilesReducer,
     avatars: avatarReducer,
+    completedTasks: completedTasksReducer,
     tasks: tasksReducer,
   },
 });

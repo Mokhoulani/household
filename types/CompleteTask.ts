@@ -3,9 +3,9 @@ import { Profile } from './profile';
 
 export type CompleteTask = {
   id: number;
-  CompletedAt: Date;
-  ProfileId: number;
-  Profile: Profile;
-  HouseholdTaskId: number;
-  HouseholdTask: HouseholdTask;
+  completedAt: Date;
+  profileId: number;
+  profile: Profile;
+  householdTaskId: number;
+  householdTask: HouseholdTask;
 };

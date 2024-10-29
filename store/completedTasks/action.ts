@@ -11,11 +11,11 @@ export const getCompletedTasks = createAppAsyncThunk<
   console.log('Hi!');
   try {
     await initializeApp();
-    const response = await apiService.get<ApiResponse<CompleteTask[]>>(
-      `CompleteTasks/by-household/${householdId}`,
-    );
-    thunkAPI.dispatch(setCompletedTasks(response.data));
-    return response.data;
+    const response = await apiService.get<
+      ApiResponse<{ $values: CompleteTask[] }>
+    >(`CompleteTasks/by-household/${householdId}`);
+    thunkAPI.dispatch(setCompletedTasks(response.data.$values));
+    return response.data.$values;
   } catch (error: any) {
     console.log(error);
     if (error.status === 404) {

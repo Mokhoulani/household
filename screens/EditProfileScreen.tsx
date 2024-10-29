@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
-  StyleSheet,
   TextInput,
   View,
 } from 'react-native';
@@ -22,6 +21,7 @@ import {
 } from '../store/avatars/selectors';
 import { useAppDispatch } from '../store/hook';
 import { approveJoinRequest } from '../store/households/action';
+import { globalStyles } from '../themes/styles';
 import { combinedLightTheme } from '../themes/theme';
 import { Avatar } from '../types/Avatar';
 
@@ -99,7 +99,7 @@ export default function EditProfileScreen({ navigation, route }: Props) {
 
   if (!profile) {
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <Text>No profile data available</Text>
       </View>
     );
@@ -107,33 +107,33 @@ export default function EditProfileScreen({ navigation, route }: Props) {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Edit Profile</Text>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.title}>Edit Profile</Text>
 
         <TextInput
           placeholder="Enter your name"
           value={name}
           onChangeText={setName}
-          style={styles.input}
+          style={globalStyles.input}
         />
 
-        <Text style={styles.subtitle}>Select an Avatar</Text>
+        <Text style={globalStyles.subtitle}>Select an Avatar</Text>
 
-        <View style={styles.avatarGrid}>
+        <View style={globalStyles.avatarGrid}>
           {avatars?.length > 0 ? (
             avatars.map((avatar) => (
               <TouchableOpacity
                 key={avatar.id}
                 style={[
-                  styles.avatarContainer,
-                  selectedAvatarId === avatar.id && styles.selectedAvatar,
+                  globalStyles.avatarContainer,
+                  selectedAvatarId === avatar.id && globalStyles.selectedAvatar,
                 ]}
                 onPress={() => handleAvatarSelect(avatar)}>
-                <Text style={styles.avatarIcon}>{avatar.icon}</Text>
+                <Text style={globalStyles.avatarIcon}>{avatar.icon}</Text>
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noAvatarText}>
+            <Text style={globalStyles.noAvatarText}>
               All avatars are currently in use
             </Text>
           )}
@@ -153,68 +153,8 @@ export default function EditProfileScreen({ navigation, route }: Props) {
           </Button>
         )}
 
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        {error && <Text style={globalStyles.errorText}>{error}</Text>}
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: combinedLightTheme.colors.border,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 20,
-    width: '100%',
-  },
-  avatarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 10,
-    marginBottom: 20,
-  },
-  avatarContainer: {
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: combinedLightTheme.colors.border,
-    margin: 5,
-  },
-  selectedAvatar: {
-    borderColor: combinedLightTheme.colors.primary,
-    backgroundColor: combinedLightTheme.colors.background,
-  },
-  avatarIcon: {
-    fontSize: 30,
-  },
-  errorText: {
-    color: combinedLightTheme.colors.error,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  noAvatarText: {
-    color: combinedLightTheme.colors.text,
-    textAlign: 'center',
-    marginTop: 10,
-  },
-});

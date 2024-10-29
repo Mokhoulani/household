@@ -4,7 +4,6 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -19,6 +18,7 @@ import {
   selectHouseholdLoading,
   selectHouseholds,
 } from '../store/households/selectors';
+import { globalStyles } from '../themes/styles';
 import { Household } from '../types/Household';
 
 type Props = MaterialTopTabScreenProps<TabHouseholdParamsList, 'Dashboard'>;
@@ -62,13 +62,13 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
       return (
         <TouchableOpacity
           key={item.id}
-          style={styles.cardTouchable}
+          style={globalStyles.cardTouchable}
           onPress={() => handlePress(item)}
           testID={`household-${item.id}`}
           accessibilityLabel={`View details for ${
             item.name || 'Unnamed Household'
           }`}>
-          <Card style={styles.card}>
+          <Card style={globalStyles.card}>
             <Card.Title
               title={item.name || 'Unnamed Household'}
               subtitle={
@@ -91,7 +91,7 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
   const renderContent = () => {
     if (isLoading && !refreshing) {
       return (
-        <View style={styles.centerContainer}>
+        <View style={globalStyles.centerContainer}>
           <ActivityIndicator size="large" />
         </View>
       );
@@ -99,31 +99,33 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
 
     if (error) {
       return (
-        <View style={styles.messageContainer}>
-          <Text style={styles.errorMessage}>
+        <View style={globalStyles.messageContainer}>
+          <Text style={globalStyles.errorMessage}>
             {typeof error === 'string' ? error : 'Failed to load households'}
           </Text>
           <TouchableOpacity
             onPress={fetchHouseholds}
-            style={styles.retryButton}
+            style={globalStyles.retryButton}
             testID="retry-button">
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={globalStyles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
       );
     }
 
     if (households.length === 0) {
-      return <Text style={styles.emptyMessage}>No households available</Text>;
+      return (
+        <Text style={globalStyles.emptyMessage}>No households available</Text>
+      );
     }
 
     return households.map(renderHouseholdItem);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={globalStyles.scrollContent}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -131,64 +133,8 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
             testID="refresh-control"
           />
         }>
-        <Surface style={styles.surface}>{renderContent()}</Surface>
+        <Surface style={globalStyles.surface}>{renderContent()}</Surface>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  surface: {
-    margin: 16,
-    elevation: 2,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-  },
-  cardTouchable: {
-    marginVertical: 8,
-  },
-  card: {
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  messageContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 16,
-    color: 'gray',
-  },
-  errorMessage: {
-    textAlign: 'center',
-    marginVertical: 10,
-    fontSize: 16,
-    color: '#dc3545',
-  },
-  retryButton: {
-    marginTop: 10,
-    padding: 12,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

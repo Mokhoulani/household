@@ -5,16 +5,15 @@ import {
   Alert,
   Button,
   ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
 import { TabChoreParamsList } from '../navigators/TopTabsNavigatorChore';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { selectCurrentHousehold } from '../store/households/selectors';
 import { selectCurrentProfile } from '../store/profiles/selectors';
 import { addTask } from '../store/tasks/action';
+import { globalStyles } from '../themes/styles';
 import { combinedLightTheme } from '../themes/theme';
 
 interface TaskFormData {
@@ -44,8 +43,8 @@ export default function CreateTaskView({ navigation }: Props) {
 
   if (!isOwner) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.errorText}>
           You are not the owner of this household
         </Text>
       </View>
@@ -54,8 +53,8 @@ export default function CreateTaskView({ navigation }: Props) {
 
   if (!household) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>No household selected</Text>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.errorText}>No household selected</Text>
       </View>
     );
   }
@@ -110,25 +109,30 @@ export default function CreateTaskView({ navigation }: Props) {
       hint?: string;
     },
   ) => (
-    <View style={styles.inputContainer}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={globalStyles.inputContainer}>
+      <Text style={globalStyles.label}>{label}</Text>
       <TextInput
         placeholder={placeholder}
         value={String(formData[field])}
         onChangeText={(value) => handleChange(field, value)}
-        style={[styles.input, options?.multiline && styles.multilineInput]}
+        style={[
+          globalStyles.input,
+          options?.multiline && globalStyles.multilineInput,
+        ]}
         multiline={options?.multiline}
         keyboardType={options?.keyboardType || 'default'}
         testID={`task-${field}-input`}
       />
-      {options?.hint && <Text style={styles.hintText}>{options.hint}</Text>}
+      {options?.hint && (
+        <Text style={globalStyles.hintText}>{options.hint}</Text>
+      )}
     </View>
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContent}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Create Task</Text>
+    <ScrollView contentContainerStyle={globalStyles.scrollContent}>
+      <View style={globalStyles.container}>
+        <Text style={globalStyles.title}>Create Task</Text>
 
         {renderFormField('Task Title *', 'title', 'Enter your title', {
           hint: 'Give your task a clear and descriptive title',
@@ -159,7 +163,7 @@ export default function CreateTaskView({ navigation }: Props) {
           hint: 'How often should this task repeat? (in days)',
         })}
 
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        {error && <Text style={globalStyles.errorText}>{error}</Text>}
 
         {isLoading ? (
           <ActivityIndicator
@@ -179,51 +183,3 @@ export default function CreateTaskView({ navigation }: Props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-  },
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-    color: combinedLightTheme.colors.text,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: combinedLightTheme.colors.border,
-    borderRadius: 8,
-    padding: 10,
-    width: '100%',
-    backgroundColor: combinedLightTheme.colors.background,
-  },
-  multilineInput: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  hintText: {
-    fontSize: 12,
-    color: combinedLightTheme.colors.text,
-    opacity: 0.7,
-    marginTop: 4,
-  },
-  errorText: {
-    color: combinedLightTheme.colors.error,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-});

@@ -4,7 +4,6 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -20,16 +19,8 @@ import {
   selectProfileIsLoading,
   selectProfiles,
 } from '../store/profiles/selectors';
+import { globalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
-
-const colors = {
-  white: '#fff',
-  background: '#f5f5f5',
-  gray: 'gray',
-  error: '#dc3545',
-  primary: '#007AFF',
-  gold: 'gold',
-};
 
 type Props = MaterialTopTabScreenProps<TabProfileParamsList, 'Dashboard'>;
 
@@ -80,25 +71,27 @@ export default function DashboardProfileScreen({ navigation }: Props) {
       return (
         <TouchableOpacity
           key={profile.id}
-          style={styles.cardTouchable}
+          style={globalStyles.cardTouchable}
           onPress={() => handlePress(profile)}
           testID={`profile-${profile.id}`}
           accessibilityLabel={`View details for ${
             profile.name || 'Unnamed Profile'
           }`}>
-          <Card style={styles.card}>
+          <Card style={globalStyles.card}>
             <Card.Title
               title={profile.name || 'Unnamed Profile'}
               subtitle={subtitle}
               subtitleStyle={
-                profile.isOwner ? styles.ownerSubtitle : styles.memberSubtitle
+                profile.isOwner
+                  ? globalStyles.ownerSubtitle
+                  : globalStyles.memberSubtitle
               }
               // eslint-disable-next-line react/no-unstable-nested-components
               right={() =>
                 profile.isOwner ? (
                   <>
                     {selectedAvatar && (
-                      <Text style={styles.avatarIcon}>
+                      <Text style={globalStyles.avatarIcon}>
                         {selectedAvatar.icon}
                       </Text>
                     )}
@@ -120,7 +113,7 @@ export default function DashboardProfileScreen({ navigation }: Props) {
   const renderContent = () => {
     if (isLoading && !refreshing) {
       return (
-        <View style={styles.centerContainer}>
+        <View style={globalStyles.centerContainer}>
           <ActivityIndicator size="large" />
         </View>
       );
@@ -128,31 +121,33 @@ export default function DashboardProfileScreen({ navigation }: Props) {
 
     if (error) {
       return (
-        <View style={styles.messageContainer}>
-          <Text style={styles.errorMessage}>
+        <View style={globalStyles.messageContainer}>
+          <Text style={globalStyles.errorMessage}>
             {typeof error === 'string' ? error : 'Failed to load profiles'}
           </Text>
           <TouchableOpacity
             onPress={fetchProfiles}
-            style={styles.retryButton}
+            style={globalStyles.retryButton}
             testID="retry-button">
-            <Text style={styles.retryText}>Retry</Text>
+            <Text style={globalStyles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
       );
     }
 
     if (profiles.length === 0) {
-      return <Text style={styles.emptyMessage}>No profiles available</Text>;
+      return (
+        <Text style={globalStyles.emptyMessage}>No profiles available</Text>
+      );
     }
 
     return profiles?.map(renderProfileItem);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={globalStyles.scrollContent}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -160,74 +155,8 @@ export default function DashboardProfileScreen({ navigation }: Props) {
             testID="refresh-control"
           />
         }>
-        <Surface style={styles.surface}>{renderContent()}</Surface>
+        <Surface style={globalStyles.surface}>{renderContent()}</Surface>
       </ScrollView>
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  surface: {
-    margin: 16,
-    elevation: 2,
-    borderRadius: 8,
-    backgroundColor: colors.white,
-  },
-  cardTouchable: {
-    marginVertical: 8,
-  },
-  card: {
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  messageContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 16,
-    color: colors.gray,
-  },
-  errorMessage: {
-    textAlign: 'center',
-    marginVertical: 10,
-    fontSize: 16,
-    color: colors.error,
-  },
-  retryButton: {
-    marginTop: 10,
-    padding: 12,
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-  },
-  retryText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  ownerSubtitle: {
-    color: colors.gold,
-    fontWeight: 'bold',
-  },
-  memberSubtitle: {
-    color: colors.gray,
-    fontStyle: 'italic',
-  },
-  avatarIcon: {
-    fontSize: 30,
-  },
-});

@@ -1,20 +1,20 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import PieChart from './PieChart';
-import { CompletedTask } from '../constants/types';
+import { CompleteTask } from '../types/CompleteTask';
 
 interface Props {
-  completedTasks: CompletedTask[];
+  completedTasks: CompleteTask[];
 }
 
 export default function PieGrid({ completedTasks }: Props) {
   const groupedTasks = completedTasks.reduce(
-    (acc: { [key: string]: CompletedTask[] }, item: CompletedTask) => {
-      if (!acc[item.Task.id]) {
-        acc[item.Task.id] = [];
+    (acc: { [key: string]: CompleteTask[] }, item: CompleteTask) => {
+      if (!acc[item.householdTask.id]) {
+        acc[item.householdTask.id] = [];
       }
 
-      acc[item.Task.id].push(item);
+      acc[item.householdTask.id].push(item);
 
       return acc;
     },
@@ -28,7 +28,7 @@ export default function PieGrid({ completedTasks }: Props) {
   return (
     <View style={styles.container}>
       {Object.entries(groupedTasks).map(([id, tasks]) => {
-        const taskTitle = tasks[0].Task.Title;
+        const taskTitle = tasks[0].householdTask.title;
         return (
           <PieChart
             key={id}

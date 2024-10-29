@@ -20,4 +20,9 @@ public class CompleteTask
 
     [StringLength(500, ErrorMessage = "Comment cannot exceed 500 characters.")]
     public string? Comment { get; set; }
+
+    [Required]
+    [ForeignKey("Household")]
+    public int HouseholdId { get; set; }
+    public Household? Household { get; set; }
 }

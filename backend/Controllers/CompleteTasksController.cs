@@ -13,13 +13,63 @@ public class CompleteTasksController : ControllerBase
 
     public CompleteTasksController(
         IEfRepository<CompleteTask> completeTaskRepository,
-        IEfRepository<HouseholdTask> householdTaskRepository,
+        IEfRepository<HouseholdTask> householdTaskRepository,   
         ILogger<CompleteTasksController> logger)
     {
         _completeTaskRepository = completeTaskRepository;
         _householdTaskRepository = householdTaskRepository;
         _logger = logger;
     }
+
+        [HttpGet("by-household/{householdId}")] 
+        public async Task<IActionResult> GetCompletedTasksByHouseholdID(int householdId)
+        {
+            try{ 
+                var userId = GetUserIdFromClaims();
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new ApiResponse<IEnumerable<CompleteTask>> { Message = "User is not authenticated." });
+                }
+                var query = await _completeTaskRepository.QueryAsync();
+                var completedTasks = await query
+                .Include(ct => ct.HouseholdTask)
+                .Include(ct => ct.Profile)
+                .Where(ct => ct.HouseholdId == householdId) 
+                .ToListAsync();
+
+                if (!completedTasks.Any())
+                {
+                    return NotFound(new ApiResponse<IEnumerable<CompleteTask>> { Message = "No completed tasks found for the current household." });
+                }
+
+                var completedTasksDTO = completedTasks.Select(task => new CompletedTaskDTO
+                {
+                    Id = task.Id,
+                    CompletedAt = task.CompletedAt,
+                    Comment = task.Comment,
+                    ProfileId = task.ProfileId,
+                    Profile = new ProfileDTO
+                    {
+                        Id = task.ProfileId,
+                        AvatarId = task.Profile.AvatarId
+                    },
+                    HouseholdTaskId = task.HouseholdTaskId,
+                    HouseholdTask = new HouseHoldTaskDTO
+                    {
+                        Id = task.HouseholdTaskId,
+                        Title = task.HouseholdTask.Title,
+                        Difficulty = task.HouseholdTask.Difficulty 
+                    }
+                }).ToList();
+
+                return Ok(new ApiResponse<IEnumerable<CompletedTaskDTO>> { Data = completedTasksDTO, Message = "Completed tasks retrieved successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving completed tasks");
+                return StatusCode(500, new ApiResponse<IEnumerable<CompleteTask>> { Message = "An error occurred while processing your request." });
+            }
+        }
 
     [HttpGet]
     public async Task<IActionResult> GetCompletedTasks()

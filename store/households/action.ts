@@ -66,7 +66,6 @@ export const approveJoinRequest = createAppAsyncThunk<Profile, Profile>(
   async (profile, thunkAPI) => {
     try {
       await initializeApp();
-      console.log('dddd', profile);
       const response = await apiService.put<ApiResponse<Profile>>(
         `profiles/${profile.id}`,
         {

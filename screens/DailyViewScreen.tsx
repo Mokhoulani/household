@@ -7,12 +7,12 @@ import { formatDistanceToNow, parseISO, isBefore, subDays } from 'date-fns';
 
 const colors = {
   background: '#fff',
-  overdue: '#ffcccc',  // Light red for overdue tasks
+  overdue: '#ffcccc',  
 };
 
 export default function DailyViewScreen() {
   const [selectedTask, setSelectedTask] = useState<CompletedTask | null>(null);
-  const [isDone, setIsDone] = useState(false);
+  const [,setIsDone] = useState(false);
 
   const renderItem = ({ item }: { item: CompletedTask }) => {
     const lastCompletedDate = parseISO(item.Task.lastCompletedDate);
@@ -41,7 +41,7 @@ export default function DailyViewScreen() {
 
   const markTaskAsDone = () => {
     setIsDone(true);
-    setSelectedTask(null); // Close the modal after marking as done
+    setSelectedTask(null);
   };
 
   return (

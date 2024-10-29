@@ -29,7 +29,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
 
   // Get pending requests - only if user is owner
   const pendingRequests = isHouseholdOwner
-    ? household?.profiles?.$values?.filter((profile) => !profile.isRequest)
+    ? household?.profiles?.$values?.filter((profile) => profile.isRequest)
     : [];
 
   const handleApproveRequest = async (profile: Profile) => {
@@ -115,7 +115,9 @@ export default function HouseholdDetailsScreen({ route }: Props) {
           titleStyle={styles.title}
           // eslint-disable-next-line react/no-unstable-nested-components
           left={() => <Text style={styles.avatarIcon}>🏠</Text>}
-          subtitle={`Members (${household?.profiles?.$values?.filter((p) => p.isRequest).length ?? 0})`}
+          subtitle={`Members (${
+            household?.profiles?.$values?.filter((p) => p.isRequest).length ?? 0
+          })`}
           subtitleStyle={styles.subtitle}
         />
         <Card.Content style={styles.cardContent}>

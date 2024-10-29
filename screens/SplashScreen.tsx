@@ -1,16 +1,13 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
+import { AnimatedSplashContent } from '../components/AnimatedSplashContent';
 import { useSplashScreen } from '../hooks/useSplashScreen';
 
 export default function SplashScreen() {
-  const { onLayoutRootView } = useSplashScreen();
+  const { onLayoutRootView, handleAnimationComplete } = useSplashScreen();
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <ActivityIndicator size="large" color="#0000ff" />
+    <View onLayout={onLayoutRootView}>
+      <AnimatedSplashContent onAnimationComplete={handleAnimationComplete} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});

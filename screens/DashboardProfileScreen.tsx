@@ -83,7 +83,9 @@ export default function DashboardProfileScreen({ navigation }: Props) {
           style={styles.cardTouchable}
           onPress={() => handlePress(profile)}
           testID={`profile-${profile.id}`}
-          accessibilityLabel={`View details for ${profile.name || 'Unnamed Profile'}`}>
+          accessibilityLabel={`View details for ${
+            profile.name || 'Unnamed Profile'
+          }`}>
           <Card style={styles.card}>
             <Card.Title
               title={profile.name || 'Unnamed Profile'}

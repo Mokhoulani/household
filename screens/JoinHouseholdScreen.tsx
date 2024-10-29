@@ -86,7 +86,7 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
         const profileData = {
           ...result,
           isOwner: false,
-          isRequest: false,
+          isRequest: true,
         };
         setCode('');
         navigation.navigate('CreateProfile', { createProfile: profileData });

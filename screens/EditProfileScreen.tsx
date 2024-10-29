@@ -66,71 +66,37 @@ export default function EditProfileScreen({ navigation, route }: Props) {
 
   const handleSubmit = async () => {
     if (!profile || !profile.household?.id) {
-      Alert.alert('Error', 'Missing required profile data');
+      console.error('Missing required profile data');
       return;
     }
 
     if (!selectedAvatarId || selectedAvatarId === 0) {
+      // Add explicit check for 0
       Alert.alert('Error', 'Please select an avatar');
       return;
     }
 
-    if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a valid name');
-      return;
+    try {
+      await dispatch(
+        approveJoinRequest({
+          id: profile.id,
+          name: name.trim(), // Use the current name state
+          isOwner: profile.isOwner,
+          isRequest: false,
+          householdId: profile.household.id,
+          accountId: profile.accountId,
+          avatarId: selectedAvatarId, // Use the selected avatar ID
+          household: null,
+          Account: null,
+        }),
+      );
+      navigation.navigate('Dashboard');
+      // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
+    } catch (error) {
+      console.error('Failed to approve request:', error);
     }
-
-    Alert.alert(
-      'Save Changes',
-      'Are you sure you want to save these profile changes?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Save',
-          style: 'default',
-          onPress: async () => {
-            try {
-              await dispatch(
-                approveJoinRequest({
-                  id: profile.id,
-                  name: name.trim(),
-                  isOwner: profile.isOwner,
-                  isRequest: profile.isRequest,
-                  householdId: profile.householdId,
-                  accountId: profile.accountId,
-                  avatarId: selectedAvatarId,
-                  household: null,
-                  Account: null,
-                }),
-              );
-
-              Alert.alert('Success', 'Profile updated successfully', [
-                {
-                  text: 'OK',
-                  onPress: () => navigation.navigate('Dashboard'),
-                },
-              ]);
-              // eslint-disable-next-line no-catch-shadow, @typescript-eslint/no-shadow
-            } catch (error) {
-              console.error('Failed to approve request:', error);
-              Alert.alert(
-                'Error',
-                'Failed to update profile. Please try again.',
-                [{ text: 'OK' }],
-              );
-            } finally {
-              dispatch(clearSelectedAvatar());
-              setName('');
-            }
-          },
-        },
-      ],
-      { cancelable: true },
-    );
   };
+
   if (!profile) {
     return (
       <View style={styles.container}>

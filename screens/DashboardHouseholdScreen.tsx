@@ -65,7 +65,9 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
           style={styles.cardTouchable}
           onPress={() => handlePress(item)}
           testID={`household-${item.id}`}
-          accessibilityLabel={`View details for ${item.name || 'Unnamed Household'}`}>
+          accessibilityLabel={`View details for ${
+            item.name || 'Unnamed Household'
+          }`}>
           <Card style={styles.card}>
             <Card.Title
               title={item.name || 'Unnamed Household'}

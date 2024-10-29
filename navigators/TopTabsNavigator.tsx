@@ -3,7 +3,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
-import HomeScreen from '../screens/HomeScreen';
+import DailyViewScreen from '../screens/DailyViewScreen';
+
 import StatisticsScreen from '../screens/StatisticsScreen';
 export type TabParamsList = {
   Today: undefined;
@@ -38,7 +39,7 @@ export default function TopTabsNavigator() {
       }}>
       <Tab.Screen
         name="Today"
-        component={HomeScreen}
+        component={DailyViewScreen}
         options={{
           title: '',
           tabBarIcon: ({ color }) => (

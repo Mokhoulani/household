@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import DashboardProfileScreen from '../screens/DashboardProfileScreen';

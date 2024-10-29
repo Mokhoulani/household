@@ -8,8 +8,6 @@ import { useAppDispatch, useAppSelector } from '../store/hook';
 import { selectCompletedTasks } from '../store/completedTasks/selector';
 import { getCompletedTasks } from '../store/completedTasks/action';
 import { CompleteTask } from '../types/CompleteTask';
-import { TabParamsList } from '../navigators/TopTabsNavigator';
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import { selectCurrentHousehold } from '../store/households/selectors';
 
 export default function StatisticsScreen() {

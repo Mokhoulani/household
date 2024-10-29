@@ -22,20 +22,25 @@ export default function StatisticsScreen() {
     }
   }, [dispatch, currentHousehold?.id]);
 
-  const completedTasksArray: CompleteTask[] = cT.completedTasks?.$values || [];
+  const completedTasksArray = cT.completedTasks?.$values || [];
 
+  // Skapa en typad array om det finns slutförda uppgifter
+  let typedCompletedTasksArray: CompleteTask[] = [];
+  if (completedTasksArray.length > 0) {
+    typedCompletedTasksArray = completedTasksArray as CompleteTask[]; // Typa om till CompleteTask[]
+  }
   return (
     <SafeAreaView style={styles.page}>
       {completedTasksArray.length > 0 ? (
         <>
           <PieChart
-            completedTasks={completedTasksArray}
+            completedTasks={typedCompletedTasksArray}
             chartTitle="Total"
             useLabel={true}
             width={Dimensions.get('window').width / 2}
           />
 
-          <PieGrid completedTasks={completedTasksArray} />
+          <PieGrid completedTasks={typedCompletedTasksArray} />
         </>
       ) : (
         <Text>Inga slutförda uppgifter att visa.</Text>

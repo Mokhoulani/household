@@ -1,15 +1,21 @@
+// themeSlice.ts
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { initialState, ThemeState } from './state';
+import { ColorMode, initialState } from './state';
 
 const themeSlice = createSlice({
   name: 'theme',
-  initialState: initialState,
+  initialState,
   reducers: {
-    setColorMode: (state, action: PayloadAction<ThemeState>) => {
-      state.colorMode = action.payload.colorMode;
+    setColorMode(state, action: PayloadAction<ColorMode>) {
+      state.colorMode = action.payload;
+    },
+    setAvatarTheme(state, action: PayloadAction<number>) {
+      state.avatarTheme = action.payload;
     },
   },
 });
 
-export const { setColorMode } = themeSlice.actions;
+export const { setColorMode, setAvatarTheme } = themeSlice.actions;
+
 export default themeSlice.reducer;

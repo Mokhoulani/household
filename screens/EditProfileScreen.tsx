@@ -21,7 +21,8 @@ import {
 } from '../store/avatars/selectors';
 import { useAppDispatch } from '../store/hook';
 import { approveJoinRequest } from '../store/households/action';
-import { globalStyles } from '../themes/styles';
+import { setAvatarTheme } from '../store/theme/reducer';
+import { useGlobalStyles } from '../themes/styles';
 import { combinedLightTheme } from '../themes/theme';
 import { Avatar } from '../types/Avatar';
 
@@ -32,8 +33,8 @@ export default function EditProfileScreen({ navigation, route }: Props) {
   const profile = route.params?.profile;
   console.log('EditProfileScreen', profile);
   const householdId = profile?.household?.id;
-  // Add null check for initial name value
   const [name, setName] = useState(profile?.name || '');
+  const globalStyles = useGlobalStyles();
 
   const selectedAvatarId = useSelector(selectSelectedAvatarId);
   const avatars = useSelector(selectAvailableAvatars);
@@ -52,6 +53,7 @@ export default function EditProfileScreen({ navigation, route }: Props) {
   const handleAvatarSelect = (avatar: Avatar) => {
     if (avatar.id) {
       dispatch(selectAvatarId(avatar.id));
+      dispatch(setAvatarTheme(avatar.id));
     }
   };
 

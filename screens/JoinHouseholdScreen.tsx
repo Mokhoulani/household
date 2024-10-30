@@ -23,7 +23,7 @@ import { selectErrorMessage } from '../store/auth/selectors';
 import { useAppDispatch } from '../store/hook';
 import { addJoinRequest } from '../store/households/action';
 import { RootState } from '../store/store';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 
 type Props = CompositeScreenProps<
   MaterialTopTabScreenProps<TabHouseholdParamsList, 'JoinHousehold'>,
@@ -38,6 +38,7 @@ export default function JoinHouseholdScreen({ navigation }: Props) {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const globalStyles = useGlobalStyles();
 
   const isLoading = useSelector(
     (state: RootState) => state.households.isLoading,

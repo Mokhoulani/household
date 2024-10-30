@@ -1,4 +1,7 @@
-import apiService, { initializeApp } from '../../api/apiService';
+import apiService, {
+  deleteAccessToken,
+  setAccessToken,
+} from '../../api/apiService';
 import { ApiResponse } from '../../types/ApiResponse';
 import { CreateHousehold, Household } from '../../types/Household';
 import { Profile } from '../../types/profile';
@@ -8,7 +11,7 @@ export const createHousehold = createAppAsyncThunk<Household, CreateHousehold>(
   'households/createHousehold',
   async ({ name }, thunkAPI) => {
     try {
-      await initializeApp();
+      await setAccessToken();
       const response = await apiService.post<ApiResponse<Household>>(
         'Households',
         { name },
@@ -18,6 +21,8 @@ export const createHousehold = createAppAsyncThunk<Household, CreateHousehold>(
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to create household',
       );
+    } finally {
+      await deleteAccessToken();
     }
   },
 );
@@ -26,7 +31,7 @@ export const getHouseholds = createAppAsyncThunk<Household[], void>(
   'households/getHouseholds',
   async (_, thunkAPI) => {
     try {
-      await initializeApp();
+      await setAccessToken();
       const response =
         await apiService.get<ApiResponse<{ $values: Household[] }>>(
           'Households',
@@ -36,6 +41,8 @@ export const getHouseholds = createAppAsyncThunk<Household[], void>(
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to get households',
       );
+    } finally {
+      await deleteAccessToken();
     }
   },
 );
@@ -44,7 +51,7 @@ export const addJoinRequest = createAppAsyncThunk<Household, { code: string }>(
   'household/addJoinRequest',
   async ({ code }, thunkAPI) => {
     try {
-      await initializeApp();
+      await setAccessToken();
       const response = await apiService.post<ApiResponse<Household>>(
         'Households/by-code',
         { code },
@@ -57,6 +64,8 @@ export const addJoinRequest = createAppAsyncThunk<Household, { code: string }>(
         );
       }
       return thunkAPI.rejectWithValue('Failed to join household');
+    } finally {
+      await deleteAccessToken();
     }
   },
 );
@@ -65,14 +74,13 @@ export const approveJoinRequest = createAppAsyncThunk<Profile, Profile>(
   'household/approveJoinRequest',
   async (profile, thunkAPI) => {
     try {
-      await initializeApp();
+      await setAccessToken();
       const response = await apiService.put<ApiResponse<Profile>>(
         `profiles/${profile.id}`,
         {
           ...profile,
         },
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -82,6 +90,8 @@ export const approveJoinRequest = createAppAsyncThunk<Profile, Profile>(
         );
       }
       return thunkAPI.rejectWithValue('Failed to approve join request');
+    } finally {
+      await deleteAccessToken();
     }
   },
 );
@@ -90,7 +100,7 @@ export const rejectJoinRequest = createAppAsyncThunk<number, Profile>(
   'household/rejectJoinRequest',
   async (profile, thunkAPI) => {
     try {
-      await initializeApp();
+      await setAccessToken();
       await apiService.delete(`profiles/${profile.id}`);
       return profile.id;
     } catch (error) {
@@ -101,6 +111,8 @@ export const rejectJoinRequest = createAppAsyncThunk<number, Profile>(
         );
       }
       return thunkAPI.rejectWithValue('Failed to reject join request');
+    } finally {
+      await deleteAccessToken();
     }
   },
 );

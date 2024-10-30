@@ -18,7 +18,7 @@ import {
   selectHouseholdLoading,
   selectHouseholds,
 } from '../store/households/selectors';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { Household } from '../types/Household';
 
 type Props = MaterialTopTabScreenProps<TabHouseholdParamsList, 'Dashboard'>;
@@ -29,6 +29,7 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
   const isLoading = useAppSelector(selectHouseholdLoading);
   const error = useAppSelector(selectHouseholdError);
   const [refreshing, setRefreshing] = useState(false);
+  const globalStyles = useGlobalStyles();
 
   const fetchHouseholds = useCallback(() => {
     dispatch(getHouseholds()).catch((error) => {

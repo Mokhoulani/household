@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '../store/hook';
 import { selectCurrentHousehold } from '../store/households/selectors';
 import { selectCurrentProfile } from '../store/profiles/selectors';
 import { addTask } from '../store/tasks/action';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { combinedLightTheme } from '../themes/theme';
 
 interface TaskFormData {
@@ -37,6 +37,7 @@ export default function CreateTaskView({ navigation }: Props) {
   const [formData, setFormData] = useState<TaskFormData>(initialFormState);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const globalStyles = useGlobalStyles();
 
   const isOwner = useAppSelector(selectCurrentProfile);
   const household = useAppSelector(selectCurrentHousehold);
@@ -88,7 +89,6 @@ export default function CreateTaskView({ navigation }: Props) {
           isArchived: false,
         }),
       );
-      Alert.alert('Success', 'Task created successfully');
       setFormData(initialFormState);
       navigation.navigate('TasksDetails');
     } catch (err) {
@@ -131,7 +131,7 @@ export default function CreateTaskView({ navigation }: Props) {
 
   return (
     <ScrollView contentContainerStyle={globalStyles.scrollContent}>
-      <View style={globalStyles.container}>
+      <View style={globalStyles.containerInput}>
         <Text style={globalStyles.title}>Create Task</Text>
 
         {renderFormField('Task Title *', 'title', 'Enter your title', {

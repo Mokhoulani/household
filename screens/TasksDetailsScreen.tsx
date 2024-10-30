@@ -10,16 +10,17 @@ import {
 import { Card } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getTasks } from '../store/tasks/action';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { HouseholdTask } from '../types/HouseholdTask';
 
 export default function TasksDetailsScreen() {
   // const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
+  const globalStyles = useGlobalStyles();
 
   // Add default empty array as fallback
-  const tasks = useAppSelector((state) => state.tasks?.tasks ?? []);
+  const tasks = useAppSelector((state) => state.tasks.tasks ?? []);
   const loading = useAppSelector((state) => state.tasks?.isLoading ?? false);
   const error = useAppSelector((state) => state.tasks?.error ?? null);
 

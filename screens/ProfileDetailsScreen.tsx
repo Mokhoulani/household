@@ -8,13 +8,14 @@ import { TabProfileParamsList } from '../navigators/TopTabsNavigatorProfile';
 import { initialAvatars } from '../store/avatars/state';
 import { useAppDispatch } from '../store/hook';
 import { setCurrentProfile } from '../store/profiles/reducer';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
 
 type Props = MaterialTopTabScreenProps<TabProfileParamsList, 'DetailsProfile'>;
 
 export default function ProfileDetailsScreen({ navigation, route }: Props) {
   const dispatch = useAppDispatch();
+  const globalStyles = useGlobalStyles();
   const profile = route.params?.profile;
   const selectedAvatar = initialAvatars.find((a) => a.id === profile?.avatarId);
 

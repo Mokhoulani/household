@@ -12,7 +12,7 @@ export default function SettingsScreen() {
 
   const handleValueChange = (value: 'light' | 'dark' | 'auto') => {
     // Dispatch the action with both colorMode and theme
-    dispatch(setColorMode({ colorMode: value }));
+    dispatch(setColorMode(value));
   };
 
   return (

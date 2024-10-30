@@ -1,9 +1,8 @@
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { Alert, SafeAreaView, ScrollView } from 'react-native';
+import { Alert, View, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Card, Surface, Text } from 'react-native-paper';
-import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
 import { initialAvatars } from '../store/avatars/state';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import {
@@ -13,25 +12,24 @@ import {
 import { selectCurrentProfileByAccountId } from '../store/households/selectors';
 import { useGlobalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
+import { selectCurrentHousehold } from '../store/households/selectors';
+import SelectHousehold from '../components/SelectHousehold';
 
-type Props = MaterialTopTabScreenProps<
-  TabHouseholdParamsList,
-  'DetailsHousehold'
->;
-
-export default function HouseholdDetailsScreen({ route }: Props) {
+export default function HouseholdDetailsScreen() {
   const dispatch = useAppDispatch();
+  const currentHousehold = useAppSelector(selectCurrentHousehold);
   const currentProfile = useAppSelector(selectCurrentProfileByAccountId);
   const globalStyles = useGlobalStyles();
   const avatar = initialAvatars;
-  const household = route.params?.household;
 
   // Explicitly separate owner check
   const isHouseholdOwner = currentProfile?.isOwner === true;
 
   // Get pending requests - only if user is owner
   const pendingRequests = isHouseholdOwner
-    ? household?.profiles?.$values?.filter((profile) => !profile.isRequest)
+    ? currentHousehold?.profiles?.$values?.filter(
+        (profile) => !profile.isRequest,
+      )
     : [];
 
   const handleApproveRequest = async (profile: Profile) => {
@@ -113,20 +111,20 @@ export default function HouseholdDetailsScreen({ route }: Props) {
     <Surface style={globalStyles.surface}>
       <Card style={globalStyles.card}>
         <Card.Title
-          title={household?.name}
+          title={currentHousehold?.name}
           titleStyle={globalStyles.title}
           // eslint-disable-next-line react/no-unstable-nested-components
           left={() => <Text style={globalStyles.avatarIcon}>🏠</Text>}
           subtitle={`Members (${
-            household?.profiles?.$values?.filter((p) => !p.isRequest).length ??
-            0
+            currentHousehold?.profiles?.$values?.filter((p) => !p.isRequest)
+              .length ?? 0
           })`}
           subtitleStyle={globalStyles.subtitle}
         />
         <Card.Content style={globalStyles.cardContent}>
-          <Text style={globalStyles.code}>code :{household?.code}</Text>
+          <Text style={globalStyles.code}>code :{currentHousehold?.code}</Text>
         </Card.Content>
-        {household?.profiles?.$values
+        {currentHousehold?.profiles?.$values
           ?.filter((profile) => !profile.isRequest)
           .map((profile) => {
             // Find the matching avatar for each profile
@@ -199,11 +197,12 @@ export default function HouseholdDetailsScreen({ route }: Props) {
     ) : null;
 
   return (
-    <SafeAreaView style={globalStyles.container}>
+    <View style={globalStyles.container}>
+      <SelectHousehold />
       <ScrollView>
         {regularMembersSection}
         {pendingRequestsSection}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -46,26 +46,6 @@ export default function TopTabsNavigatorHousehold() {
         lazyPlaceholder: () => null,
       }}>
       <Tab.Screen
-        name="Dashboard"
-        component={DashboardScreen}
-        options={{
-          title: '',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="dashboard" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="DetailsHousehold"
-        component={HouseholdDetailsScreen}
-        options={{
-          title: '',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="details" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="CreateHousehold"
         component={CreateHouseholdSceen}
         options={{

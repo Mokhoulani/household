@@ -9,6 +9,8 @@ import React from 'react';
 import CreateProfileScreen from '../screens/CreateprofileScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
+import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
+import { Text } from 'react-native-paper';
 
 // import { Household } from '../types/Household';
 
@@ -24,6 +26,7 @@ import TopTabsNavigatorProfile, {
 import TopTabsNavigatorHousehold, {
   TabHouseholdParamsList,
 } from './TopTabsNavigtorHouseHold';
+import { View } from 'react-native';
 
 export type DrawerParamList = {
   TodyView: NavigatorScreenParams<TabParamsList>;
@@ -34,6 +37,7 @@ export type DrawerParamList = {
   signout: undefined;
   settings: undefined;
   createTask: undefined;
+  NewHousehold: NavigatorScreenParams<TabProfileParamsList>;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -53,11 +57,36 @@ export default function DrawerNavigator() {
       />
       <Drawer.Screen
         name="Household"
+        component={HouseholdDetailsScreen}
+        options={() => ({
+          title: '',
+          drawerLabel: ({ color }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialIcons
+                style={{ marginRight: 16 }}
+                name="house"
+                size={24}
+              />
+              <Text style={{ color: color }}>Hushåll</Text>
+            </View>
+          ),
+        })}
+      />
+      <Drawer.Screen
+        name="NewHousehold"
         component={TopTabsNavigatorHousehold}
         options={() => ({
           title: '',
-          drawerLabel: () => (
-            <MaterialIcons style={{ marginRight: 16 }} name="house" size={24} />
+          drawerLabel: ({ color }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <AntDesign
+                name="plus"
+                size={24}
+                color={color}
+                style={{ marginRight: 16 }}
+              />
+              <Text>Skapa/gå med i hushåll</Text>
+            </View>
           ),
         })}
       />

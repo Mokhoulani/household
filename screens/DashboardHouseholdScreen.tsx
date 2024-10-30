@@ -50,10 +50,9 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
     (household: Household) => {
       if (household?.id) {
         dispatch(setCurrentHousehold(household));
-        navigation.navigate('DetailsHousehold', { household });
       }
     },
-    [dispatch, navigation],
+    [dispatch],
   );
 
   const renderHouseholdItem = useCallback(

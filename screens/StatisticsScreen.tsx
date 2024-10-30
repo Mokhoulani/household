@@ -33,27 +33,29 @@ export default function StatisticsScreen() {
     }
   }, [dispatch, currentHousehold?.id]);
 
-  useEffect(() => {
+  const filterTasks = (value: string) => {
     switch (value) {
       case 'thisWeek':
-        setFilteredTasks(getCompletedTasksThisWeek());
-        break;
+        return getCompletedTasksThisWeek();
       case 'lastWeek':
-        setFilteredTasks(getCompletedTasksLastWeek());
-        break;
+        return getCompletedTasksLastWeek();
       case 'lastMonth':
-        setFilteredTasks(getCompletedTasksLastMonth());
-        break;
+        return getCompletedTasksLastMonth();
       default:
-        setFilteredTasks(completedTasksArray);
+        return completedTasksArray;
     }
-  }, [value, completedTasksArray]);
+  };
+
+  function handleChangeValue(value: string) {
+    setValue(value);
+    setFilteredTasks(filterTasks(value));
+  }
 
   return (
     <View style={styles.page}>
       <SegmentedButtons
         value={value}
-        onValueChange={setValue}
+        onValueChange={(newValue) => handleChangeValue(newValue)}
         buttons={[
           { value: 'thisWeek', label: 'Denna vecka' },
           { value: 'lastWeek', label: 'Förra veckan' },

@@ -5,9 +5,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import CreateHouseholdSceen from '../screens/CreateHousholdScreen';
-
-import DashboardScreen from '../screens/DashboardHouseholdScreen';
-import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
 import JoinHouseholdScreen from '../screens/JoinHouseholdScreen';
 import { Household } from '../types/Household';
 
@@ -45,26 +42,6 @@ export default function TopTabsNavigatorHousehold() {
         lazy: true,
         lazyPlaceholder: () => null,
       }}>
-      <Tab.Screen
-        name="Dashboard"
-        component={DashboardScreen}
-        options={{
-          title: '',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="dashboard" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="DetailsHousehold"
-        component={HouseholdDetailsScreen}
-        options={{
-          title: '',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="details" size={24} color={color} />
-          ),
-        }}
-      />
       <Tab.Screen
         name="CreateHousehold"
         component={CreateHouseholdSceen}

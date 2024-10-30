@@ -104,7 +104,15 @@ export default function DashboardProfileScreen({ navigation }: Props) {
         </TouchableOpacity>
       );
     },
-    [handlePress, avatar],
+    [
+      avatar,
+      globalStyles.cardTouchable,
+      globalStyles.card,
+      globalStyles.ownerSubtitle,
+      globalStyles.memberSubtitle,
+      globalStyles.avatarIcon,
+      handlePress,
+    ],
   );
 
   useEffect(() => {

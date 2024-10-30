@@ -81,7 +81,14 @@ export default function TasksDetailsScreen() {
         </TouchableOpacity>
       );
     },
-    [handlePress],
+    [
+      globalStyles.badge,
+      globalStyles.badgeText,
+      globalStyles.card,
+      globalStyles.taskInfo,
+      globalStyles.taskItem,
+      handlePress,
+    ],
   );
 
   const keyExtractor = useCallback((item: HouseholdTask | null) => {

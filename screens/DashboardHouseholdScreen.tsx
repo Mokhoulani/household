@@ -82,7 +82,7 @@ export default function DashboardHouseholdScreen({ navigation }: Props) {
         </TouchableOpacity>
       );
     },
-    [handlePress],
+    [globalStyles.card, globalStyles.cardTouchable, handlePress],
   );
 
   useEffect(() => {

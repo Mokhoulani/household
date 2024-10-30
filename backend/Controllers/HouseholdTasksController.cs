@@ -13,11 +13,16 @@ using System.Threading.Tasks;
 public class HouseholdTasksController : ControllerBase
 {
     private readonly IEfRepository<HouseholdTask> _householdTaskRepository;
+    private readonly IEfRepository<Household> _householdRepository;
     private readonly ILogger<HouseholdTasksController> _logger;
 
-    public HouseholdTasksController(IEfRepository<HouseholdTask> householdTaskRepository, ILogger<HouseholdTasksController> logger)
+    public HouseholdTasksController(
+        IEfRepository<HouseholdTask> householdTaskRepository,
+        IEfRepository<Household> householdRepository,
+        ILogger<HouseholdTasksController> logger)
     {
         _householdTaskRepository = householdTaskRepository;
+        _householdRepository = householdRepository;
         _logger = logger;
     }
 
@@ -34,17 +39,34 @@ public class HouseholdTasksController : ControllerBase
 
             var query = await _householdTaskRepository.QueryAsync();
             var householdTasks = await query
-            .Include(t => t.Household).ThenInclude(h => h.Profiles)
-            .Where(t => t.Household.Profiles.Any(m => m.AccountId == userId))
-            .Include(t => t.CompletedTasks)
-            .ToListAsync();
+                .Include(t => t.Household)
+                .Include(t => t.CompletedTasks)
+                .Where(t => t.Household.Profiles.Any(p => p.AccountId == userId))
+                .ToListAsync();
 
-            if (!householdTasks.Any())
+            var householdTasksDTO = householdTasks.Select(task => new HouseholdTaskDTO
             {
-                return NotFound(new ApiResponse<IEnumerable<HouseholdTask>> { Message = "No house tasks found for the current user." });
-            }
-
-            return Ok(new ApiResponse<IEnumerable<HouseholdTask>> { Data = householdTasks, Message = "House tasks retrieved successfully." });
+                Id = task.Id,
+                HouseholdId = task.HouseholdId,
+                Household = new HouseholdDTO
+                {
+                    Id = task.HouseholdId,
+                    Name = task.Household.Name,
+                    Code = task.Household.Code
+                },
+                Interval = task.Interval,
+                IsArchived = task.IsArchived,
+                Title = task.Title,
+                Difficulty = task.Difficulty,
+                Description = task.Description,
+            }).ToList();
+            return Ok(new ApiResponse<IEnumerable<HouseholdTaskDTO>>
+            {
+                Data = householdTasksDTO,
+                Message = householdTasks.Any()
+                    ? "House tasks retrieved successfully."
+                    : "No house tasks found for the current user."
+            });
         }
         catch (Exception ex)
         {
@@ -61,7 +83,10 @@ public class HouseholdTasksController : ControllerBase
             var userId = GetUserIdFromClaims();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new ApiResponse<HouseholdTask> { Message = "User is not authenticated." });
+                return Unauthorized(new ApiResponse<HouseholdTask>
+                {
+                    Message = "User is not authenticated."
+                });
             }
 
             if (!ModelState.IsValid)
@@ -69,27 +94,74 @@ public class HouseholdTasksController : ControllerBase
                 return BadRequest(new ApiResponse<HouseholdTask>
                 {
                     Message = "Invalid house task data",
-                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                    Errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList()
                 });
             }
 
-            if (!await UserBelongsToHouseholdAsync(userId, householdTask.HouseholdId))
+            // Validate household exists
+            var household = await (await _householdRepository.QueryAsync())
+                .FirstOrDefaultAsync(h => h.Id == householdTask.HouseholdId);
+
+            if (household == null)
             {
-                return Unauthorized(new ApiResponse<HouseholdTask> { Message = "User is not part of the specified household." });
+                return BadRequest(new ApiResponse<HouseholdTask>
+                {
+                    Message = "Specified household does not exist."
+                });
             }
 
+            // Check user's membership in the household
+            if (!await UserBelongsToHouseholdAsync(userId, householdTask.HouseholdId))
+            {
+                return Unauthorized(new ApiResponse<HouseholdTask>
+                {
+                    Message = "User is not part of the specified household."
+                });
+            }
+
+
+            // Add and save the task
             await _householdTaskRepository.AddAsync(householdTask);
             await _householdTaskRepository.SaveChangesAsync();
 
-            _logger.LogInformation($"House task created for user {userId}");
+            _logger.LogInformation($"House task created for user {userId} in household {householdTask.HouseholdId}");
 
-            return CreatedAtAction(nameof(GetHouseholdTasks), new { id = householdTask.Id }, new ApiResponse<HouseholdTask> { Data = householdTask, Message = "House task created successfully" });
+            // Return created response with the new task
+            return CreatedAtAction(
+                nameof(GetHouseholdTasks),
+                new { id = householdTask.Id },
+                new ApiResponse<HouseholdTask>
+                {
+                    Data = householdTask,
+                    Message = "House task created successfully"
+                });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while creating house task");
-            return StatusCode(500, new ApiResponse<HouseholdTask> { Message = "An error occurred while processing your request." });
+            return StatusCode(500, new ApiResponse<HouseholdTask>
+            {
+                Message = "An error occurred while processing your request."
+            });
         }
+    }
+
+
+    private async Task<bool> UserBelongsToHouseholdAsync(string userId, int householdId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            throw new ArgumentException("User ID cannot be null or empty", nameof(userId));
+
+        if (householdId <= 0)
+            throw new ArgumentException("Household ID must be positive", nameof(householdId));
+
+        var query = await _householdRepository.QueryAsync();
+        return await query
+            .Where(h => h.Id == householdId)
+            .AnyAsync(h => h.Profiles.Any(p => p.AccountId == userId));
     }
 
     [HttpPut("{id}")]
@@ -103,7 +175,12 @@ public class HouseholdTasksController : ControllerBase
             }
 
             var userId = GetUserIdFromClaims();
-            if (string.IsNullOrEmpty(userId) || houseTask.Household.Profiles.Any(m => m.AccountId == userId))
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<HouseholdTask> { Message = "User is not authenticated." });
+            }
+
+            if (!await UserBelongsToHouseholdAsync(userId, houseTask.HouseholdId))
             {
                 return Unauthorized(new ApiResponse<HouseholdTask> { Message = "You are not authorized to update this house task." });
             }
@@ -136,14 +213,24 @@ public class HouseholdTasksController : ControllerBase
     {
         try
         {
-            var houseTask = await _householdTaskRepository.GetByIdAsync(id);
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ApiResponse<object> { Message = "User is not authenticated." });
+            }
+
+            var query = await _householdTaskRepository.QueryAsync();
+            var houseTask = await query
+                .Include(ht => ht.Household)
+                .ThenInclude(h => h.Profiles)
+                .FirstOrDefaultAsync(ht => ht.Id == id);
+
             if (houseTask == null)
             {
                 return NotFound(new ApiResponse<object> { Message = "House task not found." });
             }
 
-            var userId = GetUserIdFromClaims();
-            if (string.IsNullOrEmpty(userId) || houseTask.Household.Profiles.Any(m => m.AccountId == userId))
+            if (!await UserBelongsToHouseholdAsync(userId, houseTask.HouseholdId))
             {
                 return Unauthorized(new ApiResponse<object> { Message = "You are not authorized to delete this house task." });
             }
@@ -166,21 +253,5 @@ public class HouseholdTasksController : ControllerBase
     {
         return User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
     }
-    private async Task<bool> UserBelongsToHouseholdAsync(string userId, int householdId)
-    {
-        if (householdId <= 0)
-            throw new ArgumentException("Household ID must be positive", nameof(householdId));
-
-        var query = await _householdTaskRepository.QueryAsync();
-        var isBelong = await query
-            .Where(ht => ht.HouseholdId == householdId)  // Filter by householdId first
-            .Select(ht => ht.Household)
-            .SelectMany(h => h.Profiles)
-            .AnyAsync(p => p.AccountId == userId);
-        return isBelong;
-    }
-
-
 }
-
 

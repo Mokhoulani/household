@@ -7,5 +7,5 @@ export type CompleteTask = {
   profileId: number;
   profile: Profile;
   householdTaskId: number;
-  householdTask: { $value: HouseholdTask };
+  householdTask: HouseholdTask;
 };

@@ -1,4 +1,3 @@
-import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { Alert, View, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';

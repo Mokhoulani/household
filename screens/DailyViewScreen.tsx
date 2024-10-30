@@ -1,33 +1,49 @@
+import { formatDistanceToNow, isBefore, parseISO, subDays } from 'date-fns';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
+import {
+  Button,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { completedTasks } from '../constants/sampledata';
 import { CompletedTask } from '../constants/types';
-import { formatDistanceToNow, parseISO, isBefore, subDays } from 'date-fns';
 
 const colors = {
   background: '#fff',
-  overdue: '#ffcccc',  
+  overdue: '#ffcccc',
 };
 
 export default function DailyViewScreen() {
   const [selectedTask, setSelectedTask] = useState<CompletedTask | null>(null);
-  const [,setIsDone] = useState(false);
+  const [, setIsDone] = useState(false);
 
   const renderItem = ({ item }: { item: CompletedTask }) => {
     const lastCompletedDate = parseISO(item.Task.lastCompletedDate);
     const daysAgo = formatDistanceToNow(lastCompletedDate, { addSuffix: true });
-    const overdue = isBefore(lastCompletedDate, subDays(new Date(), item.Task.Difficulty));
+    const overdue = isBefore(
+      lastCompletedDate,
+      subDays(new Date(), item.Task.Difficulty),
+    );
 
     return (
       <TouchableOpacity onPress={() => setSelectedTask(item)}>
-        <View style={[styles.taskItem, overdue && { backgroundColor: colors.overdue }]}>
+        <View
+          style={[
+            styles.taskItem,
+            overdue && { backgroundColor: colors.overdue },
+          ]}>
           <Text style={[styles.emoji, { color: item.Profile.Avatar.color }]}>
             {item.Profile.Avatar.icon}
           </Text>
           <View style={styles.textContainer}>
             <Text style={styles.title}>{item.Task.Title}</Text>
-            <Text style={[styles.userName, { color: item.Profile.Avatar.color }]}>
+            <Text
+              style={[styles.userName, { color: item.Profile.Avatar.color }]}>
               {item.Profile.Name}
             </Text>
             <Text style={styles.daysAgo}>

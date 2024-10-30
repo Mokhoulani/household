@@ -22,7 +22,7 @@ import { selectErrorMessage } from '../store/auth/selectors';
 import { useAppDispatch } from '../store/hook';
 import { createHousehold } from '../store/households/action';
 import { RootState } from '../store/store';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 
 type Props = CompositeScreenProps<
   MaterialTopTabScreenProps<TabHouseholdParamsList, 'CreateHousehold'>,
@@ -37,6 +37,7 @@ export default function CreateHouseholdScreen({ navigation }: Props) {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const globalStyles = useGlobalStyles();
 
   const isLoading = useSelector(
     (state: RootState) => state.households.isLoading,

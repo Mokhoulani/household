@@ -1,4 +1,7 @@
-import apiService, { initializeApp } from '../../api/apiService';
+import apiService, {
+  deleteAccessToken,
+  setAccessToken,
+} from '../../api/apiService';
 import { ApiResponse } from '../../types/ApiResponse';
 import { Avatar } from '../../types/Avatar';
 import { Profile } from '../../types/profile';
@@ -13,7 +16,7 @@ export const getAvailableAvatarsForProfile = createAppAsyncThunk<
   GetAvailableAvatarsPayload
 >('avatars/getAvailableAvatars', async ({ householdId }) => {
   try {
-    await initializeApp();
+    await setAccessToken();
 
     const response = await apiService.get<ApiResponse<{ $values: Profile[] }>>(
       `profiles/${householdId}`,
@@ -34,5 +37,7 @@ export const getAvailableAvatarsForProfile = createAppAsyncThunk<
   } catch (error) {
     console.log(error);
     return initialAvatars;
+  } finally {
+    await deleteAccessToken();
   }
 });

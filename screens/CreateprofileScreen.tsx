@@ -22,7 +22,8 @@ import {
 } from '../store/avatars/selectors';
 import { useAppDispatch } from '../store/hook';
 import { createProfile } from '../store/profiles/action';
-import { globalStyles } from '../themes/styles';
+import { setAvatarTheme } from '../store/theme/reducer';
+import { useGlobalStyles } from '../themes/styles';
 import { combinedLightTheme } from '../themes/theme';
 import { Avatar } from '../types/Avatar';
 
@@ -40,6 +41,7 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
   const avatars = useSelector(selectAvailableAvatars);
   const isLoading = useSelector(selectAvatarsLoading);
   const error = useSelector(selectAvatarsError);
+  const globalStyles = useGlobalStyles();
 
   useEffect(() => {
     if (householdId) {
@@ -52,8 +54,8 @@ export default function CreateProfileScreen({ navigation, route }: Props) {
 
   const handleAvatarSelect = (avatar: Avatar) => {
     if (avatar.id) {
-      // Add null check
       dispatch(selectAvatarId(avatar.id));
+      dispatch(setAvatarTheme(avatar.id));
     }
   };
 

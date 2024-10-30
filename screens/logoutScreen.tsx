@@ -4,10 +4,11 @@ import { Alert, Button, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { logout } from '../store/auth/action';
 import { useAppDispatch } from '../store/hook';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 
 export default function LogoutScreen() {
   const dispatch = useAppDispatch();
+  const globalStyles = useGlobalStyles();
 
   const handleLogout = async () => {
     try {

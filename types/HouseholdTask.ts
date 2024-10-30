@@ -5,7 +5,7 @@ export type HouseholdTask = {
   title: string;
   description: string;
   householdId: number;
-  household: Household;
+  household: { $values: Household };
   difficulty: number;
   interval: number;
   isArchived: boolean;

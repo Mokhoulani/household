@@ -7,18 +7,19 @@ import { useSplashScreen } from '../hooks/useSplashScreen';
 import RootNavigator from '../navigators/RootStackNavigator';
 import SplashScreen from '../screens/SplashScreen';
 import { useAppSelector } from '../store/hook';
-import { selectColorMode } from '../store/theme/selectors';
-import { combinedDarkTheme, combinedLightTheme } from '../themes/theme';
+import { selectAvatarTheme, selectColorMode } from '../store/theme/selectors';
+import { getCombinedTheme } from '../themes/theme';
 
 export default function MainApp() {
   const colorMode = useAppSelector(selectColorMode);
   const colorScheme = useColorScheme();
+  const avatarTheme = useAppSelector(selectAvatarTheme);
   const { appIsReady, onLayoutRootView } = useSplashScreen();
 
   const theme =
     colorMode === 'dark' || (colorMode === 'auto' && colorScheme === 'dark')
-      ? combinedDarkTheme
-      : combinedLightTheme;
+      ? getCombinedTheme(avatarTheme, true)
+      : getCombinedTheme(avatarTheme, false);
 
   if (!appIsReady) {
     return <SplashScreen />;

@@ -1,6 +1,6 @@
 import initializeToken from './initialToken';
 
-const API_URL = 'http://193.13.169.110:5147/api/';
+const API_URL = 'http://192.168.8.165:5147/api/';
 
 interface ApiError extends Error {
   status: number;
@@ -16,9 +16,13 @@ class ApiService {
     });
   }
 
-  async initialize(): Promise<void> {
+  async setAccessToken(): Promise<void> {
     const accessToken = await initializeToken();
     this.setAuthToken(accessToken || null);
+  }
+
+  async deleteAccessToken(): Promise<void> {
+    this.setAuthToken(null);
   }
 
   private setAuthToken(token: string | null): void {
@@ -30,7 +34,11 @@ class ApiService {
     }
   }
 
-  private async request<T>(method: string, endpoint: string, body?: object): Promise<T> {
+  private async request<T>(
+    method: string,
+    endpoint: string,
+    body?: object,
+  ): Promise<T> {
     const response = await fetch(`${API_URL}${endpoint}`, {
       method,
       headers: this.headers,
@@ -38,7 +46,9 @@ class ApiService {
     });
 
     if (!response.ok) {
-      const error = new Error(`HTTP error! status: ${response.status}`) as ApiError;
+      const error = new Error(
+        `HTTP error! status: ${response.status}`,
+      ) as ApiError;
       error.status = response.status;
       throw error;
     }
@@ -67,6 +77,10 @@ class ApiService {
 const apiService = new ApiService();
 export default apiService;
 
-export async function initializeApp() {
-  await apiService.initialize();
+export async function setAccessToken() {
+  await apiService.setAccessToken();
+}
+
+export async function deleteAccessToken() {
+  await apiService.deleteAccessToken();
 }

@@ -1,4 +1,7 @@
-import apiService, { initializeApp } from '../../api/apiService';
+import apiService, {
+  deleteAccessToken,
+  setAccessToken,
+} from '../../api/apiService';
 import { ApiResponse } from '../../types/ApiResponse';
 import { CompleteTask } from '../../types/CompleteTask';
 import { createAppAsyncThunk } from '../hook';
@@ -8,9 +11,8 @@ export const getCompletedTasks = createAppAsyncThunk<
   CompleteTask[],
   { householdId: number }
 >('completedTasks/getCompletedTasks', async ({ householdId }, thunkAPI) => {
-  console.log('Hi!');
   try {
-    await initializeApp();
+    await setAccessToken();
     const response = await apiService.get<
       ApiResponse<{ $values: CompleteTask[] }>
     >(`CompleteTasks/by-household/${householdId}`);
@@ -28,5 +30,7 @@ export const getCompletedTasks = createAppAsyncThunk<
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || 'Failed to get Completed Tasks',
     );
+  } finally {
+    await deleteAccessToken();
   }
 });

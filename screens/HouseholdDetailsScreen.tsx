@@ -11,7 +11,7 @@ import {
   rejectJoinRequest,
 } from '../store/households/action';
 import { selectCurrentProfileByAccountId } from '../store/households/selectors';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
 
 type Props = MaterialTopTabScreenProps<
@@ -22,6 +22,7 @@ type Props = MaterialTopTabScreenProps<
 export default function HouseholdDetailsScreen({ route }: Props) {
   const dispatch = useAppDispatch();
   const currentProfile = useAppSelector(selectCurrentProfileByAccountId);
+  const globalStyles = useGlobalStyles();
   const avatar = initialAvatars;
   const household = route.params?.household;
 
@@ -30,7 +31,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
 
   // Get pending requests - only if user is owner
   const pendingRequests = isHouseholdOwner
-    ? household?.profiles?.$values?.filter((profile) => profile.isRequest)
+    ? household?.profiles?.$values?.filter((profile) => !profile.isRequest)
     : [];
 
   const handleApproveRequest = async (profile: Profile) => {
@@ -117,7 +118,8 @@ export default function HouseholdDetailsScreen({ route }: Props) {
           // eslint-disable-next-line react/no-unstable-nested-components
           left={() => <Text style={globalStyles.avatarIcon}>🏠</Text>}
           subtitle={`Members (${
-            household?.profiles?.$values?.filter((p) => p.isRequest).length ?? 0
+            household?.profiles?.$values?.filter((p) => !p.isRequest).length ??
+            0
           })`}
           subtitleStyle={globalStyles.subtitle}
         />
@@ -125,7 +127,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
           <Text style={globalStyles.code}>code :{household?.code}</Text>
         </Card.Content>
         {household?.profiles?.$values
-          ?.filter((profile) => profile.isRequest)
+          ?.filter((profile) => !profile.isRequest)
           .map((profile) => {
             // Find the matching avatar for each profile
             const selectedAvatar = avatar.find(

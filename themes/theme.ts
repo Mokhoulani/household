@@ -9,6 +9,7 @@ import {
   MD3LightTheme,
 } from 'react-native-paper';
 import { ThemeProp } from 'react-native-paper/lib/typescript/types';
+import { avatarThemes } from './avatarTheme';
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationLightTheme,
@@ -23,18 +24,6 @@ export const combinedLightTheme: AppTheme = {
   colors: {
     ...MD3LightTheme.colors,
     ...LightTheme.colors,
-    primary: 'rgb(120, 69, 172)',
-    onPrimary: 'rgb(255, 255, 255)',
-    primaryContainer: 'rgb(240, 219, 255)',
-    onPrimaryContainer: 'rgb(44, 0, 81)',
-    secondary: 'rgb(102, 90, 111)',
-    onSecondary: 'rgb(255, 255, 255)',
-    secondaryContainer: 'rgb(237, 221, 246)',
-    onSecondaryContainer: 'rgb(33, 24, 42)',
-    tertiary: 'rgb(128, 81, 88)',
-    onTertiary: 'rgb(255, 255, 255)',
-    tertiaryContainer: 'rgb(255, 217, 221)',
-    onTertiaryContainer: 'rgb(50, 16, 23)',
     error: 'rgb(186, 26, 26)',
     onError: 'rgb(255, 255, 255)',
     errorContainer: 'rgb(255, 218, 214)',
@@ -72,18 +61,6 @@ export const combinedDarkTheme = {
   colors: {
     ...MD3DarkTheme.colors,
     ...DarkTheme.colors,
-    primary: 'rgb(220, 184, 255)',
-    onPrimary: 'rgb(71, 12, 122)',
-    primaryContainer: 'rgb(95, 43, 146)',
-    onPrimaryContainer: 'rgb(240, 219, 255)',
-    secondary: 'rgb(208, 193, 218)',
-    onSecondary: 'rgb(54, 44, 63)',
-    secondaryContainer: 'rgb(77, 67, 87)',
-    onSecondaryContainer: 'rgb(237, 221, 246)',
-    tertiary: 'rgb(243, 183, 190)',
-    onTertiary: 'rgb(75, 37, 43)',
-    tertiaryContainer: 'rgb(101, 58, 65)',
-    onTertiaryContainer: 'rgb(255, 217, 221)',
     error: 'rgb(255, 180, 171)',
     onError: 'rgb(105, 0, 5)',
     errorContainer: 'rgb(147, 0, 10)',
@@ -114,3 +91,27 @@ export const combinedDarkTheme = {
     backdrop: 'rgba(51, 47, 55, 0.4)',
   },
 } satisfies AppTheme;
+
+export const getCombinedTheme = (avatarTheme: number, isDark: boolean) => {
+  const baseTheme = isDark ? combinedDarkTheme : combinedLightTheme;
+  const avatarColors = avatarThemes[avatarTheme][isDark ? 'dark' : 'light'];
+
+  return {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      primary: avatarColors.primary,
+      onPrimary: avatarColors.onPrimary,
+      primaryContainer: avatarColors.primaryContainer,
+      onPrimaryContainer: avatarColors.onPrimaryContainer,
+      secondary: avatarColors.secondary,
+      onSecondary: avatarColors.onSecondary,
+      secondaryContainer: avatarColors.secondaryContainer,
+      onSecondaryContainer: avatarColors.onSecondaryContainer,
+      tertiary: avatarColors.tertiary,
+      onTertiary: avatarColors.onTertiary,
+      tertiaryContainer: avatarColors.tertiaryContainer,
+      onTertiaryContainer: avatarColors.onTertiaryContainer,
+    },
+  };
+};

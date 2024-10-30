@@ -19,7 +19,7 @@ import {
   selectProfileIsLoading,
   selectProfiles,
 } from '../store/profiles/selectors';
-import { globalStyles } from '../themes/styles';
+import { useGlobalStyles } from '../themes/styles';
 import { Profile } from '../types/profile';
 
 type Props = MaterialTopTabScreenProps<TabProfileParamsList, 'Dashboard'>;
@@ -31,6 +31,7 @@ export default function DashboardProfileScreen({ navigation }: Props) {
   const isLoading = useAppSelector(selectProfileIsLoading);
   const error = useAppSelector(selectProfileError);
   const [refreshing, setRefreshing] = useState(false);
+  const globalStyles = useGlobalStyles();
   const avatar = initialAvatars;
 
   const fetchProfiles = useCallback(() => {

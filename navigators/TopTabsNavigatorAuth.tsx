@@ -25,7 +25,7 @@ export default function TopTabsNavigatorAuth() {
           height: 3,
         },
         tabBarLabelStyle: {
-          fontSize: 0,
+          fontSize: 12,
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',

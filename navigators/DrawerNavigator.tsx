@@ -6,27 +6,27 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
+import { Text } from 'react-native-paper';
 import CreateProfileScreen from '../screens/CreateprofileScreen';
+import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
-import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
-import { Text } from 'react-native-paper';
 
 // import { Household } from '../types/Household';
 
 import { CreateProfile } from '../types/profile';
 
+import { View } from 'react-native';
+import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import TopTabsNavigatorChore, {
   TabChoreParamsList,
 } from './TopTabsNavigatorChore';
-import TopTabsNavigator, { TabParamsList } from './TopTabsNavigator';
 import TopTabsNavigatorProfile, {
   TabProfileParamsList,
 } from './TopTabsNavigatorProfile';
 import TopTabsNavigatorHousehold, {
   TabHouseholdParamsList,
 } from './TopTabsNavigtorHouseHold';
-import { View } from 'react-native';
 
 export type DrawerParamList = {
   TodyView: NavigatorScreenParams<TabParamsList>;
@@ -50,8 +50,15 @@ export default function DrawerNavigator() {
         component={TopTabsNavigator}
         options={() => ({
           title: '',
-          drawerLabel: () => (
-            <FontAwesome5 style={{ marginRight: 16 }} name="tasks" size={24} />
+          drawerLabel: ({ color }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialIcons
+                style={{ marginRight: 16 }}
+                name="today"
+                size={24}
+              />
+              <Text style={{ color: color }}>Details</Text>
+            </View>
           ),
         })}
       />
@@ -95,8 +102,16 @@ export default function DrawerNavigator() {
         component={TopTabsNavigatorProfile}
         options={() => ({
           title: '',
-          drawerLabel: () => (
-            <AntDesign style={{ marginRight: 16 }} name="profile" size={24} />
+          drawerLabel: ({ color }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <AntDesign
+                style={{ marginRight: 16 }}
+                name="profile"
+                size={24}
+                color={color}
+              />
+              <Text>Profiles</Text>
+            </View>
           ),
         })}
       />
@@ -105,8 +120,16 @@ export default function DrawerNavigator() {
         component={TopTabsNavigatorChore}
         options={() => ({
           title: '',
-          drawerLabel: () => (
-            <FontAwesome5 style={{ marginRight: 16 }} name="tasks" size={24} />
+          drawerLabel: ({ color }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <FontAwesome5
+                style={{ marginRight: 16 }}
+                name="tasks"
+                size={24}
+                colror={color}
+              />
+              <Text>Chores</Text>
+            </View>
           ),
         })}
       />

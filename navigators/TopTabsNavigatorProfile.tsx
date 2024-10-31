@@ -32,7 +32,7 @@ export default function TopTabsNavigatorProfile() {
           height: 3,
         },
         tabBarLabelStyle: {
-          fontSize: 0,
+          fontSize: 12,
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',
@@ -45,7 +45,7 @@ export default function TopTabsNavigatorProfile() {
         name="Dashboard"
         component={DashboardProfileScreen}
         options={{
-          title: '',
+          title: 'dashbord',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="dashboard" size={24} color={color} />
           ),
@@ -55,7 +55,7 @@ export default function TopTabsNavigatorProfile() {
         name="DetailsProfile"
         component={ProfileDetailsSceen}
         options={{
-          title: '',
+          title: 'details',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="details" size={24} color={color} />
           ),
@@ -65,7 +65,7 @@ export default function TopTabsNavigatorProfile() {
         name="EditProfile"
         component={EditProfileScreen}
         options={{
-          title: '',
+          title: 'edit',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="edit" size={24} color={color} />
           ),

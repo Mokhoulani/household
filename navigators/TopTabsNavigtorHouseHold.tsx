@@ -33,7 +33,7 @@ export default function TopTabsNavigatorHousehold() {
           height: 3,
         },
         tabBarLabelStyle: {
-          fontSize: 0,
+          fontSize: 12,
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',
@@ -46,7 +46,7 @@ export default function TopTabsNavigatorHousehold() {
         name="CreateHousehold"
         component={CreateHouseholdSceen}
         options={{
-          title: '',
+          title: 'create',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="add-business" size={24} color={color} />
           ),
@@ -56,7 +56,7 @@ export default function TopTabsNavigatorHousehold() {
         name="JoinHousehold"
         component={JoinHouseholdScreen}
         options={{
-          title: '',
+          title: 'join',
           tabBarIcon: ({ color }) => (
             <AntDesign name="adduser" size={24} color={color} />
           ),

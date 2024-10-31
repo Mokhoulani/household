@@ -108,7 +108,7 @@ export default function EditProfileScreen({ navigation, route }: Props) {
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={globalStyles.container}>
       <View style={globalStyles.container}>
         <Text style={globalStyles.title}>Edit Profile</Text>
 

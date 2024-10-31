@@ -20,3 +20,14 @@ export type TaskPayload = Pick<
   | 'isArchived'
   | 'householdId'
 >;
+
+export type TaskPayloadUpdtae = Pick<
+  HouseholdTask,
+  | 'id'
+  | 'title'
+  | 'description'
+  | 'difficulty'
+  | 'interval'
+  | 'isArchived'
+  | 'householdId'
+>;

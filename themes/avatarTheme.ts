@@ -108,31 +108,31 @@ export const avatarThemes: Record<
   },
   3: {
     light: {
-      primary: 'rgb(25, 25, 25)',
-      onPrimary: 'rgb(255, 255, 255)',
-      primaryContainer: 'rgb(50, 50, 50)',
+      primary: 'rgb(128, 0, 128)', // Deep purple
+      onPrimary: 'rgb(255, 255, 255)', // White for contrast
+      primaryContainer: 'rgb(155, 89, 182)', // Lighter purple
       onPrimaryContainer: 'rgb(255, 255, 255)',
-      secondary: 'rgb(35, 35, 35)',
+      secondary: 'rgb(102, 51, 153)', // Rich purple
       onSecondary: 'rgb(255, 255, 255)',
-      secondaryContainer: 'rgb(60, 60, 60)',
+      secondaryContainer: 'rgb(153, 102, 204)', // Softer purple
       onSecondaryContainer: 'rgb(255, 255, 255)',
-      tertiary: 'rgb(45, 45, 45)',
+      tertiary: 'rgb(186, 85, 211)', // Orchid purple
       onTertiary: 'rgb(255, 255, 255)',
-      tertiaryContainer: 'rgb(70, 70, 70)',
+      tertiaryContainer: 'rgb(221, 160, 221)', // Lavender purple
       onTertiaryContainer: 'rgb(255, 255, 255)',
     },
     dark: {
-      primary: 'rgb(200, 200, 200)',
-      onPrimary: 'rgb(25, 25, 25)',
-      primaryContainer: 'rgb(35, 35, 35)',
+      primary: 'rgb(200, 162, 200)', // Soft light purple for dark mode
+      onPrimary: 'rgb(45, 0, 45)', // Dark purple for contrast
+      primaryContainer: 'rgb(75, 0, 130)', // Indigo-purple
       onPrimaryContainer: 'rgb(255, 255, 255)',
-      secondary: 'rgb(190, 190, 190)',
-      onSecondary: 'rgb(35, 35, 35)',
-      secondaryContainer: 'rgb(45, 45, 45)',
+      secondary: 'rgb(177, 156, 217)', // Muted lavender
+      onSecondary: 'rgb(55, 0, 55)',
+      secondaryContainer: 'rgb(138, 43, 226)', // Bright indigo
       onSecondaryContainer: 'rgb(255, 255, 255)',
-      tertiary: 'rgb(180, 180, 180)',
-      onTertiary: 'rgb(45, 45, 45)',
-      tertiaryContainer: 'rgb(55, 55, 55)',
+      tertiary: 'rgb(230, 190, 250)', // Light lilac
+      onTertiary: 'rgb(55, 0, 55)',
+      tertiaryContainer: 'rgb(139, 0, 139)', // Dark magenta
       onTertiaryContainer: 'rgb(255, 255, 255)',
     },
   },

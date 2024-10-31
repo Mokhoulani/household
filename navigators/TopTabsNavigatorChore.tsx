@@ -3,13 +3,17 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
-import CreateTaskView from '../screens/CreateChoresScreen';
-import TasksDetailsScreen from '../screens/TasksDetailsScreen';
+import { Text } from 'react-native-paper';
 import SelectHousehold from '../components/SelectHousehold';
+import CreateTaskView from '../screens/CreateChoresScreen';
+import EditTaskScreen from '../screens/EditTaskScrenn';
+import TasksDetailsScreen from '../screens/TasksDetailsScreen';
+import { HouseholdTask } from '../types/HouseholdTask';
 
 export type TabChoreParamsList = {
   CreateChore: undefined;
   TasksDetails: undefined;
+  EditTask: { task: HouseholdTask } | undefined;
 };
 
 const Tab = createMaterialTopTabNavigator<TabChoreParamsList>();
@@ -31,7 +35,7 @@ export default function TopTabsNavigatorChore() {
             height: 3,
           },
           tabBarLabelStyle: {
-            fontSize: 0,
+            fontSize: 12,
           },
           tabBarActiveTintColor: '#007AFF',
           tabBarInactiveTintColor: '#666',
@@ -44,7 +48,14 @@ export default function TopTabsNavigatorChore() {
           name="CreateChore"
           component={CreateTaskView}
           options={{
-            title: '',
+            tabBarLabel: ({ color }) => (
+              <Text
+                style={{
+                  color,
+                }}>
+                Create Chore
+              </Text>
+            ),
             tabBarIcon: ({ color }) => (
               <MaterialIcons name="add-home-work" size={24} color={color} />
             ),
@@ -54,7 +65,17 @@ export default function TopTabsNavigatorChore() {
           name="TasksDetails"
           component={TasksDetailsScreen}
           options={{
-            title: '',
+            title: 'details',
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons name="details" size={24} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="EditTask"
+          component={EditTaskScreen}
+          options={{
+            title: 'edit',
             tabBarIcon: ({ color }) => (
               <MaterialIcons name="add-home-work" size={24} color={color} />
             ),

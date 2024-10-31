@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import {
   adaptNavigationTheme,
+  MD2Colors,
   MD3DarkTheme,
   MD3LightTheme,
 } from 'react-native-paper';
@@ -21,6 +22,7 @@ export type AppTheme = ThemeProp & Theme;
 export const combinedLightTheme: AppTheme = {
   ...MD3LightTheme,
   ...LightTheme,
+  ...MD2Colors,
   colors: {
     ...MD3LightTheme.colors,
     ...LightTheme.colors,
@@ -58,6 +60,7 @@ export const combinedLightTheme: AppTheme = {
 export const combinedDarkTheme = {
   ...MD3DarkTheme,
   ...DarkTheme,
+  ...MD2Colors,
   colors: {
     ...MD3DarkTheme.colors,
     ...DarkTheme.colors,

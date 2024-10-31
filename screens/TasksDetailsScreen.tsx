@@ -1,3 +1,4 @@
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -8,12 +9,15 @@ import {
   View,
 } from 'react-native';
 import { Card } from 'react-native-paper';
+import { TabChoreParamsList } from '../navigators/TopTabsNavigatorChore';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getTasks } from '../store/tasks/action';
 import { useGlobalStyles } from '../themes/styles';
 import { HouseholdTask } from '../types/HouseholdTask';
 
-export default function TasksDetailsScreen() {
+type Props = MaterialTopTabScreenProps<TabChoreParamsList, 'TasksDetails'>;
+
+export default function TasksDetailsScreen({ navigation }: Props) {
   // const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
@@ -43,10 +47,14 @@ export default function TasksDetailsScreen() {
     }
   }, [fetchTasks]);
 
-  const handlePress = useCallback((task: HouseholdTask) => {
-    if (task?.id) {
-    }
-  }, []);
+  const handlePress = useCallback(
+    (task: HouseholdTask) => {
+      if (task?.id) {
+        navigation.navigate('EditTask', { task });
+      }
+    },
+    [navigation],
+  );
 
   const renderTaskItem = useCallback(
     ({ item }: { item: HouseholdTask | null }) => {

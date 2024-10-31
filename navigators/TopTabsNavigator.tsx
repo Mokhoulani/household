@@ -31,7 +31,7 @@ export default function TopTabsNavigator() {
             height: 3,
           },
           tabBarLabelStyle: {
-            fontSize: 0,
+            fontSize: 12,
           },
           tabBarActiveTintColor: '#007AFF',
           tabBarInactiveTintColor: '#666',
@@ -44,7 +44,7 @@ export default function TopTabsNavigator() {
           name="Today"
           component={DailyViewScreen}
           options={{
-            title: '',
+            title: 'tody',
             tabBarIcon: ({ color }) => (
               <MaterialIcons name="today" size={24} color={color} />
             ),
@@ -54,7 +54,7 @@ export default function TopTabsNavigator() {
           name="Statistics"
           component={StatisticsScreen}
           options={{
-            title: '',
+            title: 'statistics',
             tabBarIcon: ({ color }) => (
               <MaterialIcons name="work-history" size={24} color={color} />
             ),

@@ -18,8 +18,8 @@ export const useColors = () => {
     onTertiaryContainer: theme.colors.onTertiaryContainer,
     error: theme.colors.error,
     text: {
-      primary: theme.colors.surface,
-      secondary: theme.colors.surfaceVariant,
+      primary: theme.colors.onSurface,
+      secondary: theme.colors.onSurface,
       light: theme.colors.outline,
     },
     button: {
@@ -69,6 +69,7 @@ export const useGlobalStyles = () => {
     // Layout styles
     container: {
       flex: 1,
+      padding: 16,
       backgroundColor: colors.primaryContainer,
     } as ViewStyle,
     containerInput: {
@@ -241,6 +242,7 @@ export const useGlobalStyles = () => {
     } as TextStyle,
     scrollContent: {
       flexGrow: 1,
+      backgroundColor: theme.colors.tertiaryContainer,
     } as ViewStyle,
     centerContainer: {
       flex: 1,
@@ -251,21 +253,24 @@ export const useGlobalStyles = () => {
 
     // Card styles
     surface: {
-      margin: theme.spacing.md,
+      margin: theme.spacing.xs,
       elevation: 2,
       borderRadius: theme.borderRadius.md,
-      backgroundColor: colors.primaryContainer,
+      backgroundColor: theme.colors.secondaryContainer,
     } as ViewStyle,
     card: {
       borderRadius: theme.borderRadius.md,
       overflow: 'hidden',
       padding: theme.spacing.sm,
+      backgroundColor: theme.colors.tertiaryContainer,
     } as ViewStyle,
     cardTouchable: {
       marginVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.tertiaryContainer,
     } as ViewStyle,
     innerCard: {
       marginVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.tertiaryContainer,
     } as ViewStyle,
 
     // Typography styles

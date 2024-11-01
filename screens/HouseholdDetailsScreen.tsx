@@ -1,14 +1,25 @@
 import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
-import React, { useCallback, useMemo } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleProp,
+  TextInput,
+  TextStyle,
+  View,
+} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Button, Card, Surface, Text } from 'react-native-paper';
+import { Button, Card, Snackbar, Surface, Text } from 'react-native-paper';
 import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
 import { AvatarMap, initialAvatars } from '../store/avatars/state';
 import { useAppDispatch } from '../store/hook';
 import {
   approveJoinRequest,
   rejectJoinRequest,
+  updateHousehold,
 } from '../store/households/action';
 import { useGlobalStyles } from '../themes/styles';
 import { Avatar } from '../types/Avatar';
@@ -93,7 +104,6 @@ const MembersList: React.FC<{
   avatars: Avatar[];
   globalStyles: any;
 }> = ({ members, avatars, globalStyles }) => {
-  // Create properly typed avatar lookup map
   const avatarMap = useMemo<AvatarMap>(
     () =>
       avatars.reduce(
@@ -122,7 +132,7 @@ const MembersList: React.FC<{
                 subtitle={profile.isOwner ? 'Owner' : 'Member'}
                 // eslint-disable-next-line react/no-unstable-nested-components
                 right={() =>
-                  profile.isOwner && selectedAvatar ? (
+                  selectedAvatar ? (
                     <Text style={globalStyles.avatarIcon}>
                       {selectedAvatar.icon}
                     </Text>
@@ -185,7 +195,54 @@ type Props = MaterialTopTabScreenProps<
 
 export default function HouseholdDetailsScreen({ route }: Props) {
   const globalStyles = useGlobalStyles();
+  const dispatch = useAppDispatch();
+  const [name, setName] = useState('');
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const currentHousehold = route.params?.household;
+
+  const validateForm = (): boolean => {
+    if (!name.trim()) {
+      setNameError('Household name is required');
+      return false;
+    }
+    if (name.length < 3) {
+      setNameError('Household name must be at least 3 characters');
+      return false;
+    }
+    setNameError(null);
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm() || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      if (!currentHousehold?.id) return;
+      const updatedHousehold = {
+        id: currentHousehold?.id,
+        name: currentHousehold?.name,
+      };
+      await dispatch(updateHousehold(updatedHousehold)).unwrap(); // Keep the original action here
+      setSnackbarMessage('Household updated successfully!');
+      setSnackbarVisible(true);
+    } catch (err) {
+      console.error('Household update failed:', err);
+      setSnackbarMessage('Failed to update household. Please try again.');
+      setSnackbarVisible(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getInputStyle = (): StyleProp<TextStyle> => {
+    const baseStyle = globalStyles.input;
+    return nameError ? [baseStyle, globalStyles.inputError] : baseStyle;
+  };
 
   const ownerProfile = currentHousehold?.profiles?.find(
     (profile) => profile.isOwner,
@@ -206,8 +263,8 @@ export default function HouseholdDetailsScreen({ route }: Props) {
     useRequestManagement(isHouseholdOwner);
 
   return (
-    <View style={globalStyles.container}>
-      <ScrollView>
+    <ScrollView style={globalStyles.scrollContent}>
+      <ScrollView contentContainerStyle={globalStyles.scrollContent}>
         <Surface style={globalStyles.surface}>
           <Card style={globalStyles.card}>
             <Card.Title
@@ -220,7 +277,7 @@ export default function HouseholdDetailsScreen({ route }: Props) {
             />
             <Card.Content style={globalStyles.cardContent}>
               <Text style={globalStyles.code}>
-                code: {currentHousehold?.code}
+                Code: {currentHousehold?.code}
               </Text>
             </Card.Content>
             <MembersList
@@ -240,6 +297,54 @@ export default function HouseholdDetailsScreen({ route }: Props) {
           />
         )}
       </ScrollView>
-    </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={globalStyles.container}>
+        <View style={globalStyles.contentContainer}>
+          <Text style={globalStyles.title}>Update Household</Text>
+
+          <TextInput
+            placeholder="Enter household name"
+            value={name}
+            onChangeText={(text) => {
+              setName(text);
+              if (nameError) setNameError(null);
+            }}
+            style={getInputStyle()}
+            editable={!isSubmitting}
+            maxLength={50}
+            autoCapitalize="words"
+            autoCorrect={false}
+          />
+
+          {nameError && <Text style={globalStyles.errorText}>{nameError}</Text>}
+
+          <TouchableOpacity
+            style={[
+              globalStyles.submitButton,
+              (isSubmitting || !name.trim()) &&
+                globalStyles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={isSubmitting || !name.trim()}>
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={globalStyles.submitButtonText}>
+                Udadte Household
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}>
+        {snackbarMessage}
+      </Snackbar>
+    </ScrollView>
   );
 }

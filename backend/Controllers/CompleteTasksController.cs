@@ -13,7 +13,7 @@ public class CompleteTasksController : ControllerBase
 
     public CompleteTasksController(
         IEfRepository<CompleteTask> completeTaskRepository,
-        IEfRepository<HouseholdTask> householdTaskRepository,   
+        IEfRepository<HouseholdTask> householdTaskRepository,
         ILogger<CompleteTasksController> logger)
     {
         _completeTaskRepository = completeTaskRepository;
@@ -21,55 +21,56 @@ public class CompleteTasksController : ControllerBase
         _logger = logger;
     }
 
-        [HttpGet("by-household/{householdId}")] 
-        public async Task<IActionResult> GetCompletedTasksByHouseholdID(int householdId)
+    [HttpGet("by-household/{householdId}")]
+    public async Task<IActionResult> GetCompletedTasksByHouseholdID(int householdId)
+    {
+        try
         {
-            try{ 
-                var userId = GetUserIdFromClaims();
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return Unauthorized(new ApiResponse<IEnumerable<CompleteTask>> { Message = "User is not authenticated." });
-                }
-                var query = await _completeTaskRepository.QueryAsync();
-                var completedTasks = await query
-                .Include(ct => ct.HouseholdTask)
-                .Include(ct => ct.Profile)
-                .Where(ct => ct.HouseholdId == householdId) 
-                .ToListAsync();
-
-                if (!completedTasks.Any())
-                {
-                    return NotFound(new ApiResponse<IEnumerable<CompleteTask>> { Message = "No completed tasks found for the current household." });
-                }
-
-                var completedTasksDTO = completedTasks.Select(task => new CompletedTaskDTO
-                {
-                    Id = task.Id,
-                    CompletedAt = task.CompletedAt,
-                    Comment = task.Comment,
-                    ProfileId = task.ProfileId,
-                    Profile = new ProfileDTO
-                    {
-                        Id = task.ProfileId,
-                        AvatarId = task.Profile.AvatarId
-                    },
-                    HouseholdTaskId = task.HouseholdTaskId,
-                    HouseholdTask = new HouseholdTaskDTO
-                    {
-                        Id = task.HouseholdTaskId,
-                        Title = task.HouseholdTask.Title,
-                        Difficulty = task.HouseholdTask.Difficulty 
-                    }
-                }).ToList();
-
-                return Ok(new ApiResponse<IEnumerable<CompletedTaskDTO>> { Data = completedTasksDTO, Message = "Completed tasks retrieved successfully." });
-            }
-            catch (Exception ex)
+            var userId = GetUserIdFromClaims();
+            if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogError(ex, "Error occurred while retrieving completed tasks");
-                return StatusCode(500, new ApiResponse<IEnumerable<CompleteTask>> { Message = "An error occurred while processing your request." });
+                return Unauthorized(new ApiResponse<IEnumerable<CompleteTask>> { Message = "User is not authenticated." });
             }
+            var query = await _completeTaskRepository.QueryAsync();
+            var completedTasks = await query
+            .Include(ct => ct.HouseholdTask)
+            .Include(ct => ct.Profile)
+            .Where(ct => ct.HouseholdId == householdId)
+            .ToListAsync();
+
+            if (!completedTasks.Any())
+            {
+                return NotFound(new ApiResponse<IEnumerable<CompleteTask>> { Message = "No completed tasks found for the current household." });
+            }
+
+            var completedTasksDTO = completedTasks.Select(task => new CompletedTaskDTO
+            {
+                Id = task.Id,
+                CompletedAt = task.CompletedAt,
+                Comment = task.Comment,
+                ProfileId = task.ProfileId,
+                Profile = new ProfileDTO
+                {
+                    Id = task.ProfileId,
+                    AvatarId = task.Profile.AvatarId
+                },
+                HouseholdTaskId = task.HouseholdTaskId,
+                HouseholdTask = new HouseholdTaskDTO
+                {
+                    Id = task.HouseholdTaskId,
+                    Title = task.HouseholdTask.Title,
+                    Difficulty = task.HouseholdTask.Difficulty
+                }
+            }).ToList();
+
+            return Ok(new ApiResponse<IEnumerable<CompletedTaskDTO>> { Data = completedTasksDTO, Message = "Completed tasks retrieved successfully." });
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieving completed tasks");
+            return StatusCode(500, new ApiResponse<IEnumerable<CompleteTask>> { Message = "An error occurred while processing your request." });
+        }
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetCompletedTasks()
@@ -130,7 +131,7 @@ public class CompleteTasksController : ControllerBase
             }
 
             // Ensure the task belongs to the same household
-            if (houseTask.HouseholdId != completedTask.Profile.HouseholdId)
+            if (houseTask.HouseholdId != completedTask.HouseholdId)
             {
                 return BadRequest(new ApiResponse<CompleteTask> { Message = "House task and household do not match." });
             }
@@ -142,7 +143,16 @@ public class CompleteTasksController : ControllerBase
 
             _logger.LogInformation($"Completed task created for user {userId}");
 
-            return CreatedAtAction(nameof(GetCompletedTasks), new { id = completedTask.Id }, new ApiResponse<CompleteTask> { Data = completedTask, Message = "Completed task created successfully" });
+            var dto = new CompletedTaskDTO
+            {
+                Id = completedTask.Id,
+                CompletedAt = completedTask.CompletedAt,
+                ProfileId = completedTask.ProfileId,
+                HouseholdTaskId = completedTask.HouseholdTaskId,
+                Comment = completedTask.Comment
+            };
+
+            return CreatedAtAction(nameof(GetCompletedTasks), new { id = completedTask.Id }, new ApiResponse<CompletedTaskDTO> { Data = dto, Message = "Completed task created successfully" });
         }
         catch (Exception ex)
         {

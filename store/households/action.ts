@@ -3,7 +3,11 @@ import apiService, {
   setAccessToken,
 } from '../../api/apiService';
 import { ApiResponse } from '../../types/ApiResponse';
-import { CreateHousehold, Household } from '../../types/Household';
+import {
+  CreateHousehold,
+  Household,
+  UpdateHousehold,
+} from '../../types/Household';
 import { Profile } from '../../types/profile';
 import { createAppAsyncThunk } from '../hook';
 
@@ -20,6 +24,26 @@ export const createHousehold = createAppAsyncThunk<Household, CreateHousehold>(
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to create household',
+      );
+    } finally {
+      await deleteAccessToken();
+    }
+  },
+);
+
+export const updateHousehold = createAppAsyncThunk<Household, UpdateHousehold>(
+  'households/updateHousehold',
+  async (household, thunkAPI) => {
+    try {
+      await setAccessToken();
+      const response = await apiService.put<ApiResponse<Household>>(
+        `Households/${household.id}`,
+        { ...household },
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || 'Failed to update household',
       );
     } finally {
       await deleteAccessToken();

@@ -1,3 +1,4 @@
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   RefreshControl,
@@ -8,6 +9,7 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ActivityIndicator, Card, Surface } from 'react-native-paper';
+import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
 import { useAppDispatch, useAppSelector } from '../store/hook';
 import { getHouseholds } from '../store/households/action';
 import { setCurrentHousehold } from '../store/households/reducer';
@@ -19,7 +21,9 @@ import {
 import { useGlobalStyles } from '../themes/styles';
 import { Household } from '../types/Household';
 
-export default function DashboardHouseholdScreen() {
+type Props = MaterialTopTabScreenProps<TabHouseholdParamsList, 'Dashboard'>;
+
+export default function DashboardHouseholdScreen({ navigation }: Props) {
   const dispatch = useAppDispatch();
   const households = useAppSelector(selectHouseholds) || [];
   const isLoading = useAppSelector(selectHouseholdLoading);
@@ -46,9 +50,10 @@ export default function DashboardHouseholdScreen() {
     (household: Household) => {
       if (household?.id) {
         dispatch(setCurrentHousehold(household));
+        navigation.navigate('DetailsHousehold', { household });
       }
     },
-    [dispatch],
+    [dispatch, navigation],
   );
 
   const renderHouseholdItem = useCallback(
@@ -68,9 +73,7 @@ export default function DashboardHouseholdScreen() {
             <Card.Title
               title={item.name || 'Unnamed Household'}
               subtitle={
-                item.profiles
-                  ? `${item.profiles.$values.length} members`
-                  : 'No members'
+                item.profiles ? `${item.profiles.length} members` : 'No members'
               }
             />
           </Card>

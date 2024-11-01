@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 
 public class Profile
 {
@@ -18,6 +20,8 @@ public class Profile
 
     // Navigation properties
     [ForeignKey("HouseholdId")]
+
+    [JsonIgnore]
     public Household? Household { get; set; } // Navigation to Household
 
     [ForeignKey("AccountId")]

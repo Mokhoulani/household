@@ -7,6 +7,10 @@ export type AvatarState = {
   error: string | null;
 };
 
+export interface AvatarMap {
+  [key: number]: Avatar;
+}
+
 export const initialAvatars: Avatar[] = [
   { id: 1, icon: '🐅', color: '#FFA500' },
   { id: 2, icon: '🐇', color: '#D3D3D3' },

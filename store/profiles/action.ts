@@ -11,9 +11,8 @@ export const getProfiles = createAppAsyncThunk<Profile[], void>(
   async (_, thunkAPI) => {
     try {
       await setAccessToken();
-      const response =
-        await apiService.get<ApiResponse<{ $values: Profile[] }>>('Profiles');
-      return response.data.$values;
+      const response = await apiService.get<ApiResponse<Profile[]>>('Profiles');
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to get profiles',

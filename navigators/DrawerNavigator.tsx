@@ -8,7 +8,6 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 import React from 'react';
 import { Text } from 'react-native-paper';
 import CreateProfileScreen from '../screens/CreateprofileScreen';
-import HouseholdDetailsScreen from '../screens/HouseholdDetailsScreen';
 import LogoutScreen from '../screens/logoutScreen';
 import SettingsScreen from '../screens/SettingScreen';
 
@@ -64,7 +63,7 @@ export default function DrawerNavigator() {
       />
       <Drawer.Screen
         name="Household"
-        component={HouseholdDetailsScreen}
+        component={TopTabsNavigatorHousehold}
         options={() => ({
           title: '',
           drawerLabel: ({ color }) => (

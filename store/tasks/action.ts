@@ -16,11 +16,8 @@ export const getTasks = createAppAsyncThunk<HouseholdTask[], void>(
     try {
       await setAccessToken();
       const response =
-        await apiService.get<ApiResponse<{ $values: HouseholdTask[] }>>(
-          'HouseholdTasks',
-        );
-      console.log(response.data.$values);
-      return response.data.$values;
+        await apiService.get<ApiResponse<HouseholdTask[]>>('HouseholdTasks');
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to get Tasks',

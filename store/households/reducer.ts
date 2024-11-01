@@ -14,7 +14,6 @@ const initialState: HouseholdState = {
   currentHousehold: null,
   isLoading: false,
   error: null,
-  profiles: [],
 };
 
 const householdSlice = createSlice({
@@ -77,13 +76,13 @@ const householdSlice = createSlice({
       .addCase(approveJoinRequest.fulfilled, (state, action) => {
         if (!state.currentHousehold) return;
 
-        const memberIndex = state.currentHousehold.profiles.$values.findIndex(
+        const memberIndex = state.currentHousehold.profiles.findIndex(
           (p) => p.id === action.payload.id,
         );
 
         if (memberIndex !== -1) {
-          state.currentHousehold.profiles.$values[memberIndex] = {
-            ...state.currentHousehold.profiles.$values[memberIndex],
+          state.currentHousehold.profiles[memberIndex] = {
+            ...state.currentHousehold.profiles[memberIndex],
             ...action.payload,
             isRequest: true,
           };
@@ -97,8 +96,8 @@ const householdSlice = createSlice({
       .addCase(rejectJoinRequest.fulfilled, (state, action) => {
         if (!state.currentHousehold) return;
 
-        state.currentHousehold.profiles.$values =
-          state.currentHousehold.profiles.$values.filter(
+        state.currentHousehold.profiles =
+          state.currentHousehold.profiles.filter(
             (member) => member.id !== action.payload,
           );
       })

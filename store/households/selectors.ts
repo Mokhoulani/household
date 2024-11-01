@@ -18,7 +18,7 @@ export const selectCurrentProfileByAccountId = (state: RootState) => {
 
   const currentHouseholdProfiles = households?.find(
     (h) => h.id === currentHousehold?.id,
-  )?.profiles?.$values;
+  )?.profiles;
 
   return currentHouseholdProfiles?.find((p) => p.accountId === userId) ?? null;
 };

@@ -18,11 +18,11 @@ export const getAvailableAvatarsForProfile = createAppAsyncThunk<
   try {
     await setAccessToken();
 
-    const response = await apiService.get<ApiResponse<{ $values: Profile[] }>>(
+    const response = await apiService.get<ApiResponse<Profile[]>>(
       `profiles/${householdId}`,
     );
 
-    const profiles = response.data.$values;
+    const profiles = response.data;
 
     const usedAvatarIds = profiles.map((profile) => {
       return profile.avatarId;

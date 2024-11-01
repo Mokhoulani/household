@@ -33,10 +33,9 @@ export const getHouseholds = createAppAsyncThunk<Household[], void>(
     try {
       await setAccessToken();
       const response =
-        await apiService.get<ApiResponse<{ $values: Household[] }>>(
-          'Households',
-        );
-      return response.data?.$values;
+        await apiService.get<ApiResponse<Household[]>>('Households');
+      console.log('respos', response.data);
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || 'Failed to get households',

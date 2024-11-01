@@ -54,7 +54,7 @@ public class CompleteTasksController : ControllerBase
                         AvatarId = task.Profile.AvatarId
                     },
                     HouseholdTaskId = task.HouseholdTaskId,
-                    HouseholdTask = new HouseHoldTaskDTO
+                    HouseholdTask = new HouseholdTaskDTO
                     {
                         Id = task.HouseholdTaskId,
                         Title = task.HouseholdTask.Title,

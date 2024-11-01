@@ -6,7 +6,7 @@ public class CompletedTaskDTO
     public int ProfileId { get; set; }
     public ProfileDTO Profile { get; set; }
     public int HouseholdTaskId { get; set; }
-    public HouseHoldTaskDTO HouseholdTask { get; set; }
+    public HouseholdTaskDTO HouseholdTask { get; set; }
 }
 
 
@@ -31,18 +31,7 @@ public class HouseholdTaskDTO
     public ICollection<CompletedTaskDTO> CompletedTasks { get; set; }
 }
 
-public class ProfileDTO
-{
-    public int Id { get; set; }
-    public int AvatarId { get; set; }
-}
 
-public class HouseHoldTaskDTO
-{
-    public int Id { get; set; }
-    public string? Title { get; set; }
-    public int? Difficulty { get; set; }
-}
 
 public class HouseholdDTO
 {
@@ -53,4 +42,16 @@ public class HouseholdDTO
 
     public ICollection<ProfileDTO> Profiles { get; set; }
     public ICollection<HouseholdTaskDTO> Tasks { get; set; }
+}
+
+public class ProfileDTO
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public bool IsOwner { get; set; }
+    public bool IsRequest { get; set; }
+    public int AvatarId { get; set; }
+    public int HouseholdId { get; set; }
+    public string? AccountId { get; set; }
+    public HouseholdDTO Household { get; set; }
 }

@@ -139,7 +139,7 @@ public class HouseholdsController : ControllerBase
                 return NotFound(new ApiResponse<Household> { Message = "Household not found." });
             }
 
-            if (!existingHousehold.Profiles.Any(m => m.AccountId == userId))
+            if (existingHousehold.Profiles.Any(m => m.AccountId == userId))
             {
                 return Unauthorized(new ApiResponse<Household> { Message = "You are not authorized to update this household." });
             }

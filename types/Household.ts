@@ -13,6 +13,11 @@ export type CreateHousehold = {
   name: string;
 };
 
+export type UpdateHousehold = {
+  id: number;
+  name: string;
+};
+
 export type joinHousehold = {
   code: string;
 };

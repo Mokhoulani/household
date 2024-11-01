@@ -13,11 +13,11 @@ export const getCompletedTasks = createAppAsyncThunk<
 >('completedTasks/getCompletedTasks', async ({ householdId }, thunkAPI) => {
   try {
     await setAccessToken();
-    const response = await apiService.get<
-      ApiResponse<{ $values: CompleteTask[] }>
-    >(`CompleteTasks/by-household/${householdId}`);
-    thunkAPI.dispatch(setCompletedTasks(response.data.$values));
-    return response.data.$values;
+    const response = await apiService.get<ApiResponse<CompleteTask[]>>(
+      `CompleteTasks/by-household/${householdId}`,
+    );
+    thunkAPI.dispatch(setCompletedTasks(response.data));
+    return response.data;
   } catch (error: any) {
     console.log(error);
     if (error.status === 404) {

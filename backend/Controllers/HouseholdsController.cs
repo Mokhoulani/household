@@ -29,10 +29,40 @@ public class HouseholdsController : ControllerBase
             }
             var query = await _householdRepository.QueryAsync();
             var households = await query
-            .Include(h => h.Profiles)
-            .Where(h => h.Profiles.Any(p => p.AccountId == userId))
-            .Include(t => t.Tasks)
-            .ToListAsync();
+                .Include(h => h.Profiles)
+                .Include(h => h.Tasks)
+                .Where(h => h.Profiles.Any(p => p.AccountId == userId))
+                .ToListAsync();
+
+
+            var householdsDTO = households.Select(household => new HouseholdDTO
+            {
+                Id = household.Id,
+                Name = household.Name,
+                Code = household.Code,
+                Profiles = household.Profiles.Select(profile => new ProfileDTO
+                {
+                    Id = profile.Id,
+                    AccountId = profile.AccountId,
+                    Name = profile.Name,
+                    IsOwner = profile.IsOwner,
+                    IsRequest = profile.IsRequest,
+                    AvatarId = profile.AvatarId,
+                    HouseholdId = profile.HouseholdId,
+                }).ToList(),
+                Tasks = household.Tasks.Select(task => new HouseholdTaskDTO
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Interval = task.Interval,
+                    IsArchived = task.IsArchived,
+                    Difficulty = task.Difficulty,
+                    HouseholdId = task.HouseholdId,
+
+                }).ToList()
+            }).ToList();
+
 
             if (!households.Any())
             {

@@ -36,15 +36,30 @@ public class ProfilesController : ControllerBase
             var profiles = await query
             .Include(p => p.Household)
             .Where(p => p.AccountId == userId)
-
             .ToListAsync();
+
+            var profilesDTO = profiles.Select(profile => new ProfileDTO
+            {
+                Id = profile.Id,
+                AccountId = profile.AccountId,
+                HouseholdId = profile.HouseholdId,
+                IsOwner = profile.IsOwner,
+                IsRequest = profile.IsRequest,
+                Name = profile.Name,
+                Household = new HouseholdDTO
+                {
+                    Id = profile.Household.Id,
+                    Name = profile.Household.Name,
+                    Code = profile.Household.Code
+                },
+            }).ToList();
 
             if (!profiles.Any())
             {
                 return NotFound(new ApiResponse<IEnumerable<Profile>> { Message = "No profiles found for the current user." });
             }
 
-            return Ok(new ApiResponse<IEnumerable<Profile>> { Data = profiles, Message = "Profiles retrieved successfully." });
+            return Ok(new ApiResponse<IEnumerable<ProfileDTO>> { Data = profilesDTO, Message = "Profiles retrieved successfully." });
         }
         catch (Exception ex)
         {

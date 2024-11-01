@@ -130,56 +130,58 @@ export default function CreateTaskView({ navigation }: Props) {
   );
 
   return (
-    <ScrollView contentContainerStyle={globalStyles.scrollContent}>
-      <View style={globalStyles.containerInput}>
-        <Text style={globalStyles.title}>Create Task</Text>
+    <View style={globalStyles.container}>
+      <ScrollView contentContainerStyle={globalStyles.scrollContent}>
+        <View style={globalStyles.containerInput}>
+          <Text style={globalStyles.title}>Create Task</Text>
 
-        {renderFormField('Task Title *', 'title', 'Enter your title', {
-          hint: 'Give your task a clear and descriptive title',
-        })}
+          {renderFormField('Task Title *', 'title', 'Enter your title', {
+            hint: 'Give your task a clear and descriptive title',
+          })}
 
-        {renderFormField(
-          'Description *',
-          'description',
-          'Enter your description',
-          {
-            multiline: true,
-            hint: 'Provide detailed instructions for the task',
-          },
-        )}
+          {renderFormField(
+            'Description *',
+            'description',
+            'Enter your description',
+            {
+              multiline: true,
+              hint: 'Provide detailed instructions for the task',
+            },
+          )}
 
-        {renderFormField(
-          'Difficulty Level',
-          'difficulty',
-          'Enter difficulty level',
-          {
+          {renderFormField(
+            'Difficulty Level',
+            'difficulty',
+            'Enter difficulty level',
+            {
+              keyboardType: 'numeric',
+              hint: 'Rate difficulty from 0 (easiest) to 10 (hardest)',
+            },
+          )}
+
+          {renderFormField('Interval', 'interval', 'Enter interval', {
             keyboardType: 'numeric',
-            hint: 'Rate difficulty from 0 (easiest) to 10 (hardest)',
-          },
-        )}
+            hint: 'How often should this task repeat? (in days)',
+          })}
 
-        {renderFormField('Interval', 'interval', 'Enter interval', {
-          keyboardType: 'numeric',
-          hint: 'How often should this task repeat? (in days)',
-        })}
+          {error && <Text style={globalStyles.errorText}>{error}</Text>}
 
-        {error && <Text style={globalStyles.errorText}>{error}</Text>}
-
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color={combinedLightTheme.colors.primary}
-            testID="loading-indicator"
-          />
-        ) : (
-          <Button
-            title="Create Task"
-            onPress={handleSubmit}
-            disabled={!isFormValid}
-            testID="submit-button"
-          />
-        )}
-      </View>
-    </ScrollView>
+          {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color={combinedLightTheme.colors.primary}
+              testID="loading-indicator"
+            />
+          ) : (
+            <Button
+              title="Create Task"
+              onPress={handleSubmit}
+              disabled={!isFormValid}
+              testID="submit-button"
+            />
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 }

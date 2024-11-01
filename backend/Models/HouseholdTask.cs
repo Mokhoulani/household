@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 public class HouseholdTask
 {
     public int Id { get; set; }
@@ -8,6 +9,7 @@ public class HouseholdTask
     [ForeignKey("Household")]
     public int HouseholdId { get; set; }
 
+    [JsonIgnore]
     public Household? Household { get; set; }
 
     [Required]

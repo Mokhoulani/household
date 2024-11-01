@@ -1,206 +1,244 @@
-import React from 'react';
-import { Alert, View, ScrollView } from 'react-native';
+import { MaterialTopTabScreenProps } from '@react-navigation/material-top-tabs';
+import React, { useCallback, useMemo } from 'react';
+import { Alert, ScrollView, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button, Card, Surface, Text } from 'react-native-paper';
-import { initialAvatars } from '../store/avatars/state';
-import { useAppDispatch, useAppSelector } from '../store/hook';
+import { TabHouseholdParamsList } from '../navigators/TopTabsNavigtorHouseHold';
+import { AvatarMap, initialAvatars } from '../store/avatars/state';
+import { useAppDispatch } from '../store/hook';
 import {
   approveJoinRequest,
   rejectJoinRequest,
 } from '../store/households/action';
-import { selectCurrentProfileByAccountId } from '../store/households/selectors';
 import { useGlobalStyles } from '../themes/styles';
+import { Avatar } from '../types/Avatar';
 import { Profile } from '../types/profile';
-import { selectCurrentHousehold } from '../store/households/selectors';
-import SelectHousehold from '../components/SelectHousehold';
 
-export default function HouseholdDetailsScreen() {
+// Custom hook for request management
+const useRequestManagement = (isOwner: boolean) => {
   const dispatch = useAppDispatch();
-  const currentHousehold = useAppSelector(selectCurrentHousehold);
-  const currentProfile = useAppSelector(selectCurrentProfileByAccountId);
-  const globalStyles = useGlobalStyles();
-  const avatar = initialAvatars;
 
-  // Explicitly separate owner check
-  const isHouseholdOwner = currentProfile?.isOwner === true;
+  const handleApproveRequest = useCallback(
+    async (profile: Profile) => {
+      if (!isOwner) {
+        console.warn('Non-owner attempted to approve request');
+        return;
+      }
 
-  // Get pending requests - only if user is owner
-  const pendingRequests = isHouseholdOwner
-    ? currentHousehold?.profiles?.$values?.filter(
-        (profile) => !profile.isRequest,
-      )
-    : [];
-
-  const handleApproveRequest = async (profile: Profile) => {
-    // Double-check owner status before any action
-    if (!isHouseholdOwner) {
-      console.warn('Non-owner attempted to approve request');
-      return;
-    }
-
-    Alert.alert(
-      'Approve Request',
-      `Are you sure you want to approve ${profile.name}'s join request?`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Approve',
-          style: 'default',
-          onPress: async () => {
-            try {
-              await dispatch(approveJoinRequest(profile));
-            } catch (error) {
-              console.error('Failed to approve request:', error);
-              // Show error alert
-              Alert.alert(
-                'Error',
-                'Failed to approve the request. Please try again.',
-                [{ text: 'OK' }],
-              );
-            }
+      Alert.alert(
+        'Approve Request',
+        `Are you sure you want to approve ${profile.name}'s join request?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Approve',
+            style: 'default',
+            onPress: async () => {
+              try {
+                const updatedProfile = { ...profile, isRequest: false };
+                await dispatch(approveJoinRequest(updatedProfile));
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              } catch (error) {
+                Alert.alert(
+                  'Error',
+                  'Failed to approve the request. Please try again.',
+                );
+              }
+            },
           },
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+        ],
+      );
+    },
+    [dispatch, isOwner],
+  );
 
-  const handleRejectRequest = async (profile: Profile) => {
-    // Double-check owner status before any action
-    if (!isHouseholdOwner) {
-      console.warn('Non-owner attempted to reject request');
-      return;
-    }
+  const handleRejectRequest = useCallback(
+    async (profile: Profile) => {
+      if (!isOwner) {
+        console.warn('Non-owner attempted to reject request');
+        return;
+      }
 
-    Alert.alert(
-      'Reject Request',
-      `Are you sure you want to reject ${profile.name}'s join request?`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Reject',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await dispatch(rejectJoinRequest(profile));
-            } catch (error) {
-              console.error('Failed to reject request:', error);
-              // Show error alert
-              Alert.alert(
-                'Error',
-                'Failed to reject the request. Please try again.',
-                [{ text: 'OK' }],
-              );
-            }
+      Alert.alert(
+        'Reject Request',
+        `Are you sure you want to reject ${profile.name}'s join request?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Reject',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await dispatch(rejectJoinRequest(profile));
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              } catch (error) {
+                Alert.alert(
+                  'Error',
+                  'Failed to reject the request. Please try again.',
+                );
+              }
+            },
           },
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+        ],
+      );
+    },
+    [dispatch, isOwner],
+  );
 
-  // Regular members section - visible to all
-  const regularMembersSection = (
+  return { handleApproveRequest, handleRejectRequest };
+};
+
+const MembersList: React.FC<{
+  members: Profile[];
+  avatars: Avatar[];
+  globalStyles: any;
+}> = ({ members, avatars, globalStyles }) => {
+  // Create properly typed avatar lookup map
+  const avatarMap = useMemo<AvatarMap>(
+    () =>
+      avatars.reduce(
+        (acc: AvatarMap, avatar) => ({
+          ...acc,
+          [avatar.id]: avatar,
+        }),
+        {},
+      ),
+    [avatars],
+  );
+
+  return (
+    <>
+      {members.map((profile) => {
+        const selectedAvatar = avatarMap[profile.avatarId];
+        return (
+          <TouchableOpacity
+            key={profile.id}
+            style={globalStyles.cardTouchable}
+            onPress={() => console.log('Profile clicked:', profile)}>
+            <Card style={globalStyles.card}>
+              <Card.Title
+                title={profile.name}
+                titleStyle={globalStyles.nameBadge}
+                subtitle={profile.isOwner ? 'Owner' : 'Member'}
+                // eslint-disable-next-line react/no-unstable-nested-components
+                right={() =>
+                  profile.isOwner && selectedAvatar ? (
+                    <Text style={globalStyles.avatarIcon}>
+                      {selectedAvatar.icon}
+                    </Text>
+                  ) : null
+                }
+              />
+            </Card>
+          </TouchableOpacity>
+        );
+      })}
+    </>
+  );
+};
+
+// Pending requests component
+const PendingRequests: React.FC<{
+  requests: Profile[];
+  onApprove: (profile: Profile) => void;
+  onReject: (profile: Profile) => void;
+  globalStyles: any;
+}> = ({ requests, onApprove, onReject, globalStyles }) => {
+  if (!requests?.length) return null;
+
+  return (
     <Surface style={globalStyles.surface}>
       <Card style={globalStyles.card}>
         <Card.Title
-          title={currentHousehold?.name}
-          titleStyle={globalStyles.title}
-          // eslint-disable-next-line react/no-unstable-nested-components
-          left={() => <Text style={globalStyles.avatarIcon}>🏠</Text>}
-          subtitle={`Members (${
-            currentHousehold?.profiles?.$values?.filter((p) => !p.isRequest)
-              .length ?? 0
-          })`}
-          subtitleStyle={globalStyles.subtitle}
+          title="Pending Join Requests"
+          subtitle={`${requests.length} pending`}
         />
-        <Card.Content style={globalStyles.cardContent}>
-          <Text style={globalStyles.code}>code :{currentHousehold?.code}</Text>
-        </Card.Content>
-        {currentHousehold?.profiles?.$values
-          ?.filter((profile) => !profile.isRequest)
-          .map((profile) => {
-            // Find the matching avatar for each profile
-            const selectedAvatar = avatar.find(
-              (a) => a.id === profile.avatarId,
-            );
-
-            return (
-              <TouchableOpacity
-                key={profile.id}
-                style={globalStyles.cardTouchable}
-                onPress={() => console.log('Profile clicked:', profile)}>
-                <Card style={globalStyles.card}>
-                  <Card.Title
-                    title={profile.name}
-                    titleStyle={globalStyles.nameBadge}
-                    subtitle={profile.isOwner ? 'Owner' : 'Member'}
-                    // eslint-disable-next-line react/no-unstable-nested-components
-                    right={() =>
-                      profile.isOwner ? (
-                        <>
-                          {selectedAvatar && (
-                            <Text style={globalStyles.avatarIcon}>
-                              {selectedAvatar.icon}
-                            </Text>
-                          )}
-                        </>
-                      ) : null
-                    }
-                  />
-                </Card>
-              </TouchableOpacity>
-            );
-          })}
+        {requests.map((profile) => (
+          <Card key={profile.id} style={globalStyles.requestCard}>
+            <Card.Title title={profile.name} />
+            <Card.Actions style={globalStyles.actions}>
+              <Button
+                mode="contained"
+                onPress={() => onApprove(profile)}
+                style={globalStyles.actionButton}>
+                Approve
+              </Button>
+              <Button
+                mode="outlined"
+                onPress={() => onReject(profile)}
+                style={globalStyles.actionButton}
+                buttonColor="#fff">
+                Reject
+              </Button>
+            </Card.Actions>
+          </Card>
+        ))}
       </Card>
     </Surface>
   );
+};
 
-  // Pending requests section - only rendered for owner
-  const pendingRequestsSection =
-    isHouseholdOwner && pendingRequests && pendingRequests.length > 0 ? (
-      <Surface style={globalStyles.surface}>
-        <Card style={globalStyles.card}>
-          <Card.Title
-            title="Pending Join Requests"
-            subtitle={`${pendingRequests.length} pending`}
-          />
-          {pendingRequests.map((profile) => (
-            <Card key={profile.id} style={globalStyles.requestCard}>
-              <Card.Title title={profile.name} />
-              <Card.Actions style={globalStyles.actions}>
-                <Button
-                  mode="contained"
-                  onPress={() => handleApproveRequest(profile)}
-                  style={globalStyles.actionButton}>
-                  Approve
-                </Button>
-                <Button
-                  mode="outlined"
-                  onPress={() => handleRejectRequest(profile)}
-                  style={globalStyles.actionButton}
-                  buttonColor="#fff">
-                  Reject
-                </Button>
-              </Card.Actions>
-            </Card>
-          ))}
-        </Card>
-      </Surface>
-    ) : null;
+type Props = MaterialTopTabScreenProps<
+  TabHouseholdParamsList,
+  'DetailsHousehold'
+>;
+
+export default function HouseholdDetailsScreen({ route }: Props) {
+  const globalStyles = useGlobalStyles();
+  const currentHousehold = route.params?.household;
+
+  const ownerProfile = currentHousehold?.profiles?.find(
+    (profile) => profile.isOwner,
+  );
+  const isHouseholdOwner = ownerProfile?.isOwner === true;
+
+  const { regularMembers, pendingRequests } = useMemo(
+    () => ({
+      regularMembers:
+        currentHousehold?.profiles?.filter((p) => !p.isRequest) ?? [],
+      pendingRequests:
+        currentHousehold?.profiles?.filter((p) => p.isRequest) ?? [],
+    }),
+    [currentHousehold?.profiles],
+  );
+
+  const { handleApproveRequest, handleRejectRequest } =
+    useRequestManagement(isHouseholdOwner);
 
   return (
     <View style={globalStyles.container}>
-      <SelectHousehold />
       <ScrollView>
-        {regularMembersSection}
-        {pendingRequestsSection}
+        <Surface style={globalStyles.surface}>
+          <Card style={globalStyles.card}>
+            <Card.Title
+              title={currentHousehold?.name}
+              titleStyle={globalStyles.title}
+              // eslint-disable-next-line react/no-unstable-nested-components
+              left={() => <Text style={globalStyles.avatarIcon}>🏠</Text>}
+              subtitle={`Members (${regularMembers.length})`}
+              subtitleStyle={globalStyles.subtitle}
+            />
+            <Card.Content style={globalStyles.cardContent}>
+              <Text style={globalStyles.code}>
+                code: {currentHousehold?.code}
+              </Text>
+            </Card.Content>
+            <MembersList
+              members={regularMembers}
+              avatars={initialAvatars}
+              globalStyles={globalStyles}
+            />
+          </Card>
+        </Surface>
+
+        {isHouseholdOwner && (
+          <PendingRequests
+            requests={pendingRequests}
+            onApprove={handleApproveRequest}
+            onReject={handleRejectRequest}
+            globalStyles={globalStyles}
+          />
+        )}
       </ScrollView>
     </View>
   );

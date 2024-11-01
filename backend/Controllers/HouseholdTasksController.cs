@@ -60,6 +60,7 @@ public class HouseholdTasksController : ControllerBase
                 Difficulty = task.Difficulty,
                 Description = task.Description,
             }).ToList();
+            
             return Ok(new ApiResponse<IEnumerable<HouseholdTaskDTO>>
             {
                 Data = householdTasksDTO,

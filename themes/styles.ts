@@ -74,7 +74,7 @@ export const useGlobalStyles = () => {
     } as ViewStyle,
     containerInput: {
       flex: 1,
-      padding: 16,
+      padding: 10,
     } as ViewStyle,
     containerLoading: {
       flex: 1,
@@ -284,7 +284,7 @@ export const useGlobalStyles = () => {
     subtitle: {
       fontSize: theme.typography.subtitle.fontSize,
       fontWeight: theme.typography.subtitle.fontWeight,
-      marginBottom: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
       color: colors.text.secondary,
     } as TextStyle,
     description: {
